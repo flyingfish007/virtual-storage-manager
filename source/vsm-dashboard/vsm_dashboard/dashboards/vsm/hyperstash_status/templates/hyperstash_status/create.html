@@ -1,0 +1,59 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}Add Hyperstash Instance{% endblock %}
+
+{% block page_header %}
+    {% include "horizon/common/_page_header.html" with title=_("Add Hyperstash Instance") %}
+    <link href="{{ STATIC_URL }}dashboard/css/hyperstash.css" rel="stylesheet">
+
+{% endblock page_header %}
+
+{% block main %}
+    {% csrf_token %}
+    <div id="divPoolForm" >
+	    <form>
+	    	<div class="left">
+		        <fieldset>
+			    	<div class="control-group form-field clearfix required">
+                        <label>{% trans "Hyperstash Instance Name" %}:</label>
+                        <span class="help-block"></span>
+                        <div class="input">
+                            <input id="txtHsInstanceName" maxlength="255"  type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="control-group form-field clearfix required">
+                        <label>{% trans "IP Address" %}:</label>
+                        <span class="help-block"></span>
+                        <div class="input">
+                            <input id="txtIpAddress" maxlength="255"  type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="control-group form-field clearfix">
+                        <label>{% trans "Description" %}:</label>
+                        <span class="help-block"></span>
+                        <div class="input">
+                            <input id="txtDescription" maxlength="255"  type="text" class="form-control">
+                        </div>
+                    </div>
+		        </fieldset>
+			</div>
+			<div class="right">
+			    <h3>{% trans "Description" %}:</h3>
+			    <p>{% trans "From here you can add a new Hyperstash Instance." %}</p>
+			</div>
+		</form>
+		 <div id="divFormOptions" class="vsm-options-bar">
+	    	<button id="btnCreate" class="btn btn-primary" onclick="addHsInstance()">{% trans "Submit" %}</button>
+	    	<a id="btnCancel" class="btn btn-default" href="/dashboard/vsm/hyperstash_status/">{% trans "Cancel" %}</a>
+	    </div>
+	</div>
+{% endblock %}
+
+
+{% block js %}
+    {{ block.super }}
+	<script src='{{ STATIC_URL }}dashboard/js/vsm.spin.js' type='text/javascript' charset='utf-8'></script>
+    <script src="{{ STATIC_URL }}dashboard/js/hyperstash_status.js"></script>
+{% endblock %}
+

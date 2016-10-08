@@ -1,0 +1,24 @@
+{
+  "rbds": [
+    {
+      "id": 1,
+      "pool": "tp01",
+      "rbd_name": "testvol01",
+      "size": 1024,
+      "objects": 2,
+      "order": 22,
+      "format": 2,
+      "hs_instance_id": 1
+    },
+    {
+      "id": 1,
+      "pool": "tp01",
+      "rbd_name": "testvol01",
+      "size": 1024,
+      "objects": 2,
+      "order": 22,
+      "format": 2,
+      "hs_instance_id": 1
+    }
+  ]
+}

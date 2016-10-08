@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "RBD Status: " %}{{ rbd_name }}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=rbd_name %}
+    <link href="{{ STATIC_URL }}dashboard/css/common.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}dashboard/css/hyperstash.css" rel="stylesheet">
+ 
+{% endblock page_header %}
+
+{% block main %}
+    {% csrf_token %}
+     <!--The frame work of dashboard-->
+    <div id="framework">
+        <!--the main area-->
+        <div id="divMain">
+            <!--Pool Area-->
+            <div id="divCacheRatio" class="vsm-block">
+                <h4 class="vsm-block-title">{% trans "Cache Ratio" %}</h4>
+                <div id="divCacheRatioContent" class="vsm-block-content">
+                    <br />
+                    <div id="divCacheRatioRect" title={{ rbd_id }}>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div id="divFooter" style="width:100%;height:60px;clear:both">
+    </div>
+{% endblock %}
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}lib/echarts.js"></script>
+    <script src="{{ STATIC_URL }}dashboard/js/message.js"></script> 
+    <script src="{{ STATIC_URL }}dashboard/js/hyperstash_status.js"></script>
+{% endblock %}

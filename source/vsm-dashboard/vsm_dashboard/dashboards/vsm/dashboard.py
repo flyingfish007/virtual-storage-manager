@@ -49,10 +49,15 @@ class UserMgmt(horizon.PanelGroup):
     name = _("VSM Management")
     panels = ("usermgmt", 'settings')
 
+class HyperstashMgmt(horizon.PanelGroup):
+    slug = "hyperstashmgmt"
+    name = _("Hyperstash Management")
+    panels = ("hyperstash_status", )
+
 class VizDash(horizon.Dashboard):
     name = _("VSM")
     slug = "vsm"
-    panels = (Dashboard, ServerMgmt, ClusterMgmt, ClusterMonitor, OpenstackMgmt, UserMgmt)
+    panels = (Dashboard, ServerMgmt, ClusterMgmt, HyperstashMgmt, ClusterMonitor, OpenstackMgmt, UserMgmt)
     default_panel = 'overview'
     roles = ('admin',)
 
