@@ -825,3 +825,49 @@ class Config(BASE, VsmBase):
     section = Column('section', String(length=255), nullable=False)
     description = Column('description', String(length=255), nullable=True)
     alterable = Column('alterable', Boolean(create_constraint=True, name=None))
+
+class HyperstashInstance(BASE, VsmBase):
+    """ Hyperstash Instance.
+    """
+
+    __tablename__ = 'hs_instance'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    hs_instance_name = Column(String(length=255), nullable=False)
+    ip_address = Column(String(length=255), nullable=False)
+    hostname = Column(String(length=255), nullable=False)
+    description = Column(String(length=255), nullable=False)
+
+class RBDCacheConfig(BASE, VsmBase):
+    """ RBD cache config.
+    """
+
+    __tablename__ = 'rbd_cache_config'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    cache_dir = Column(String(length=255), nullable=False)
+    clean_start = Column(String(length=255), nullable=False)
+    enable_memory_usage_tracker = Column(Boolean, default=False)
+    object_size = Column(String(length=255), nullable=False)
+    cache_total_size = Column(String(length=255), nullable=False)
+    cache_dirty_ratio_min = Column(String(length=255), nullable=False)
+    cache_dirty_ratio_max = Column(String(length=255), nullable=False)
+    cache_ratio_health = Column(String(length=255), nullable=False)
+    cache_ratio_max = Column(String(length=255), nullable=False)
+    cache_flush_interval = Column(String(length=255), nullable=False)
+    cache_evict_interval = Column(String(length=255), nullable=False)
+    cache_flush_queue_depth = Column(String(length=255), nullable=False)
+    agent_thread_num = Column(String(length=255), nullable=False)
+    cache_service_threads_num = Column(String(length=255), nullable=False)
+
+class HyperstashPerformanceMetric(BASE, VsmBase):
+    """ hyperstash performance metric and value from diamond.
+    """
+
+    __tablename__ = 'hs_metric'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    metric = Column(String(length=255), nullable=False)
+    value = Column(String(length=255), nullable=False)
+    rbd_name = Column(String(length=255), nullable=False)
+    timestamp = Column(Integer, nullable=False)

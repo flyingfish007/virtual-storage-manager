@@ -647,3 +647,15 @@ class ConductorManager(manager.Manager):
 
     def delete_pool_usage(self, context, poolusage_id):
         return db.destroy_storage_pool_usage(context, poolusage_id)
+
+    def hyperstash_get_all(self, context):
+        return db.hyperstash_get_all(context)
+
+    def hyperstash_create(self, context, hs_instance):
+        return db.hyperstash_create(context, hs_instance)
+
+    def hyperstash_get(self, context, id):
+        return db.hyperstash_get(context, id)
+
+    def hyperstash_delete(self, context, id):
+        return db.hyperstash_delete(context, id)

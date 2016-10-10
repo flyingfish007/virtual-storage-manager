@@ -328,3 +328,15 @@ class API(object):
 
     def get_appnode(self, context, id):
         return self.conductor_rpcapi.get_appnode(context, id)
+
+    def hyperstash_get_all(self, context):
+        return self.conductor_rpcapi.hyperstash_get_all(context)
+
+    def hyperstash_create(self, context, hs_instance):
+        return self.conductor_rpcapi.hyperstash_create(context, hs_instance)
+
+    def hyperstash_get(self, context, id):
+        return self.conductor_rpcapi.hyperstash_get(context, id)
+
+    def hyperstash_delete(self, context, id):
+        return self.conductor_rpcapi.hyperstash_delete(context, id)

@@ -1318,3 +1318,15 @@ def clean_performance_history_data(context,days):
 def get_poolusage(context, poolusage_id):
     return IMPL.get_poolusage(context, poolusage_id=poolusage_id)
 #endregion
+
+def hyperstash_get_all(context):
+    return IMPL.hyperstash_get_all(context)
+
+def hyperstash_create(context, hs_instance):
+    return IMPL.hyperstash_create(context, hs_instance)
+
+def hyperstash_get(context, id):
+    return IMPL.hyperstash_get(context, id)
+
+def hyperstash_delete(context, id):
+    return IMPL.hyperstash_delete(context, id)
