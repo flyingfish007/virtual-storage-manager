@@ -32,12 +32,13 @@ class HyperstashController(wsgi.Controller):
 
         hostname = utils.execute('su', '-s', '/bin/bash', '-c',
                                  'exec ssh root@%s hostname' % ip_address,
-                                 'root', run_as_root=True)
+                                 'root', run_as_root=True)[0].strip("\n")
         instance_info = {'hs_instance_name': hs_instance_name,
                          'ip_address': ip_address,
                          'hostname': hostname,
                          'description': description}
-        return self.conductor_api.hyperstash_create(context, instance_info)
+        self.conductor_api.hyperstash_create(context, instance_info)
+        return webob.Response(status_int=201)
 
     def delete(self, req, id):
 
@@ -55,3 +56,5 @@ class HyperstashController(wsgi.Controller):
 
         rbds_all = self.conductor_api.rbd_get_all(context)
 
+def create_resource(ext_mgr):
+    return wsgi.Resource(HyperstashController(ext_mgr))

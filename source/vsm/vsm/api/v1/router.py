@@ -45,6 +45,7 @@ from vsm.api.v1 import performance_metrics
 from vsm.api.contrib import poolusages
 from vsm.api.v1 import ec_profiles
 from vsm.api.v1 import rgw
+from vsm.api.v1 import hyperstash
 
 from vsm.openstack.common import log as logging
 
@@ -263,3 +264,9 @@ class APIRouter(vsm.api.openstack.APIRouter):
                         controller=self.resources['rgws'],
                         collection={},
                         member={'action':'post'})
+
+        self.resources['hyperstashes'] = hyperstash.create_resource(ext_mgr)
+        mapper.resource("hyperstashes", "hyperstashes",
+                        controller=self.resources['hyperstashes'],
+                        collection={},
+                        member={'action': 'post'})
