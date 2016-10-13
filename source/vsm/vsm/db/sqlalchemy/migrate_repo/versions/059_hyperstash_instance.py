@@ -30,7 +30,7 @@ def upgrade(migrate_engine):
         Column('hs_instance_name', String(length=255), nullable=False),
         Column('ip_address', String(length=255), nullable=False),
         Column('hostname', String(length=255), nullable=False),
-        Column('description', String(length=255), nullable=False),
+        Column('description', String(length=255), nullable=True),
         Column('created_at', DateTime(timezone=False)),
         Column('updated_at', DateTime(timezone=False)),
         Column('deleted_at', DateTime(timezone=False)),
