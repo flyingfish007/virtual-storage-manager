@@ -2,6 +2,8 @@
 import json
 import logging
 
+from vsm_dashboard.api import vsm as vsmapi
+
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -21,10 +23,13 @@ class IndexView(tables.DataTableView):
     template_name = 'vsm/hyperstash_status/index.html'
 
     def get_data(self):
-        hs_instance_str = open("/opt/hyperstash_instances.json").read()
-        hs_instance_json = json.loads(hs_instance_str)
-        hs_instance_list = hs_instance_json['hs_instances']
+        hs_instance_list = vsmapi.list_hyperstash_instances(self.request)
         return hs_instance_list
+
+        # hs_instance_str = open("/opt/hyperstash_instances.json").read()
+        # hs_instance_json = json.loads(hs_instance_str)
+        # hs_instance_list = hs_instance_json['hs_instances']
+        # return hs_instance_list
 
 class CreateView(TemplateView):
     template_name = 'vsm/hyperstash_status/create.html'
@@ -37,27 +42,34 @@ class CreateView(TemplateView):
 def create_hs_instance(request):
     body = json.loads(request.body)
     hs_instance = body['hs_instance']
-    hs_instance_str = open("/opt/hyperstash_instances.json").read()
-    hs_instance_json = json.loads(hs_instance_str)
-    hs_instance_list = hs_instance_json['hs_instances']
-    max = 0
-    hs_id = 0
-    for _hs_instance in hs_instance_list:
-        hs_id = int(_hs_instance['id'])
-        if hs_id > max:
-            max = hs_id
-    hs_instance['id'] = hs_id + 1
-    hs_instance['hostname'] = "hs" + str(hs_id + 1)
-    hs_instance_json['hs_instances'].append(hs_instance)
-    hs_instance_str = json.dumps(hs_instance_json)
-    with open("/opt/hyperstash_instances.json", "w") as file:
-        file.write(hs_instance_str)
-        file.close()
+    vsmapi.create_hyperstash_instance(request, hs_instance)
     status = "OK"
     msg = "succeed to create hs instance"
     resp = dict(message=msg, status=status)
     resp = json.dumps(resp)
     return HttpResponse(resp)
+
+    # hs_instance_str = open("/opt/hyperstash_instances.json").read()
+    # hs_instance_json = json.loads(hs_instance_str)
+    # hs_instance_list = hs_instance_json['hs_instances']
+    # max = 0
+    # hs_id = 0
+    # for _hs_instance in hs_instance_list:
+    #     hs_id = int(_hs_instance['id'])
+    #     if hs_id > max:
+    #         max = hs_id
+    # hs_instance['id'] = hs_id + 1
+    # hs_instance['hostname'] = "hs" + str(hs_id + 1)
+    # hs_instance_json['hs_instances'].append(hs_instance)
+    # hs_instance_str = json.dumps(hs_instance_json)
+    # with open("/opt/hyperstash_instances.json", "w") as file:
+    #     file.write(hs_instance_str)
+    #     file.close()
+    # status = "OK"
+    # msg = "succeed to create hs instance"
+    # resp = dict(message=msg, status=status)
+    # resp = json.dumps(resp)
+    # return HttpResponse(resp)
 
 
 class RbdListView(tables.DataTableView):

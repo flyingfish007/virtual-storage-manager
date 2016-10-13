@@ -836,7 +836,7 @@ class HyperstashInstance(BASE, VsmBase):
     hs_instance_name = Column(String(length=255), nullable=False)
     ip_address = Column(String(length=255), nullable=False)
     hostname = Column(String(length=255), nullable=False)
-    description = Column(String(length=255), nullable=False)
+    description = Column(String(length=255), nullable=True)
 
 class RBDCacheConfig(BASE, VsmBase):
     """ RBD cache config.

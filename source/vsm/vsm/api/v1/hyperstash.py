@@ -17,6 +17,14 @@ class HyperstashController(wsgi.Controller):
         self.ext_mgr = ext_mgr
         super(HyperstashController, self).__init__()
 
+    def show(self, req, id):
+
+        context = req.environ['vsm.context']
+
+        hs_instance = self.conductor_api.hyperstash_get(context, id)
+
+        return {'hs_instance': hs_instance}
+
     def index(self, req):
 
         context = req.environ['vsm.context']

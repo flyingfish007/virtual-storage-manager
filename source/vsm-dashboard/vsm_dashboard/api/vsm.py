@@ -372,3 +372,12 @@ def detect_cephconf(request, body=None):
          u'monitor_keyring': u'/etc/keying'}
     """
     return vsmclient(request).clusters.detect_cephconf(body)
+
+def list_hyperstash_instances(request):
+    return vsmclient(request).hyperstashes.list()
+
+def delete_hyperstash_instance(request, hs_instance):
+    return vsmclient(request).hyperstashes.delete(hs_instance)
+
+def create_hyperstash_instance(request, body):
+    return vsmclient(request).hyperstashes.create(body)
