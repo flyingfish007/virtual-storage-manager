@@ -46,6 +46,7 @@ from vsm.api.contrib import poolusages
 from vsm.api.v1 import ec_profiles
 from vsm.api.v1 import rgw
 from vsm.api.v1 import hs_instances
+from vsm.api.v1 import hs_rbd_cache_configs
 
 from vsm.openstack.common import log as logging
 
@@ -271,4 +272,10 @@ class APIRouter(vsm.api.openstack.APIRouter):
                         collection={
                             'list_rbds': "post"
                         },
+                        member={'action': 'post'})
+
+        self.resources['hs_rbd_cache_configs'] = hs_rbd_cache_configs.create_resource(ext_mgr)
+        mapper.resource("hs_rbd_cache_configs", "hs_rbd_cache_configs",
+                        controller=self.resources['hs_rbd_cache_configs'],
+                        collection={},
                         member={'action': 'post'})

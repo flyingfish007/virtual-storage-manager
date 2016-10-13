@@ -4489,3 +4489,38 @@ def hs_instance_delete(context, id):
             hs_ref[key] = value
         hs_ref['deleted'] = True
         hs_ref.save(session=session)
+
+def hs_rbd_cache_config_create(context, hs_rbd_cache_config):
+    hs_rbd_cache_config_ref = models.HsRbdCacheConfig()
+    hs_rbd_cache_config_ref.update(hs_rbd_cache_config)
+    hs_rbd_cache_config_ref.save()
+    return hs_rbd_cache_config_ref
+
+def hs_rbd_cache_config_get(context, id, session=None):
+    result = model_query(context, models.HsRbdCacheConfig, session=session).\
+            filter_by(id=id).\
+            first()
+    return result
+
+def hs_rbd_cache_config_get_by_rbd_id(context, rbd_id, session=None):
+    result = model_query(context, models.HsRbdCacheConfig, session=session).\
+            filter_by(rbd_id=rbd_id).\
+            first()
+    return result
+
+def hs_rbd_cache_config_get_all(context, session=None):
+    return model_query(context,
+                       models.HsRbdCacheConfig,
+                       session=session).all()
+
+def hs_rbd_cache_config_update(context, id, body, session=None):
+    session = get_session()
+
+    with session.begin(subtransactions=True):
+        body['updated_at'] = timeutils.utcnow()
+        convert_datetimes(body, 'created_at', 'deleted_at', 'updated_at')
+        map_ref = hs_rbd_cache_config_get(context, id, session=session)
+
+        for (key, value) in body.iteritems():
+            map_ref[key] = value
+        map_ref.save(session=session)

@@ -659,3 +659,18 @@ class ConductorManager(manager.Manager):
 
     def hs_instance_delete(self, context, id):
         return db.hs_instance_delete(context, id)
+
+    def hs_rbd_cache_config_create(self, context, hs_rbd_cache_config):
+        return db.hs_rbd_cache_config_create(context, hs_rbd_cache_config)
+
+    def hs_rbd_cache_config_get(self, context, id):
+        return db.hs_rbd_cache_config_get(context, id)
+
+    def hs_rbd_cache_config_get_by_rbd_id(self, context, rbd_id):
+        return db.hs_rbd_cache_config_get_by_rbd_id(context, rbd_id)
+
+    def hs_rbd_cache_config_get_all(self, context):
+        return db.hs_rbd_cache_config_get_all(context)
+
+    def hs_rbd_cache_config_update(self, context, id, body):
+        return db.hs_rbd_cache_config_update(context, id, body)

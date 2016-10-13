@@ -452,3 +452,23 @@ class ConductorAPI(vsm.openstack.common.rpc.proxy.RpcProxy):
     def hs_instance_delete(self, context, id):
         return self.call(context, self.make_msg('hs_instance_delete',
                                                 id=id))
+
+    def hs_rbd_cache_config_create(self, context, hs_rbd_cache_config):
+        return self.call(context, self.make_msg('hs_rbd_cache_config_create',
+                                                hs_rbd_cache_config=hs_rbd_cache_config))
+
+    def hs_rbd_cache_config_get(self, context, id):
+        return self.call(context, self.make_msg('hs_rbd_cache_config_get',
+                                                id=id))
+
+    def hs_rbd_cache_config_get_by_rbd_id(self, context, rbd_id):
+        return self.call(context, self.make_msg('hs_rbd_cache_config_get_by_rbd_id',
+                                                rbd_id=rbd_id))
+
+    def hs_rbd_cache_config_get_all(self, context):
+        return self.call(context, self.make_msg('hs_rbd_cache_config_get_all'))
+
+    def hs_rbd_cache_config_update(self, context, id, body):
+        return self.call(context, self.make_msg('hs_rbd_cache_config_update',
+                                                id=id,
+                                                body=body))

@@ -857,7 +857,7 @@ class HsRbdCacheConfig(BASE, VsmBase):
     cache_flush_interval = Column(String(length=255), nullable=False)
     cache_evict_interval = Column(String(length=255), nullable=False)
     cache_flush_queue_depth = Column(String(length=255), nullable=False)
-    agent_thread_num = Column(String(length=255), nullable=False)
+    agent_threads_num = Column(String(length=255), nullable=False)
     cache_service_threads_num = Column(String(length=255), nullable=False)
     hs_instance_id = Column(Integer, nullable=False)
     rbd_id = Column(Integer, nullable=False)

@@ -1330,3 +1330,18 @@ def hs_instance_get(context, id):
 
 def hs_instance_delete(context, id):
     return IMPL.hs_instance_delete(context, id)
+
+def hs_rbd_cache_config_create(context, hs_rbd_cache_config):
+    return IMPL.hs_rbd_cache_config_create(context, hs_rbd_cache_config)
+
+def hs_rbd_cache_config_get(context, id):
+    return IMPL.hs_rbd_cache_config_get(context, id)
+
+def hs_rbd_cache_config_get_by_rbd_id(context, rbd_id):
+    return IMPL.hs_rbd_cache_config_get_by_rbd_id(context, rbd_id)
+
+def hs_rbd_cache_config_get_all(context):
+    return IMPL.hs_rbd_cache_config_get_all(context)
+
+def hs_rbd_cache_config_update(context, id, body):
+    return IMPL.hs_rbd_cache_config_update(context, id, body)
