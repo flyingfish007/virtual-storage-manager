@@ -89,12 +89,12 @@ class RbdHSConfigAction(tables.LinkAction):
 class ListRbdTable(tables.DataTable):
 
     id = tables.Column("id", verbose_name=_("ID"), hidden=False)
-    pool = tables.Column("pool", verbose_name=_("Pool Name"))
     rbd_name = tables.Column("rbd_name", verbose_name=_("RBD Name"))
     size = tables.Column("size", verbose_name=_("Size(MB)"))
     objects = tables.Column("objects", verbose_name=_("Objects"))
     order = tables.Column("order", verbose_name=_("Order"))
     format = tables.Column("format", verbose_name=_("Format"))
+    pool = tables.Column("pool", verbose_name=_("Pool Name"))
     hs_instance_id = tables.Column("hs_instance_id", hidden=True)
 
     class Meta:
