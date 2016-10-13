@@ -23,7 +23,7 @@ class IndexView(tables.DataTableView):
     template_name = 'vsm/hyperstash_status/index.html'
 
     def get_data(self):
-        hs_instance_list = vsmapi.list_hyperstash_instances(self.request)
+        hs_instance_list = vsmapi.list_hs_instances(self.request)
         return hs_instance_list
 
         # hs_instance_str = open("/opt/hyperstash_instances.json").read()
@@ -42,7 +42,7 @@ class CreateView(TemplateView):
 def create_hs_instance(request):
     body = json.loads(request.body)
     hs_instance = body['hs_instance']
-    vsmapi.create_hyperstash_instance(request, hs_instance)
+    vsmapi.create_hs_instance(request, hs_instance)
     status = "OK"
     msg = "succeed to create hs instance"
     resp = dict(message=msg, status=status)
@@ -80,7 +80,7 @@ class RbdListView(tables.DataTableView):
     def get_data(self):
         LOG.info("=========================RBD LIST VIEW: %s" % self.kwargs)
         hs_instance_id = self.kwargs["hs_instance_id"]
-        rbd_list = vsmapi.list_rbds_on_hyperstash_instance(self.request, hs_instance_id)
+        rbd_list = vsmapi.list_rbds_on_hs_instance(self.request, hs_instance_id)
         for rbd in rbd_list:
             rbd.size = rbd.size / 1024 / 1024
         return rbd_list

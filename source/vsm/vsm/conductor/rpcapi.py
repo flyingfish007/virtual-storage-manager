@@ -438,17 +438,17 @@ class ConductorAPI(vsm.openstack.common.rpc.proxy.RpcProxy):
         return self.call(context, self.make_msg('delete_pool_usage',
                                                 poolusage_id=poolusage_id))
 
-    def hyperstash_get_all(self, context):
-        return self.call(context, self.make_msg('hyperstash_get_all'))
+    def hs_instance_get_all(self, context):
+        return self.call(context, self.make_msg('hs_instance_get_all'))
 
-    def hyperstash_create(self, context, hs_instance):
-        return self.call(context, self.make_msg('hyperstash_create',
+    def hs_instance_create(self, context, hs_instance):
+        return self.call(context, self.make_msg('hs_instance_create',
                                                 hs_instance=hs_instance))
 
-    def hyperstash_get(self, context, id):
-        return self.call(context, self.make_msg('hyperstash_get',
+    def hs_instance_get(self, context, id):
+        return self.call(context, self.make_msg('hs_instance_get',
                                                 id=id))
 
-    def hyperstash_delete(self, context, id):
-        return self.call(context, self.make_msg('hyperstash_delete',
+    def hs_instance_delete(self, context, id):
+        return self.call(context, self.make_msg('hs_instance_delete',
                                                 id=id))

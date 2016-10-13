@@ -826,7 +826,7 @@ class Config(BASE, VsmBase):
     description = Column('description', String(length=255), nullable=True)
     alterable = Column('alterable', Boolean(create_constraint=True, name=None))
 
-class HyperstashInstance(BASE, VsmBase):
+class HsInstance(BASE, VsmBase):
     """ Hyperstash Instance.
     """
 
@@ -838,11 +838,11 @@ class HyperstashInstance(BASE, VsmBase):
     hostname = Column(String(length=255), nullable=False)
     description = Column(String(length=255), nullable=True)
 
-class RBDCacheConfig(BASE, VsmBase):
-    """ RBD cache config.
+class HsRbdCacheConfig(BASE, VsmBase):
+    """ Hyperstash RBD cache config.
     """
 
-    __tablename__ = 'rbd_cache_config'
+    __tablename__ = 'hs_rbd_cache_config'
 
     id = Column(Integer, primary_key=True, nullable=False)
     cache_dir = Column(String(length=255), nullable=False)
@@ -859,12 +859,14 @@ class RBDCacheConfig(BASE, VsmBase):
     cache_flush_queue_depth = Column(String(length=255), nullable=False)
     agent_thread_num = Column(String(length=255), nullable=False)
     cache_service_threads_num = Column(String(length=255), nullable=False)
+    hs_instance_id = Column(Integer, nullable=False)
+    rbd_id = Column(Integer, nullable=False)
 
-class HyperstashPerformanceMetric(BASE, VsmBase):
+class HsPerformanceMetric(BASE, VsmBase):
     """ hyperstash performance metric and value from diamond.
     """
 
-    __tablename__ = 'hs_metric'
+    __tablename__ = 'hs_performance_metric'
 
     id = Column(Integer, primary_key=True, nullable=False)
     metric = Column(String(length=255), nullable=False)

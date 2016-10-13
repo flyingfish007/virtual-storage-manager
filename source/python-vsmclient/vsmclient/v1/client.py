@@ -37,7 +37,7 @@ from vsmclient.v1 import performance_metrics
 from vsmclient.v1 import pool_usages
 from vsmclient.v1 import ec_profiles
 from vsmclient.v1 import rgws
-from vsmclient.v1 import hyperstash
+from vsmclient.v1 import hs_instances
 
 class Client(object):
     """
@@ -92,7 +92,7 @@ class Client(object):
         self.pool_usages = pool_usages.PoolUsageManager(self)
         self.ec_profiles = ec_profiles.ECProfilesManager(self)
         self.rgws = rgws.RgwManager(self)
-        self.hyperstashes = hyperstash.HyperstashManager(self)
+        self.hs_instances = hs_instances.HsInstanceManager(self)
 
         # Add in any extensions...
         if extensions:

@@ -1319,14 +1319,14 @@ def get_poolusage(context, poolusage_id):
     return IMPL.get_poolusage(context, poolusage_id=poolusage_id)
 #endregion
 
-def hyperstash_get_all(context):
-    return IMPL.hyperstash_get_all(context)
+def hs_instance_get_all(context):
+    return IMPL.hs_instance_get_all(context)
 
-def hyperstash_create(context, hs_instance):
-    return IMPL.hyperstash_create(context, hs_instance)
+def hs_instance_create(context, hs_instance):
+    return IMPL.hs_instance_create(context, hs_instance)
 
-def hyperstash_get(context, id):
-    return IMPL.hyperstash_get(context, id)
+def hs_instance_get(context, id):
+    return IMPL.hs_instance_get(context, id)
 
-def hyperstash_delete(context, id):
-    return IMPL.hyperstash_delete(context, id)
+def hs_instance_delete(context, id):
+    return IMPL.hs_instance_delete(context, id)

@@ -34,7 +34,7 @@ class DeleteAction(tables.DeleteAction):
         return True
 
     def delete(self, request, obj_id):
-        return vsmapi.delete_hyperstash_instance(request, obj_id)
+        return vsmapi.delete_hs_instance(request, obj_id)
 
         # hs_instance_str = open("/opt/hyperstash_instances.json").read()
         # hs_instance_json = json.loads(hs_instance_str)

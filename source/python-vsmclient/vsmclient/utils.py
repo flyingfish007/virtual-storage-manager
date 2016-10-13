@@ -275,9 +275,9 @@ def find_setting(cs, setting):
     """Get a setting by name or ID."""
     return find_resource(cs.vsm_settings, setting)
 
-def find_hyperstash(cs, hyperstash):
-    """Get a hyperstash by name or ID."""
-    return find_resource(cs.hyperstashes, hyperstash)
+def find_hs_instance(cs, hs_instance):
+    """Get a hyperstash instance by name or ID."""
+    return find_resource(cs.hs_instances, hs_instance)
 
 def _format_servers_list_networks(server):
     output = []

@@ -373,14 +373,14 @@ def detect_cephconf(request, body=None):
     """
     return vsmclient(request).clusters.detect_cephconf(body)
 
-def list_hyperstash_instances(request):
-    return vsmclient(request).hyperstashes.list()
+def list_hs_instances(request):
+    return vsmclient(request).hs_instances.list()
 
-def delete_hyperstash_instance(request, hs_instance):
-    return vsmclient(request).hyperstashes.delete(hs_instance)
+def delete_hs_instance(request, hs_instance):
+    return vsmclient(request).hs_instances.delete(hs_instance)
 
-def create_hyperstash_instance(request, body):
-    return vsmclient(request).hyperstashes.create(body)
+def create_hs_instance(request, body):
+    return vsmclient(request).hs_instances.create(body)
 
-def list_rbds_on_hyperstash_instance(request, hs_instance_id):
-    return vsmclient(request).hyperstashes.list_rbds(hs_instance_id)
+def list_rbds_on_hs_instance(request, hs_instance_id):
+    return vsmclient(request).hs_instances.list_rbds(hs_instance_id)

@@ -99,9 +99,9 @@ def _find_setting(cs, setting):
     """Get a setting by name or ID."""
     return utils.find_setting(cs, setting)
 
-def _find_hyperstash(cs, hyperstash):
+def _find_hs_instance(cs, hyperstash):
     """Get a hyperstash by name or ID."""
-    return utils.find_hyperstash(cs, hyperstash)
+    return utils.find_hs_instance(cs, hyperstash)
 
 
 def _print_cluster(cluster):
@@ -1351,39 +1351,39 @@ def do_rgw_create(cs, args):
         raise exceptions.CommandError("Failed to create rgw.")
 
 
-###################hyperstash##########################
+###################hyperstash instance##########################
 @utils.service_type('vsm')
-def do_hyperstash_list(cs, args):
-    """Lists all hyperstashes."""
-    hyperstashes = cs.hyperstashes.list()
+def do_hs_instance_list(cs, args):
+    """Lists all hyperstash instances."""
+    hs_instances = cs.hs_instances.list()
     columns = ["ID", "HS Instance Name", "IP Address", "Hostname", "Description"]
-    utils.print_list(hyperstashes, columns)
+    utils.print_list(hs_instances, columns)
 
 @utils.arg('id',
            metavar='<id>',
-           help='ID of hyperstash.')
+           help='ID of hyperstash instance.')
 @utils.service_type('vsm')
-def do_hyperstash_delete(cs, args):
-    """Deletes a hyperstash by id."""
-    hyperstash = _find_hyperstash(cs, args.id)
+def do_hs_instance_delete(cs, args):
+    """Deletes a hyperstash instance by id."""
+    hs_instance = _find_hs_instance(cs, args.id)
     try:
-        cs.hyperstashes.delete(hyperstash)
-        print("Succeed to delete hyperstash.")
+        cs.hs_instances.delete(hs_instance)
+        print("Succeed to delete hyperstash instance.")
     except:
-        raise exceptions.CommandError("Failed to delete hyperstash.")
+        raise exceptions.CommandError("Failed to delete hyperstash instance.")
 
 @utils.arg('--hs-instance-name',
            metavar='<hs-instance-name>',
            help='The name of hyperstash instance.')
 @utils.arg('--ip-address',
            metavar='<ip-address>',
-           help='The ip address of description.')
+           help='The ip address of hyperstash instance.')
 @utils.arg('--description',
            metavar='<description>',
-           help='The description of description.')
+           help='The description of hyperstash instance.')
 @utils.service_type('vsm')
-def do_hyperstash_create(cs, args):
-    """Creates a hyperstash."""
+def do_hs_instance_create(cs, args):
+    """Creates a hyperstash instance."""
     if not args.hs_instance_name:
         raise exceptions.CommandError("you need specify a hyperstash instance name")
     if not args.ip_address:
@@ -1394,19 +1394,19 @@ def do_hyperstash_create(cs, args):
         'description': args.description
     }
     try:
-        cs.hyperstashes.create(hs_instance)
-        print("Succeed to create hyperstash.")
+        cs.hs_instances.create(hs_instance)
+        print("Succeed to create hyperstash instance.")
     except:
-        raise exceptions.CommandError("Failed to create hyperstash.")
+        raise exceptions.CommandError("Failed to create hyperstash instance.")
 
 @utils.arg('id',
            metavar='<id>',
-           help='ID of hyperstash.')
+           help='ID of hyperstash instance.')
 @utils.service_type('vsm')
-def do_hyperstash_list_rbds(cs, args):
+def do_hs_instance_list_rbds(cs, args):
     """Lists rbds on a hyperstash instance."""
     try:
-        rbds = cs.hyperstashes.list_rbds(args.id)
+        rbds = cs.hs_instances.list_rbds(args.id)
         columns = ["ID", "Pool", "RBD Name", "Size", "Objects",
                    "Order", "Format"]
         utils.print_list(rbds, columns)

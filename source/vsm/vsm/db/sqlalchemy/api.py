@@ -4459,24 +4459,24 @@ def get_metric_timestamp_range(context, search_opts, diamond_collect_interval, m
             timestamp_end = get_max_timestamp_by_metrics_name(context, metrics_name) or timestamp_start
     return timestamp_start, timestamp_end
 
-def hyperstash_get_all(context, session=None):
+def hs_instance_get_all(context, session=None):
     return model_query(context,
-                       models.HyperstashInstance,
+                       models.HsInstance,
                        session=session).all()
 
-def hyperstash_create(context, hs_instance):
-    hs_ref = models.HyperstashInstance()
+def hs_instance_create(context, hs_instance):
+    hs_ref = models.HsInstance()
     hs_ref.update(hs_instance)
     hs_ref.save()
     return hs_ref
 
-def hyperstash_get(context, id, session=None):
-    result = model_query(context, models.HyperstashInstance, session=session).\
+def hs_instance_get(context, id, session=None):
+    result = model_query(context, models.HsInstance, session=session).\
             filter_by(id=id).\
             first()
     return result
 
-def hyperstash_delete(context, id):
+def hs_instance_delete(context, id):
     session = get_session()
 
     with session.begin(subtransactions=True):
@@ -4484,7 +4484,7 @@ def hyperstash_delete(context, id):
         values['deleted_at'] = timeutils.utcnow()
         values['updated_at'] = values['deleted_at']
         convert_datetimes(values, 'created_at', 'deleted_at', 'updated_at')
-        hs_ref = hyperstash_get(context, id, session=session)
+        hs_ref = hs_instance_get(context, id, session=session)
         for (key, value) in values.iteritems():
             hs_ref[key] = value
         hs_ref['deleted'] = True

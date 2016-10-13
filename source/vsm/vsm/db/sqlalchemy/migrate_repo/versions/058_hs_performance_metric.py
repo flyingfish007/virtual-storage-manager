@@ -24,23 +24,13 @@ def upgrade(migrate_engine):
     meta = MetaData()
     meta.bind = migrate_engine
 
-    rbd_cache_config = Table(
-        'rbd_cache_config', meta,
+    hs_performance_metric = Table(
+        'hs_performance_metric', meta,
         Column('id', Integer, primary_key=True, nullable=False),
-        Column('cache_dir', String(length=255), nullable=False),
-        Column('clean_start', String(length=255), nullable=False),
-        Column('enable_memory_usage_tracker', Boolean, default=False),
-        Column('object_size', String(length=255), nullable=False),
-        Column('cache_total_size', String(length=255), nullable=False),
-        Column('cache_dirty_ratio_min', String(length=255), nullable=False),
-        Column('cache_dirty_ratio_max', String(length=255), nullable=False),
-        Column('cache_ratio_health', String(length=255), nullable=False),
-        Column('cache_ratio_max', String(length=255), nullable=False),
-        Column('cache_flush_interval', String(length=255), nullable=False),
-        Column('cache_evict_interval', String(length=255), nullable=False),
-        Column('cache_flush_queue_depth', String(length=255), nullable=False),
-        Column('agent_thread_num', String(length=255), nullable=False),
-        Column('cache_service_threads_num', String(length=255), nullable=False),
+        Column('metric', String(length=255), nullable=False),
+        Column('value', String(length=255), nullable=False),
+        Column('rbd_name', String(length=255), nullable=False),
+        Column('timestamp', Integer, nullable=False),
         Column('created_at', DateTime(timezone=False)),
         Column('updated_at', DateTime(timezone=False)),
         Column('deleted_at', DateTime(timezone=False)),
@@ -48,16 +38,16 @@ def upgrade(migrate_engine):
     )
 
     try:
-        rbd_cache_config.create()
+        hs_performance_metric.create()
     except Exception:
-        meta.drop_all(tables=[rbd_cache_config])
+        meta.drop_all(tables=[hs_performance_metric])
         raise
 
 def downgrade(migrate_engine):
     meta = MetaData()
     meta.bind = migrate_engine
 
-    rbd_cache_config = Table('rbd_cache_config',
+    hs_performance_metric = Table('hs_performance_metric',
                     meta,
                     autoload=True)
-    rbd_cache_config.drop()
+    hs_performance_metric.drop()
