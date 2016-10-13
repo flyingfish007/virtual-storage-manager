@@ -268,5 +268,7 @@ class APIRouter(vsm.api.openstack.APIRouter):
         self.resources['hyperstashes'] = hyperstash.create_resource(ext_mgr)
         mapper.resource("hyperstashes", "hyperstashes",
                         controller=self.resources['hyperstashes'],
-                        collection={},
+                        collection={
+                            'list_rbds': "post"
+                        },
                         member={'action': 'post'})
