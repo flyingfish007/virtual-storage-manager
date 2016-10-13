@@ -79,73 +79,78 @@ class RbdListView(tables.DataTableView):
 
     def get_data(self):
         LOG.info("=========================RBD LIST VIEW: %s" % self.kwargs)
-        if int(self.kwargs["hs_instance_id"]) == 1:
-            rbd_list = [
-                {
-                    "id": 1,
-                    "pool": "tp01",
-                    "rbd_name": "testvol01",
-                    "size": 1024,
-                    "objects": 2,
-                    "order": 22,
-                    "format": 2,
-                    "hs_instance_id": 1
-                },
-                {
-                    "id": 2,
-                    "pool": "tp01",
-                    "rbd_name": "testvol02",
-                    "size": 1024,
-                    "objects": 2,
-                    "order": 22,
-                    "format": 2,
-                    "hs_instance_id": 1
-                },
-                {
-                    "id": 3,
-                    "pool": "tp02",
-                    "rbd_name": "testvol03",
-                    "size": 1024,
-                    "objects": 2,
-                    "order": 22,
-                    "format": 2,
-                    "hs_instance_id": 1
-                }
-            ]
-        else:
-            rbd_list = [
-                {
-                    "id": 4,
-                    "pool": "tp01",
-                    "rbd_name": "testvol04",
-                    "size": 1024,
-                    "objects": 2,
-                    "order": 22,
-                    "format": 2,
-                    "hs_instance_id": 2
-                },
-                {
-                    "id": 5,
-                    "pool": "tp01",
-                    "rbd_name": "testvol05",
-                    "size": 1024,
-                    "objects": 2,
-                    "order": 22,
-                    "format": 2,
-                    "hs_instance_id": 2
-                },
-                {
-                    "id": 6,
-                    "pool": "tp02",
-                    "rbd_name": "testvol06",
-                    "size": 1024,
-                    "objects": 2,
-                    "order": 22,
-                    "format": 2,
-                    "hs_instance_id": 2
-                }
-            ]
+        hs_instance_id = self.kwargs["hs_instance_id"]
+        rbd_list = vsmapi.list_rbds_on_hyperstash_instance(self.request, hs_instance_id)
+        for rbd in rbd_list:
+            rbd.size = rbd.size / 1024 / 1024
         return rbd_list
+        # if int(self.kwargs["hs_instance_id"]) == 1:
+        #     rbd_list = [
+        #         {
+        #             "id": 1,
+        #             "pool": "tp01",
+        #             "rbd_name": "testvol01",
+        #             "size": 1024,
+        #             "objects": 2,
+        #             "order": 22,
+        #             "format": 2,
+        #             "hs_instance_id": 1
+        #         },
+        #         {
+        #             "id": 2,
+        #             "pool": "tp01",
+        #             "rbd_name": "testvol02",
+        #             "size": 1024,
+        #             "objects": 2,
+        #             "order": 22,
+        #             "format": 2,
+        #             "hs_instance_id": 1
+        #         },
+        #         {
+        #             "id": 3,
+        #             "pool": "tp02",
+        #             "rbd_name": "testvol03",
+        #             "size": 1024,
+        #             "objects": 2,
+        #             "order": 22,
+        #             "format": 2,
+        #             "hs_instance_id": 1
+        #         }
+        #     ]
+        # else:
+        #     rbd_list = [
+        #         {
+        #             "id": 4,
+        #             "pool": "tp01",
+        #             "rbd_name": "testvol04",
+        #             "size": 1024,
+        #             "objects": 2,
+        #             "order": 22,
+        #             "format": 2,
+        #             "hs_instance_id": 2
+        #         },
+        #         {
+        #             "id": 5,
+        #             "pool": "tp01",
+        #             "rbd_name": "testvol05",
+        #             "size": 1024,
+        #             "objects": 2,
+        #             "order": 22,
+        #             "format": 2,
+        #             "hs_instance_id": 2
+        #         },
+        #         {
+        #             "id": 6,
+        #             "pool": "tp02",
+        #             "rbd_name": "testvol06",
+        #             "size": 1024,
+        #             "objects": 2,
+        #             "order": 22,
+        #             "format": 2,
+        #             "hs_instance_id": 2
+        #         }
+        #     ]
+        # return rbd_list
 
 class ConfigRbdView(forms.ModalFormView):
     form_class = ConfigRbdForm

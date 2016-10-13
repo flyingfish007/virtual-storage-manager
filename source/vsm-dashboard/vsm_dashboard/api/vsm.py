@@ -381,3 +381,6 @@ def delete_hyperstash_instance(request, hs_instance):
 
 def create_hyperstash_instance(request, body):
     return vsmclient(request).hyperstashes.create(body)
+
+def list_rbds_on_hyperstash_instance(request, hs_instance_id):
+    return vsmclient(request).hyperstashes.list_rbds(hs_instance_id)
