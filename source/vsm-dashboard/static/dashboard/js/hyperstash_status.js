@@ -105,7 +105,7 @@ function addHsInstance(){
 			"hs_instance":{
 				"hs_instance_name":$("#txtHsInstanceName").val(),
 				'ip_address': $("#txtIpAddress").val(),
-                'description': $("#description").val()
+                'description': $("#txtDescription").val()
 			}
 	};
 	var postData = JSON.stringify(data);
