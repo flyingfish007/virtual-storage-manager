@@ -38,6 +38,7 @@ from vsmclient.v1 import pool_usages
 from vsmclient.v1 import ec_profiles
 from vsmclient.v1 import rgws
 from vsmclient.v1 import hs_instances
+from vsmclient.v1 import hs_rbd_cache_configs
 
 class Client(object):
     """
@@ -93,6 +94,7 @@ class Client(object):
         self.ec_profiles = ec_profiles.ECProfilesManager(self)
         self.rgws = rgws.RgwManager(self)
         self.hs_instances = hs_instances.HsInstanceManager(self)
+        self.hs_rbd_cache_configs = hs_rbd_cache_configs.HsRbdCacheConfigManager(self)
 
         # Add in any extensions...
         if extensions:

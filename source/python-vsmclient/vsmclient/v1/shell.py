@@ -99,9 +99,13 @@ def _find_setting(cs, setting):
     """Get a setting by name or ID."""
     return utils.find_setting(cs, setting)
 
-def _find_hs_instance(cs, hyperstash):
-    """Get a hyperstash by name or ID."""
-    return utils.find_hs_instance(cs, hyperstash)
+def _find_hs_instance(cs, hs_instance):
+    """Get a hyperstash instance by name or ID."""
+    return utils.find_hs_instance(cs, hs_instance)
+
+def _find_hs_rbd_cache_config(cs, hs_rbd_cache_config):
+    """Get a hyperstash rbd cache config by name or ID."""
+    return utils.find_hs_rbd_cache_config(cs, hs_rbd_cache_config)
 
 
 def _print_cluster(cluster):
@@ -169,6 +173,12 @@ def _print_setting(setting):
         utils.print_dict(setting)
     else:
         utils.print_dict(setting._info)
+
+def _print_hs_rbd_cache_config(hs_rbd_cache_config):
+    if isinstance(hs_rbd_cache_config, dict):
+        utils.print_dict(hs_rbd_cache_config)
+    else:
+        utils.print_dict(hs_rbd_cache_config._info)
 
 
 def _translate_keys(collection, convert):
@@ -1412,6 +1422,39 @@ def do_hs_instance_list_rbds(cs, args):
         utils.print_list(rbds, columns)
     except:
         raise exceptions.CommandError("Failed to list_rbds on hyperstash instance.")
+
+
+###################hyperstash rbd cache config##########################
+@utils.service_type('vsm')
+def do_hs_rbd_cache_config_list(cs, args):
+    """Lists all hyperstash rbd cache config."""
+    hs_rbd_cache_configs = cs.hs_rbd_cache_configs.list()
+    columns = ["ID", "Cache Dir", "Clean Start", "Enable Memory Usage Tracker",
+               "Object Size", "Cache Total Size", "Cache Dirty Ratio Min",
+               "Cache Dirty Ratio Max", "Cache Ratio Health", "Cache Ratio Max",
+               "Cache Flush Interval", "Cache Evict Interval", "Cache Flush Queue Depth",
+               "Agent Threads Num", "Cache Service Threads Num", "Hs Instance Id",
+               "Rbd Id"]
+    utils.print_list(hs_rbd_cache_configs, columns)
+
+@utils.arg('--id',
+           metavar='<id>',
+           help='Name or ID of hyperstash rbd cache config.')
+@utils.arg('--rbd-id',
+           metavar='<rbd_id>',
+           help='ID of rbd.')
+@utils.service_type('vsm')
+def do_hs_rbd_cache_config_show(cs, args):
+    """Shows details info of a hyperstash rbd cache config."""
+    if not args.id and not args.rbd_id:
+        raise exceptions.CommandError("you need specify a "
+                                      "id or rbd_id")
+    if args.id:
+        hs_rbd_cache_config = _find_hs_rbd_cache_config(cs, args.id)
+    else:
+        hs_rbd_cache_config = cs.hs_rbd_cache_configs.get_by_rbd_id(args.rbd_id)
+    _print_hs_rbd_cache_config(hs_rbd_cache_config)
+
 
 # TODO tag for those not completed commands
 # It will be removed later

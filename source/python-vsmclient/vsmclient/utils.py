@@ -279,6 +279,10 @@ def find_hs_instance(cs, hs_instance):
     """Get a hyperstash instance by name or ID."""
     return find_resource(cs.hs_instances, hs_instance)
 
+def find_hs_rbd_cache_config(cs, hs_rbd_cache_config):
+    """Get a hyperstash rbd cache config by name or ID."""
+    return find_resource(cs.hs_rbd_cache_configs, hs_rbd_cache_config)
+
 def _format_servers_list_networks(server):
     output = []
     for (network, addresses) in server.networks.items():
