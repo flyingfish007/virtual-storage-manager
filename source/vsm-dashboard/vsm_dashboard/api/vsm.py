@@ -393,3 +393,6 @@ def get_hs_rbd_cache_config(request, id):
 
 def get_hs_rbd_cache_config_by_rbd_id(request, rbd_id):
     return vsmclient(request).hs_rbd_cache_configs.get_by_rbd_id(rbd_id)
+
+def update_hs_rbd_cache_config(request, id, info):
+    return vsmclient(request).hs_rbd_cache_configs.update(id, info)

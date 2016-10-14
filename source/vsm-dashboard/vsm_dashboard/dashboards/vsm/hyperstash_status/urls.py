@@ -8,6 +8,7 @@ from .views import ConfigRbdView
 from .views import monitor
 from .views import cache_ratio
 from .views import create_hs_instance
+from .views import update_action
 
 
 urlpatterns = patterns('',
@@ -18,4 +19,5 @@ urlpatterns = patterns('',
     url(r'^(?P<rbd_id>[^/]+)/config_rbd/$', ConfigRbdView.as_view(), name='config_rbd'),
     url(r'^(?P<rbd_id>[^/]+)/monitor/$', monitor, name='monitor'),
     url(r'^(?P<rbd_id>[^/]+)/cache_ratio/$', cache_ratio, name='cache_ratio'),
+    url(r'^update_action/$', update_action, name='update_action'),
 )

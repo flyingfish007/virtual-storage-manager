@@ -136,3 +136,65 @@ function addHsInstance(){
 		}
     });
 }
+
+function updateHsRbdCacheConfig(){
+	var id = $("#id_id").val();
+    var cache_dir = $("#id_cache_dir").val();
+    var clean_start = $("#id_clean_start").val();
+    var enable_memory_usage_tracker = $("#id_enable_memory_usage_tracker").val();
+    var object_size = $("#id_object_size").val();
+	var cache_total_size = $("#id_cache_total_size").val();
+	var cache_dirty_ratio_min = $("#id_cache_dirty_ratio_min").val();
+    var cache_dirty_ratio_max = $("#id_cache_dirty_ratio_max").val();
+    var cache_ratio_health = $("#id_cache_ratio_health").val();
+    var cache_ratio_max = $("#id_cache_ratio_max").val();
+    var cache_flush_interval = $("#id_cache_flush_interval").val();
+    var cache_evict_interval = $("#id_cache_evict_interval").val();
+    var cache_flush_queue_depth = $("#id_cache_flush_queue_depth").val();
+    var agent_threads_num = $("#id_agent_threads_num").val();
+    var cache_service_threads_num = $("#id_cache_service_threads_num").val();
+    var hs_instance_id = $("#id_hs_instance_id").val();
+
+	var data = {
+        "id":id,
+        "cache_dir":cache_dir,
+		"clean_start":clean_start,
+        "enable_memory_usage_tracker":enable_memory_usage_tracker,
+		"object_size":object_size,
+        "cache_total_size":cache_total_size,
+		"cache_dirty_ratio_min":cache_dirty_ratio_min,
+        "cache_dirty_ratio_max":cache_dirty_ratio_max,
+        "cache_ratio_health":cache_ratio_health,
+        "cache_ratio_max":cache_ratio_max,
+        "cache_flush_interval":cache_flush_interval,
+        "cache_evict_interval":cache_evict_interval,
+        "cache_flush_queue_depth":cache_flush_queue_depth,
+        "agent_threads_num":agent_threads_num,
+        "cache_service_threads_num":cache_service_threads_num,
+        "hs_instance_id":hs_instance_id
+    };
+	var postData = JSON.stringify(data);
+	token = $("input[name=csrfmiddlewaretoken]").val();
+
+	$.ajax({
+		type: "post",
+		url: "/dashboard/vsm/hyperstash_status/update_action/",
+		data: postData,
+		dataType:"json",
+		success: function(data){
+				console.log(data);
+				window.location.href="/dashboard/vsm/hyperstash_status/"+hs_instance_id+"/list_rbd";
+		   	},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+				if(XMLHttpRequest.status == 500)
+                	showTip("error","INTERNAL SERVER ERROR")
+			},
+		headers: {
+			"X-CSRFToken": token
+			},
+		complete: function(){
+
+		}
+    });
+
+}

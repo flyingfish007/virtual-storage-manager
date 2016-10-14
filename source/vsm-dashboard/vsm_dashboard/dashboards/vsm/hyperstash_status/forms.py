@@ -34,7 +34,8 @@ class AddHSInstanceForm(forms.SelfHandlingForm):
 
 class ConfigRbdForm(forms.SelfHandlingForm):
 
-    failure_url = 'horizon:vsm:hyperstash_status:list_rbd'
+    id = forms.CharField(label=_("ID"), widget=forms.HiddenInput)
+    hs_instance_id = forms.CharField(label=_("Hs Instance ID"), widget=forms.HiddenInput)
 
     cache_dir = forms.CharField(
         label = _("Cache Dir"),

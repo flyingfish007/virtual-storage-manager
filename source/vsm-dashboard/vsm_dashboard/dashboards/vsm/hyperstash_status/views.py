@@ -155,7 +155,7 @@ class RbdListView(tables.DataTableView):
 class ConfigRbdView(forms.ModalFormView):
     form_class = ConfigRbdForm
     template_name = 'vsm/hyperstash_status/config_rbd.html'
-    success_url = reverse_lazy('horizon:vsm:openstackconnect:index')
+    # success_url = reverse_lazy('horizon:vsm:hyperstash_status:index')
 
     def get_object(self):
         LOG.info("=========================OBJECT CONFIG RBD VIEW: %s" % self.kwargs)
@@ -231,6 +231,21 @@ class ConfigRbdView(forms.ModalFormView):
         LOG.info("=========================INITIAL CONFIG RBD VIEW: %s" % self.kwargs)
         rbd_config = self.get_object()
         return rbd_config
+
+def update_action(request):
+    data = json.loads(request.body)
+    try:
+        id = data.pop('id')
+        vsmapi.update_hs_rbd_cache_config(request, id, data)
+        status = "OK"
+        msg = "Update Hyperstash Rbd Cache Config Successfully!"
+    except:
+        status = "Failed"
+        msg = "Update Hyperstash Rbd Cache Config Failed!"
+
+    resp = dict(message=msg, status=status)
+    resp = json.dumps(resp)
+    return HttpResponse(resp)
 
 def monitor(request, rbd_id):
     LOG.info("=========================rbd_id: %s" % str(rbd_id))
