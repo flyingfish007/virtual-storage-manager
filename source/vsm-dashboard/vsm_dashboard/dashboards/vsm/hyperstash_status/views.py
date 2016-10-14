@@ -159,45 +159,68 @@ class ConfigRbdView(forms.ModalFormView):
 
     def get_object(self):
         LOG.info("=========================OBJECT CONFIG RBD VIEW: %s" % self.kwargs)
-        if int(self.kwargs['rbd_id']) in [1, 2, 3]:
-            rbd_config = {
-                "id": 1,
-                "cache_dir": "/hyperstorage",
-                "clean_start": 0,
-                "enable_memory_usage_tracker": False,
-                "object_size": 4096,
-                "cache_total_size": 10737418240,
-                "cache_dirty_ratio_min": 0.1,
-                "cache_dirty_ratio_max": 0.9,
-                "cache_ratio_health": 0.5,
-                "cache_ratio_max": 0.7,
-                "cache_flush_interval": 1,
-                "cache_evict_interval": 1,
-                "cache_flush_queue_depth": 256,
-                "agent_threads_num": 128,
-                "cache_service_threads_num": 64,
-                "hs_instance_id": 1
-            }
-        else:
-            rbd_config = {
-                "id": 4,
-                "cache_dir": "/hyperstorage1111",
-                "clean_start": 0,
-                "enable_memory_usage_tracker": False,
-                "object_size": 4096,
-                "cache_total_size": 10737418240,
-                "cache_dirty_ratio_min": 0.1,
-                "cache_dirty_ratio_max": 0.9,
-                "cache_ratio_health": 0.5,
-                "cache_ratio_max": 0.7,
-                "cache_flush_interval": 1,
-                "cache_evict_interval": 1,
-                "cache_flush_queue_depth": 256,
-                "agent_threads_num": 128,
-                "cache_service_threads_num": 64,
-                "hs_instance_id": 2
-            }
+        rbd_config = vsmapi.get_hs_rbd_cache_config_by_rbd_id(self.request,
+                                                              self.kwargs['rbd_id'])
+        LOG.info("=========================rbd_config: %s" % str(rbd_config))
+        rbd_config = {
+            'id': rbd_config.id,
+            'cache_dir': rbd_config.cache_dir,
+            'clean_start': rbd_config.clean_start,
+            'enable_memory_usage_tracker': rbd_config.enable_memory_usage_tracker,
+            'object_size': rbd_config.object_size,
+            'cache_total_size': rbd_config.cache_total_size,
+            'cache_dirty_ratio_min': rbd_config.cache_dirty_ratio_min,
+            "cache_dirty_ratio_max": rbd_config.cache_dirty_ratio_max,
+            "cache_ratio_health": rbd_config.cache_ratio_health,
+            "cache_ratio_max": rbd_config.cache_ratio_max,
+            "cache_flush_interval": rbd_config.cache_flush_interval,
+            "cache_evict_interval": rbd_config.cache_evict_interval,
+            "cache_flush_queue_depth": rbd_config.cache_flush_queue_depth,
+            "agent_threads_num": rbd_config.agent_threads_num,
+            "cache_service_threads_num": rbd_config.cache_service_threads_num,
+            "hs_instance_id": rbd_config.hs_instance_id
+        }
         return rbd_config
+
+        # if int(self.kwargs['rbd_id']) in [1, 2, 3]:
+        #     rbd_config = {
+        #         "id": 1,
+        #         "cache_dir": "/hyperstorage",
+        #         "clean_start": 0,
+        #         "enable_memory_usage_tracker": False,
+        #         "object_size": 4096,
+        #         "cache_total_size": 10737418240,
+        #         "cache_dirty_ratio_min": 0.1,
+        #         "cache_dirty_ratio_max": 0.9,
+        #         "cache_ratio_health": 0.5,
+        #         "cache_ratio_max": 0.7,
+        #         "cache_flush_interval": 1,
+        #         "cache_evict_interval": 1,
+        #         "cache_flush_queue_depth": 256,
+        #         "agent_threads_num": 128,
+        #         "cache_service_threads_num": 64,
+        #         "hs_instance_id": 1
+        #     }
+        # else:
+        #     rbd_config = {
+        #         "id": 4,
+        #         "cache_dir": "/hyperstorage1111",
+        #         "clean_start": 0,
+        #         "enable_memory_usage_tracker": False,
+        #         "object_size": 4096,
+        #         "cache_total_size": 10737418240,
+        #         "cache_dirty_ratio_min": 0.1,
+        #         "cache_dirty_ratio_max": 0.9,
+        #         "cache_ratio_health": 0.5,
+        #         "cache_ratio_max": 0.7,
+        #         "cache_flush_interval": 1,
+        #         "cache_evict_interval": 1,
+        #         "cache_flush_queue_depth": 256,
+        #         "agent_threads_num": 128,
+        #         "cache_service_threads_num": 64,
+        #         "hs_instance_id": 2
+        #     }
+        # return rbd_config
 
     def get_context_data(self, **kwargs):
         context = super(ConfigRbdView, self).get_context_data(**kwargs)

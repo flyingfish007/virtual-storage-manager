@@ -384,3 +384,12 @@ def create_hs_instance(request, body):
 
 def list_rbds_on_hs_instance(request, hs_instance_id):
     return vsmclient(request).hs_instances.list_rbds(hs_instance_id)
+
+def list_hs_rbd_cache_configs(request):
+    return vsmclient(request).hs_rbd_cache_configs.list()
+
+def get_hs_rbd_cache_config(request, id):
+    return vsmclient(request).hs_rbd_cache_configs.get(id)
+
+def get_hs_rbd_cache_config_by_rbd_id(request, rbd_id):
+    return vsmclient(request).hs_rbd_cache_configs.get_by_rbd_id(rbd_id)
