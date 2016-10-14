@@ -93,59 +93,60 @@ class HsInstanceController(wsgi.Controller):
                               'root', run_as_root=True)
                 utils.execute('chown', 'vsm:vsm', '/tmp/%s.conf' % rbd['rbd_name'],
                               run_as_root=True)
-                new_hs_rbd_cache_config = {}
-                with open('/tmp/%s.conf' % rbd['rbd_name']) as file:
-                    for line in file.readlines():
-                        try:
-                            value = line.split('=')[1].strip('\n')
-                        except:
-                            value = None
-                        if "cache_dir=" in line:
-                            new_hs_rbd_cache_config['cache_dir'] = value
-                        elif "clean_start=" in line:
-                            new_hs_rbd_cache_config['clean_start'] = value
-                        elif "enable_MemoryUsageTracker=" in line:
-                            enable_memory_usage_tracker = value
-                            if enable_memory_usage_tracker == "true":
-                                new_hs_rbd_cache_config['enable_memory_usage_tracker'] = True
-                            else:
-                                new_hs_rbd_cache_config['enable_memory_usage_tracker'] = False
-                        elif "object_size=" in line:
-                            new_hs_rbd_cache_config['object_size'] = value
-                        elif "cache_total_size=" in line:
-                            new_hs_rbd_cache_config['cache_total_size'] = value
-                        elif "cache_dirty_ratio_min=" in line:
-                            new_hs_rbd_cache_config['cache_dirty_ratio_min'] = value
-                        elif "cache_dirty_ratio_max=" in line:
-                            new_hs_rbd_cache_config['cache_dirty_ratio_max'] = value
-                        elif "cache_ratio_health=" in line:
-                            new_hs_rbd_cache_config['cache_ratio_health'] = value
-                        elif "cache_ratio_max=" in line:
-                            new_hs_rbd_cache_config['cache_ratio_max'] = value
-                        elif "cache_flush_interval=" in line:
-                            new_hs_rbd_cache_config['cache_flush_interval'] = value
-                        elif "cache_evict_interval=" in line:
-                            new_hs_rbd_cache_config['cache_evict_interval'] = value
-                        elif "cache_flush_queue_depth=" in line:
-                            new_hs_rbd_cache_config['cache_flush_queue_depth'] = value
-                        elif "agent_threads_num=" in line:
-                            new_hs_rbd_cache_config['agent_threads_num'] = value
-                        elif "cacheservice_threads_num=" in line:
-                            new_hs_rbd_cache_config['cache_service_threads_num'] = value
-                    new_hs_rbd_cache_config['hs_instance_id'] = int(hs_instance_id)
-                    new_hs_rbd_cache_config['rbd_id'] = int(rbd['id'])
-                    hs_rbd_cache_config = \
-                        self.conductor_api.hs_rbd_cache_config_get_by_rbd_id(context,
-                                                                             int(rbd['id']))
-                    if hs_rbd_cache_config:
-                        self.conductor_api.\
-                            hs_rbd_cache_config_update(context,
-                                                       hs_rbd_cache_config['id'],
-                                                       new_hs_rbd_cache_config)
-                    else:
-                        self.conductor_api.\
-                            hs_rbd_cache_config_create(context, new_hs_rbd_cache_config)
-                    file.close()
+        for rbd in new_rbds:
+            new_hs_rbd_cache_config = {}
+            with open('/tmp/%s.conf' % rbd['rbd_name']) as file:
+                for line in file.readlines():
+                    try:
+                        value = line.split('=')[1].strip('\n')
+                    except:
+                        value = None
+                    if "cache_dir=" in line:
+                        new_hs_rbd_cache_config['cache_dir'] = value
+                    elif "clean_start=" in line:
+                        new_hs_rbd_cache_config['clean_start'] = value
+                    elif "enable_MemoryUsageTracker=" in line:
+                        enable_memory_usage_tracker = value
+                        if enable_memory_usage_tracker == "true":
+                            new_hs_rbd_cache_config['enable_memory_usage_tracker'] = True
+                        else:
+                            new_hs_rbd_cache_config['enable_memory_usage_tracker'] = False
+                    elif "object_size=" in line:
+                        new_hs_rbd_cache_config['object_size'] = value
+                    elif "cache_total_size=" in line:
+                        new_hs_rbd_cache_config['cache_total_size'] = value
+                    elif "cache_dirty_ratio_min=" in line:
+                        new_hs_rbd_cache_config['cache_dirty_ratio_min'] = value
+                    elif "cache_dirty_ratio_max=" in line:
+                        new_hs_rbd_cache_config['cache_dirty_ratio_max'] = value
+                    elif "cache_ratio_health=" in line:
+                        new_hs_rbd_cache_config['cache_ratio_health'] = value
+                    elif "cache_ratio_max=" in line:
+                        new_hs_rbd_cache_config['cache_ratio_max'] = value
+                    elif "cache_flush_interval=" in line:
+                        new_hs_rbd_cache_config['cache_flush_interval'] = value
+                    elif "cache_evict_interval=" in line:
+                        new_hs_rbd_cache_config['cache_evict_interval'] = value
+                    elif "cache_flush_queue_depth=" in line:
+                        new_hs_rbd_cache_config['cache_flush_queue_depth'] = value
+                    elif "agent_threads_num=" in line:
+                        new_hs_rbd_cache_config['agent_threads_num'] = value
+                    elif "cacheservice_threads_num=" in line:
+                        new_hs_rbd_cache_config['cache_service_threads_num'] = value
+                new_hs_rbd_cache_config['hs_instance_id'] = int(hs_instance_id)
+                new_hs_rbd_cache_config['rbd_id'] = int(rbd['id'])
+                hs_rbd_cache_config = \
+                    self.conductor_api.hs_rbd_cache_config_get_by_rbd_id(context,
+                                                                         int(rbd['id']))
+                if hs_rbd_cache_config:
+                    self.conductor_api.\
+                        hs_rbd_cache_config_update(context,
+                                                   hs_rbd_cache_config['id'],
+                                                   new_hs_rbd_cache_config)
+                else:
+                    self.conductor_api.\
+                        hs_rbd_cache_config_create(context, new_hs_rbd_cache_config)
+                file.close()
         return {'rbds': new_rbds}
 
 

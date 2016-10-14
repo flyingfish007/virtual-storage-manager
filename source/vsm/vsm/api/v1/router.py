@@ -277,5 +277,7 @@ class APIRouter(vsm.api.openstack.APIRouter):
         self.resources['hs_rbd_cache_configs'] = hs_rbd_cache_configs.create_resource(ext_mgr)
         mapper.resource("hs_rbd_cache_configs", "hs_rbd_cache_configs",
                         controller=self.resources['hs_rbd_cache_configs'],
-                        collection={},
+                        collection={
+                            'get_by_rbd_id': 'get'
+                        },
                         member={'action': 'post'})

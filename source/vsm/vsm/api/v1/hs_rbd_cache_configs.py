@@ -44,6 +44,20 @@ class HsRbdCacheConfig(wsgi.Controller):
     def update(self, req, id, body):
         return
 
+    def get_by_rbd_id(self, req):
+
+        context = req.environ['vsm.context']
+
+        search_opts = {}
+        search_opts.update(req.GET)
+        rbd_id = search_opts.pop('rbd_id')
+
+        hs_rbd_cache_config = \
+            self.conductor_api.hs_rbd_cache_config_get_by_rbd_id(context,
+                                                                 rbd_id)
+
+        return {'hs_rbd_cache_config': hs_rbd_cache_config}
+
 
 def create_resource(ext_mgr):
     return wsgi.Resource(HsRbdCacheConfig(ext_mgr))
