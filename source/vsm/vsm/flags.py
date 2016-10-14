@@ -503,7 +503,7 @@ vsm_settings_opts = [
                default=600,
                help='ceph osd erasure-code-profile get (secs)'),
     cfg.IntOpt('rbd_ls_-l_{pool_name}',
-               default=1800,
+               default=300,
                help='rbd ls -l {pool_name} (secs)'),
     cfg.IntOpt('ceph_mds_dump',
                default=60,
