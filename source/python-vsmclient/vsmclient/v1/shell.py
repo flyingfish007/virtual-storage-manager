@@ -1441,7 +1441,7 @@ def do_hs_rbd_cache_config_list(cs, args):
            metavar='<id>',
            help='Name or ID of hyperstash rbd cache config.')
 @utils.arg('--rbd-id',
-           metavar='<rbd_id>',
+           metavar='<rbd-id>',
            help='ID of rbd.')
 @utils.service_type('vsm')
 def do_hs_rbd_cache_config_show(cs, args):
@@ -1454,6 +1454,92 @@ def do_hs_rbd_cache_config_show(cs, args):
     else:
         hs_rbd_cache_config = cs.hs_rbd_cache_configs.get_by_rbd_id(args.rbd_id)
     _print_hs_rbd_cache_config(hs_rbd_cache_config)
+
+@utils.arg('id',
+           metavar='<id>',
+           help='ID of hyperstash rbd cache config.')
+@utils.arg('--cache-dir',
+           metavar='<cache-dir>',
+           help='Cache dir.')
+@utils.arg('--clean-start',
+           metavar='<clean-start>',
+           help='Clean start.')
+@utils.arg('--enable-memory-usage-tracker',
+           metavar='<enable-memory-usage-tracker>',
+           help='Enable memory usage tracker.')
+@utils.arg('--object-size',
+           metavar='<object-size>',
+           help='Object size.')
+@utils.arg('--cache-total-size',
+           metavar='<cache-total-size>',
+           help='Cache total size.')
+@utils.arg('--cache-dirty-ratio-min',
+           metavar='<cache-dirty-ratio-min>',
+           help='Cache dirty ratio min.')
+@utils.arg('--cache-dirty-ratio-max',
+           metavar='<cache-dirty-ratio-max>',
+           help='Cache dirty ratio max.')
+@utils.arg('--cache-ratio-health',
+           metavar='<cache-ratio-health>',
+           help='Cache ratio health.')
+@utils.arg('--cache-ratio-max',
+           metavar='<cache-ratio-max>',
+           help='Cache ratio max.')
+@utils.arg('--cache-flush-interval',
+           metavar='<cache-flush-interval>',
+           help='Cache flush interval.')
+@utils.arg('--cache-evict-interval',
+           metavar='<cache-evict-interval>',
+           help='Cache evict interval.')
+@utils.arg('--cache-flush-queue-depth',
+           metavar='<cache-flush-queue-depth>',
+           help='Cache flush queue depth.')
+@utils.arg('--agent-threads-num',
+           metavar='<agent-threads-num>',
+           help='Agent threads num.')
+@utils.arg('--cache-service-threads-num',
+           metavar='<cache-service-threads-num>',
+           help='Cache service threads num.')
+@utils.service_type('vsm')
+def do_hs_rbd_cache_config_update(cs, args):
+    """Updates a hyperstash rbd cache config by id."""
+    hs_rbd_cache_config = _find_hs_rbd_cache_config(cs, args.id)
+    cache_dir = args.cache_dir or hs_rbd_cache_config.cache_dir
+    clean_start = args.clean_start or hs_rbd_cache_config.clean_start
+    enable_memory_usage_tracker = args.enable_memory_usage_tracker or hs_rbd_cache_config.enable_memory_usage_tracker
+    object_size = args.object_size or hs_rbd_cache_config.object_size
+    cache_total_size = args.cache_total_size or hs_rbd_cache_config.cache_total_size
+    cache_dirty_ratio_min = args.cache_dirty_ratio_min or hs_rbd_cache_config.cache_dirty_ratio_min
+    cache_dirty_ratio_max = args.cache_dirty_ratio_max or hs_rbd_cache_config.cache_dirty_ratio_max
+    cache_ratio_health = args.cache_ratio_health or hs_rbd_cache_config.cache_ratio_health
+    cache_ratio_max = args.cache_ratio_max or hs_rbd_cache_config.cache_ratio_max
+    cache_flush_interval = args.cache_flush_interval or hs_rbd_cache_config.cache_flush_interval
+    cache_evict_interval = args.cache_evict_interval or hs_rbd_cache_config.cache_evict_interval
+    cache_flush_queue_depth = args.cache_flush_queue_depth or hs_rbd_cache_config.cache_flush_queue_depth
+    agent_threads_num = args.agent_threads_num or hs_rbd_cache_config.agent_threads_num
+    cache_service_threads_num = args.cache_service_threads_num or hs_rbd_cache_config.cache_service_threads_num
+
+    new_hs_rbd_cache_config = {
+        'cache_dir': cache_dir,
+        'clean_start': clean_start,
+        'enable_memory_usage_tracker': enable_memory_usage_tracker,
+        'object_size': object_size,
+        'cache_total_size': cache_total_size,
+        'cache_dirty_ratio_min': cache_dirty_ratio_min,
+        'cache_dirty_ratio_max': cache_dirty_ratio_max,
+        'cache_ratio_health': cache_ratio_health,
+        'cache_ratio_max': cache_ratio_max,
+        'cache_flush_interval': cache_flush_interval,
+        'cache_evict_interval': cache_evict_interval,
+        'cache_flush_queue_depth': cache_flush_queue_depth,
+        'agent_threads_num': agent_threads_num,
+        'cache_service_threads_num': cache_service_threads_num
+    }
+    try:
+        cs.hs_rbd_cache_configs.update(hs_rbd_cache_config, new_hs_rbd_cache_config)
+        print("Succeed to update hs_rbd_cache_config.")
+    except:
+        raise exceptions.CommandError("Failed to update hs_rbd_cache_config.")
 
 
 # TODO tag for those not completed commands

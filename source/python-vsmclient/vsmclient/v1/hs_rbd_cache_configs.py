@@ -35,3 +35,10 @@ class HsRbdCacheConfigManager(base.ManagerWithFind):
 
         return self._get("/hs_rbd_cache_configs/get_by_rbd_id%s" %
                          query_string, "hs_rbd_cache_config")
+
+    def update(self, hs_rbd_cache_config, info):
+        if not info:
+            return
+
+        body = {"hs_rbd_cache_config": info}
+        self._update("/hs_rbd_cache_configs/%s" % base.getid(hs_rbd_cache_config), body)

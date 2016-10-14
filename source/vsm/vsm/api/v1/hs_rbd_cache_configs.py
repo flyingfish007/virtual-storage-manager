@@ -54,6 +54,10 @@ class HsRbdCacheConfig(wsgi.Controller):
         cache_dir = hs_rbd_cache_config['cache_dir']
         clean_start = hs_rbd_cache_config['clean_start']
         enable_memory_usage_tracker = hs_rbd_cache_config['enable_memory_usage_tracker']
+        if not enable_memory_usage_tracker:
+            enable_memory_usage_tracker = "false"
+        elif enable_memory_usage_tracker and enable_memory_usage_tracker != "false":
+            enable_memory_usage_tracker = "true"
         object_size = hs_rbd_cache_config['object_size']
         cache_total_size = hs_rbd_cache_config['cache_total_size']
         cache_dirty_ratio_min = hs_rbd_cache_config['cache_dirty_ratio_min']
