@@ -82,7 +82,6 @@ class HsInstanceController(wsgi.Controller):
         LOG.info("==================rbds from hyperstash instance: %s" % rbds)
         new_rbds = []
         for rbd in rbds_all:
-            LOG.info("==================rbd image name: %s" % rbd['image'])
             if rbd['image'] in rbds:
                 rbd['rbd_name'] = rbd['image']
                 rbd['hs_instance_id'] = hs_instance_id
@@ -97,7 +96,10 @@ class HsInstanceController(wsgi.Controller):
                 new_hs_rbd_cache_config = {}
                 with open('/tmp/%s.conf' % rbd['rbd_name']) as file:
                     for line in file.readlines():
-                        value = line.split('=')[1].strip('\n')
+                        try:
+                            value = line.split('=')[1].strip('\n')
+                        except:
+                            value = None
                         if "cache_dir=" in line:
                             new_hs_rbd_cache_config['cache_dir'] = value
                         elif "clean_start=" in line:
