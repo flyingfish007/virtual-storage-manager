@@ -77,8 +77,6 @@ install -p -D -m 755 replace-str %{buildroot}%{_usr}/bin/replace-str
 install -p -D -m 755 clean-data %{buildroot}%{_usr}/bin/clean-data
 install -p -D -m 755 __clean-data %{buildroot}%{_usr}/bin/__clean-data
 install -p -D -m 755 ec-profile %{buildroot}%{_usr}/bin/ec-profile
-install -p -D -m 755 cache-tier-defaults %{buildroot}%{_usr}/bin/cache-tier-defaults
-install -p -D -m 755 reset_status %{buildroot}%{_usr}/bin/reset_status
 install -p -D -m 755 vsm-update %{buildroot}%{_usr}/bin/vsm-update
 
 install -p -D -m 755 vsm-checker %{buildroot}%{_usr}/bin/vsm-checker
@@ -101,8 +99,6 @@ install -p -D -m 755 clean-data %{buildroot}%{_usr}/local/bin/clean-data
 install -p -D -m 755 __clean-data %{buildroot}%{_usr}/local/bin/__clean-data
 install -p -D -m 755 preinstall %{buildroot}%{_usr}/local/bin/preinstall
 install -p -D -m 755 ec-profile %{buildroot}%{_usr}/local/bin/ec-profile
-install -p -D -m 755 cache-tier-defaults %{buildroot}%{_usr}/local/bin/cache-tier-defaults
-install -p -D -m 755 reset_status %{buildroot}%{_usr}/local/bin/reset_status
 install -p -D -m 755 vsm-update %{buildroot}%{_usr}/local/bin/vsm-update
 
 install -p -D -m 755 vsm-checker %{buildroot}%{_usr}/local/bin/vsm-checker
@@ -140,8 +136,6 @@ exit 0
 %attr(-, root, root) %{_usr}/bin/__clean-data
 %attr(-, root, root) %{_usr}/bin/vsm-installer
 %attr(-, root, root) %{_usr}/bin/ec-profile
-%attr(-, root, root) %{_usr}/bin/cache-tier-defaults
-%attr(-, root, root) %{_usr}/bin/reset_status
 %attr(-, root, root) %{_usr}/bin/vsm-update
 %attr(-, root, root) %{_usr}/bin/vsm-checker
 %dir %{_usr}/lib/vsm
@@ -168,8 +162,6 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-installer
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/preinstall
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/ec-profile
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/cache-tier-defaults
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/reset_status
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-update
 
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-checker
