@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [ "$1" == "-I" ]
-then
-  shift
-  options="-i"
-fi
-
-/bin/hostname $options $*
