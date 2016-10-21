@@ -71,13 +71,11 @@ install -p -D -m 755 usr/bin/vsm-node %{buildroot}%{_usr}/bin/vsm-node
 install -d -m 755 %{buildroot}%{_sysconfdir}/systemd/system
 install -p -D -m 755 etc/systemd/system/epmd.socket %{buildroot}%{_sysconfdir}/systemd/system
 install -p -D -m 755 restart-all %{buildroot}%{_usr}/bin/restart-all
-install -p -D -m 755 sync-code %{buildroot}%{_usr}/bin/sync-code
 install -p -D -m 755 replace-str %{buildroot}%{_usr}/bin/replace-str
 #install -p -D -m 755 tools/hooks/add_disk.sh %{buildroot}%{_bindir}/add_disk
 
 install -p -D -m 755 clean-data %{buildroot}%{_usr}/bin/clean-data
 install -p -D -m 755 __clean-data %{buildroot}%{_usr}/bin/__clean-data
-install -p -D -m 755 downloadrepo  %{buildroot}%{_usr}/bin/downloadrepo
 install -p -D -m 755 ec-profile %{buildroot}%{_usr}/bin/ec-profile
 install -p -D -m 755 cache-tier-defaults %{buildroot}%{_usr}/bin/cache-tier-defaults
 install -p -D -m 755 reset_status %{buildroot}%{_usr}/bin/reset_status
@@ -97,14 +95,11 @@ install -p -D -m 755 vsm-controller %{buildroot}%{_usr}/local/bin/vsm-controller
 install -p -D -m 755 vsm-installer %{buildroot}%{_usr}/local/bin/vsm-installer
 install -p -D -m 755 vsm-node %{buildroot}%{_usr}/local/bin/vsm-node
 install -p -D -m 755 restart-all %{buildroot}%{_usr}/local/bin/restart-all
-install -p -D -m 755 sync-code %{buildroot}%{_usr}/local/bin/sync-code
 install -p -D -m 755 replace-str %{buildroot}%{_usr}/local/bin/replace-str
 
 install -p -D -m 755 clean-data %{buildroot}%{_usr}/local/bin/clean-data
 install -p -D -m 755 __clean-data %{buildroot}%{_usr}/local/bin/__clean-data
-install -p -D -m 755 downloadrepo  %{buildroot}%{_usr}/local/bin/downloadrepo
 install -p -D -m 755 preinstall %{buildroot}%{_usr}/local/bin/preinstall
-install -p -D -m 755 rpms_list %{buildroot}%{_usr}/local/bin/rpms_list
 install -p -D -m 755 ec-profile %{buildroot}%{_usr}/local/bin/ec-profile
 install -p -D -m 755 cache-tier-defaults %{buildroot}%{_usr}/local/bin/cache-tier-defaults
 install -p -D -m 755 reset_status %{buildroot}%{_usr}/local/bin/reset_status
@@ -141,12 +136,10 @@ exit 0
 %attr(-, root, root) %{_usr}/bin/vsm-controller
 %attr(-, root, root) %{_usr}/bin/restart-all
 %attr(-, root, root) %{_usr}/bin/replace-str
-%attr(-, root, root) %{_usr}/bin/sync-code
 %attr(-, root, root) %{_usr}/bin/vsm-node
 %attr(-, root, root) %{_usr}/bin/clean-data
 %attr(-, root, root) %{_usr}/bin/__clean-data
 %attr(-, root, root) %{_usr}/bin/vsm-installer
-%attr(-, root, root) %{_usr}/bin/downloadrepo
 %attr(-, root, root) %{_usr}/bin/ec-profile
 %attr(-, root, root) %{_usr}/bin/cache-tier-defaults
 %attr(-, root, root) %{_usr}/bin/reset_status
@@ -170,14 +163,11 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-controller
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/restart-all
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/replace-str
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/sync-code
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-node
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/clean-data
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/__clean-data
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-installer
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/downloadrepo
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/preinstall
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/rpms_list
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/ec-profile
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/cache-tier-defaults
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/reset_status
