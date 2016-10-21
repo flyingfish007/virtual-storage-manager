@@ -34,7 +34,6 @@ install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ preinst
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ replace-str
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ reset_status
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ restart-all
-install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ rpm.lst
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ vsm-checker
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ vsm-controller
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ vsm-installer
