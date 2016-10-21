@@ -181,18 +181,12 @@ install -p -D -m 755 bin/presentpool %{buildroot}%{_bindir}/presentpool
 install -p -D -m 755 bin/rbd_ls %{buildroot}%{_bindir}/rbd_ls
 install -p -D -m 755 bin/vsm-backup %{buildroot}%{_bindir}/vsm-backup
 install -p -D -m 755 bin/vsm-restore %{buildroot}%{_bindir}/vsm-restore
-install -p -D -m 755 bin/refresh-osd-status %{buildroot}%{_usr}/local/bin/refresh-osd-status
-install -p -D -m 755 bin/refresh-cluster-status %{buildroot}%{_usr}/local/bin/refresh-cluster-status
 install -p -D -m 755 bin/check_xtrust_crudini %{buildroot}%{_usr}/local/bin/check_xtrust_crudini
-install -p -D -m 755 bin/import_ceph_conf  %{buildroot}%{_usr}/local/bin/import_ceph_conf
-install -p -D -m 755 bin/get_smart_info %{buildroot}%{_bindir}/get_smart_info
 install -p -D -m 755 bin/kill_diamond %{buildroot}%{_bindir}/kill_diamond
 install -p -D -m 755 bin/vsm-ceph-upgrade %{buildroot}%{_bindir}/vsm-ceph-upgrade
 install -p -D -m 755 bin/nvme %{buildroot}%{_usr}/sbin/nvme
 
 install -p -D -m 755 tools/get_storage %{buildroot}%{_usr}/local/bin/get_storage
-install -p -D -m 755 tools/spot_info_list %{buildroot}%{_usr}/local/bin/spot_info_list
-install -p -D -m 755 tools/vsm-reporter.py %{buildroot}%{_usr}/local/bin/vsm-reporter
 
 %pre
 getent group vsm >/dev/null || groupadd -r vsm --gid 165
@@ -262,19 +256,13 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/rbd_ls
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-backup
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-restore
-%config(noreplace) %attr(-, root, vsm) %{_bindir}/get_smart_info
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/import_ceph_conf
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/kill_diamond
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-ceph-upgrade
 %config(noreplace) %attr(-, root, vsm) %{_usr}/sbin/nvme
 
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/refresh-osd-status
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/refresh-cluster-status
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/check_xtrust_crudini
 
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/get_storage
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/spot_info_list
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-reporter
 
 
 #-----------------------------

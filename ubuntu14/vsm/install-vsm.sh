@@ -80,20 +80,13 @@ install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/exp_ceph-mds_upgr
 #---------------------------
 install -g root -o root -v -m 755 -d $VSM_ROOT_PATH/usr/local/bin
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/start_osd
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/refresh-osd-status
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/refresh-cluster-status
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/check_xtrust_crudini
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin tools/get_storage
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin tools/spot_info_list
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin tools/vsm-reporter.py
 
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/import_ceph_conf
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/get_smart_info
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/kill_diamond
 #install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/vsm-ceph-upgrade
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/sbin bin/nvme
 
-mv $VSM_ROOT_PATH/usr/local/bin/vsm-reporter.py $VSM_ROOT_PATH/usr/local/bin/vsm-reporter
 rm -rf $VSM_ROOT_PATH/usr/local/bin/vsm-agent
 rm -rf $VSM_ROOT_PATH/usr/local/bin/vsm-all
 rm -rf $VSM_ROOT_PATH/usr/local/bin/vsm-api
