@@ -266,14 +266,12 @@ install -p -D -m 755 bin/vsm-restore %{buildroot}%{_bindir}/vsm-restore
 %if 0%{?suse_version}
 install -p -D -m 755 bin/start_osd %{buildroot}%{_usr}/bin/start_osd
 install -p -D -m 755 bin/vsm-ceph-upgrade %{buildroot}%{_bindir}/vsm-ceph-upgrade
-#install -p -D -m 755 bin/kill_diamond %{buildroot}%{_bindir}/kill_diamond
 
 install -p -D -m 755 tools/get_storage %{buildroot}%{_usr}/bin/get_storage
 %else
 install -p -D -m 755 bin/start_osd %{buildroot}%{_usr}/local/bin/start_osd
 install -p -D -m 755 bin/check_xtrust_crudini %{buildroot}%{_usr}/local/bin/check_xtrust_crudini
 install -p -D -m 755 bin/vsm-ceph-upgrade %{buildroot}%{_bindir}/vsm-ceph-upgrade
-install -p -D -m 755 bin/kill_diamond %{buildroot}%{_bindir}/kill_diamond
 install -p -D -m 755 bin/nvme %{buildroot}%{_usr}/sbin/nvme
 
 install -p -D -m 755 tools/get_storage %{buildroot}%{_usr}/local/bin/get_storage

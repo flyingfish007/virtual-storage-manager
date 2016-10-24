@@ -3998,12 +3998,6 @@ class DiamondDriver(object):
         }
         :return:
         '''
-        # try:
-        #     out, err = utils.execute('kill_diamond',
-        #                              'll',
-        #                              run_as_root=True)
-        # except:
-        #     LOG.info("kill_diamond error:%s--%s"%(out,err))
         config_file = '%s%s.conf'%(self._diamond_config_path,collector)
         keys = values.keys()
         content = []

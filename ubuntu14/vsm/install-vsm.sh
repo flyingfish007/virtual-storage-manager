@@ -83,8 +83,6 @@ install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/start_osd
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/check_xtrust_crudini
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin tools/get_storage
 
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/kill_diamond
-#install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/local/bin bin/vsm-ceph-upgrade
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/sbin bin/nvme
 
 rm -rf $VSM_ROOT_PATH/usr/local/bin/vsm-agent

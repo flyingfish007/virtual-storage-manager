@@ -182,7 +182,6 @@ install -p -D -m 755 bin/rbd_ls %{buildroot}%{_bindir}/rbd_ls
 install -p -D -m 755 bin/vsm-backup %{buildroot}%{_bindir}/vsm-backup
 install -p -D -m 755 bin/vsm-restore %{buildroot}%{_bindir}/vsm-restore
 install -p -D -m 755 bin/check_xtrust_crudini %{buildroot}%{_usr}/local/bin/check_xtrust_crudini
-install -p -D -m 755 bin/kill_diamond %{buildroot}%{_bindir}/kill_diamond
 install -p -D -m 755 bin/vsm-ceph-upgrade %{buildroot}%{_bindir}/vsm-ceph-upgrade
 install -p -D -m 755 bin/nvme %{buildroot}%{_usr}/sbin/nvme
 
@@ -256,7 +255,6 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/rbd_ls
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-backup
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-restore
-%config(noreplace) %attr(-, root, vsm) %{_bindir}/kill_diamond
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-ceph-upgrade
 %config(noreplace) %attr(-, root, vsm) %{_usr}/sbin/nvme
 
