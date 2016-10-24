@@ -1,9 +1,3 @@
-function _change_vsmclient_files() {
-    echo "" > $TEMP/$VSMCLIENT_DIR/python_vsmclient.egg-info/requires.txt
-    echo "" > $TEMP/$VSMCLIENT_DIR/tools/pip-requires
-    echo "" > $TEMP/$VSMCLIENT_DIR/tools/test-requires
-}
-
 function _install_vsmclient_dep_package() {
     sudo yum install -y `cat $1 | grep BuildRequires | awk '{print $2}' | tr "\n" " "`
     sudo yum install -y rpm-build
@@ -16,7 +10,6 @@ function _setup_vsmclient_rpm() {
  
     cp -rf $TOPDIR/$SOURCE_DIR/$VSMCLIENT_DIR $TEMP/
     cd $TEMP/
-    _change_vsmclient_files
 
     if [[ $VSMCLIENT_DIR != python-vsmclient-$version ]]; then
         mv $VSMCLIENT_DIR python-vsmclient-$version
