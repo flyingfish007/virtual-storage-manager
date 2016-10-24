@@ -79,7 +79,6 @@ install -p -D -m 755 __clean-data %{buildroot}%{_usr}/bin/__clean-data
 install -p -D -m 755 ec-profile %{buildroot}%{_usr}/bin/ec-profile
 install -p -D -m 755 vsm-update %{buildroot}%{_usr}/bin/vsm-update
 
-install -p -D -m 755 vsm-checker %{buildroot}%{_usr}/bin/vsm-checker
 install -d -m 755 %{buildroot}%{_usr}/lib/vsm
 cp -rf keys  %{buildroot}%{_usr}/lib/vsm/
 cp -rf tools/ %{buildroot}%{_usr}/lib/vsm/
@@ -100,8 +99,6 @@ install -p -D -m 755 __clean-data %{buildroot}%{_usr}/local/bin/__clean-data
 install -p -D -m 755 preinstall %{buildroot}%{_usr}/local/bin/preinstall
 install -p -D -m 755 ec-profile %{buildroot}%{_usr}/local/bin/ec-profile
 install -p -D -m 755 vsm-update %{buildroot}%{_usr}/local/bin/vsm-update
-
-install -p -D -m 755 vsm-checker %{buildroot}%{_usr}/local/bin/vsm-checker
 
 cp -rf keys  %{buildroot}%{_usr}/local/bin/
 cp -rf tools %{buildroot}%{_usr}/local/bin/
@@ -137,7 +134,6 @@ exit 0
 %attr(-, root, root) %{_usr}/bin/vsm-installer
 %attr(-, root, root) %{_usr}/bin/ec-profile
 %attr(-, root, root) %{_usr}/bin/vsm-update
-%attr(-, root, root) %{_usr}/bin/vsm-checker
 %dir %{_usr}/lib/vsm
 %attr(-, root, root) %{_usr}/lib/vsm/*
 #%dir %{_usr}/lib/vsm/keys
@@ -163,8 +159,6 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/preinstall
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/ec-profile
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-update
-
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-checker
 
 %dir %{_usr}/local/bin/keys
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/keys/*

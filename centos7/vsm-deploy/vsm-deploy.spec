@@ -62,8 +62,6 @@ install -p -D -m 755 preinstall %{buildroot}%{_usr}/local/bin/preinstall
 install -p -D -m 755 ec-profile %{buildroot}%{_usr}/local/bin/ec-profile
 install -p -D -m 755 vsm-update %{buildroot}%{_usr}/local/bin/vsm-update
 
-install -p -D -m 755 vsm-checker %{buildroot}%{_usr}/local/bin/vsm-checker
-
 cp -rf keys  %{buildroot}%{_usr}/local/bin/
 cp -rf tools %{buildroot}%{_usr}/local/bin/
 
@@ -92,8 +90,6 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/preinstall
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/ec-profile
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-update
-
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-checker
 
 %dir %{_usr}/local/bin/keys
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/keys/*
