@@ -122,11 +122,9 @@ function create_release() {
     cp RELEASE release/$BUILD
     cp README.md release/$BUILD
     cp INSTALL.md release/$BUILD
-    cp INSTALL.pdf release/$BUILD
     cp LICENSE release/$BUILD
     cp NOTICE release/$BUILD
     cp CHANGELOG.md release/$BUILD
-    cp CHANGELOG.pdf release/$BUILD
     cp installrc release/$BUILD
 #    cp -r manifest release/$BUILD
     mkdir -p release/$BUILD/manifest
