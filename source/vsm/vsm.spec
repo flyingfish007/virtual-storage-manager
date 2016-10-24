@@ -221,11 +221,6 @@ cp -rf etc/vsm/prepools %{buildroot}%{_sysconfdir}/vsm/
 # usr/lib/systemd/system
 #---------------------------
 install -d -m 755 %{buildroot}%{_unitdir}
-install -p -D -m 644 usr/lib/systemd/system/vsm-physical.service %{buildroot}%{_unitdir}/vsm-physical.service
-install -p -D -m 644 usr/lib/systemd/system/vsm-agent.service %{buildroot}%{_unitdir}/vsm-agent.service
-install -p -D -m 644 usr/lib/systemd/system/vsm-api.service %{buildroot}%{_unitdir}/vsm-api.service
-install -p -D -m 644 usr/lib/systemd/system/vsm-conductor.service %{buildroot}%{_unitdir}/vsm-conductor.service
-install -p -D -m 644 usr/lib/systemd/system/vsm-scheduler.service %{buildroot}%{_unitdir}/vsm-scheduler.service
 
 
 install -d -m 755 %{buildroot}%{_sbindir}
@@ -236,7 +231,6 @@ ln -sf %_sbindir/service %{buildroot}%_sbindir/rcvsm-conductor
 ln -sf %_sbindir/service %{buildroot}%_sbindir/rcvsm-scheduler
 
 install -d -m 755 %{buildroot}%{_tmpfilesdir}
-install -m 0644 -D etc/systemd/vsm.tmpfiles.d %{buildroot}/%{_tmpfilesdir}/%{name}.conf
 %else
 #---------------------------
 # etc/init.d/
@@ -295,7 +289,6 @@ if ! getent passwd vsm >/dev/null; then
   useradd -u 165 -r -g vsm -G vsm,nobody -d %{_sharedstatedir}/vsm -s /sbin/nologin -c "Vsm Storage Services" vsm
 fi
 %if 0%{?suse_version}
-%service_add_pre vsm-physical.service vsm-agent.service vsm-api.service vsm-scheduler.service vsm-conductor.service
 install -d -m 755 %{buildroot}/var/run/vsm
 %else
 mkdir -p /var/run/vsm/
@@ -316,17 +309,14 @@ exit 0
 
 %post
 %if 0%{?suse_version}
-%service_add_post vsm-physical.service vsm-agent.service vsm-api.service vsm-scheduler.service vsm-conductor.service
 %endif
 
 %preun
 %if 0%{?suse_version}
-%service_del_preun vsm-physical.service vsm-agent.service vsm-api.service vsm-scheduler.service vsm-conductor.service
 %endif
 
 %postun
 %if 0%{?suse_version}
-%service_del_postun vsm-physical.service vsm-agent.service vsm-api.service vsm-scheduler.service vsm-conductor.service
 %endif
 
 
@@ -381,11 +371,6 @@ exit 0
 
 %if 0%{?suse_version}
 %dir %{_unitdir}
-%attr(-, root, root) %{_unitdir}/vsm-physical.service
-%attr(-, root, root) %{_unitdir}/vsm-agent.service
-%attr(-, root, root) %{_unitdir}/vsm-api.service
-%attr(-, root, root) %{_unitdir}/vsm-conductor.service
-%attr(-, root, root) %{_unitdir}/vsm-scheduler.service
 %attr(-, root, root) %{_sbindir}/rcvsm-physical
 %attr(-, root, root) %{_sbindir}/rcvsm-agent
 %attr(-, root, root) %{_sbindir}/rcvsm-api
