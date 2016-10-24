@@ -23,7 +23,6 @@ bin/vsm-api
 bin/vsm-conductor
 bin/vsm-manage
 bin/vsm-scheduler
-contrib/redhat-eventlet.patch
 doc/.gitignore
 doc/Makefile
 doc/README.rst

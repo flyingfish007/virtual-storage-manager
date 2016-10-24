@@ -209,9 +209,3 @@ class Fedora(Distro):
         # Install "patch" program if it's not there
         if not self.check_pkg('patch'):
             self.yum_install('patch')
-
-        # Apply the eventlet patch
-        self.apply_patch(os.path.join(self.venv, 'lib', self.py_version,
-                                      'site-packages',
-                                      'eventlet/green/subprocess.py'),
-                         'contrib/redhat-eventlet.patch')
