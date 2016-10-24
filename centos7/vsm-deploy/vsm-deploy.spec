@@ -59,7 +59,6 @@ install -p -D -m 755 replace-str %{buildroot}%{_usr}/local/bin/replace-str
 install -p -D -m 755 clean-data %{buildroot}%{_usr}/local/bin/clean-data
 install -p -D -m 755 __clean-data %{buildroot}%{_usr}/local/bin/__clean-data
 install -p -D -m 755 preinstall %{buildroot}%{_usr}/local/bin/preinstall
-install -p -D -m 755 ec-profile %{buildroot}%{_usr}/local/bin/ec-profile
 install -p -D -m 755 vsm-update %{buildroot}%{_usr}/local/bin/vsm-update
 
 cp -rf keys  %{buildroot}%{_usr}/local/bin/
@@ -88,7 +87,6 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/__clean-data
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-installer
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/preinstall
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/ec-profile
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/vsm-update
 
 %dir %{_usr}/local/bin/keys
