@@ -260,8 +260,6 @@ install -p -D -m 755 bin/auto_key_gen %{buildroot}%{_bindir}/auto_key_gen
 install -p -D -m 755 bin/vsm-assist %{buildroot}%{_bindir}/vsm-assist
 install -p -D -m 755 bin/presentpool %{buildroot}%{_bindir}/presentpool
 install -p -D -m 755 bin/rbd_ls %{buildroot}%{_bindir}/rbd_ls
-install -p -D -m 755 bin/vsm-backup %{buildroot}%{_bindir}/vsm-backup
-install -p -D -m 755 bin/vsm-restore %{buildroot}%{_bindir}/vsm-restore
 
 %if 0%{?suse_version}
 install -p -D -m 755 bin/start_osd %{buildroot}%{_usr}/bin/start_osd
@@ -401,8 +399,6 @@ exit 0
 %attr(-, root, root) %{_bindir}/vsm-assist
 %attr(-, root, root) %{_bindir}/presentpool
 %attr(-, root, root) %{_bindir}/rbd_ls
-%attr(-, root, root) %{_bindir}/vsm-backup
-%attr(-, root, root) %{_bindir}/vsm-restore
 %attr(-, root, root) %{_bindir}/vsm-ceph-upgrade
 
 
@@ -422,8 +418,6 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-assist
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/presentpool
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/rbd_ls
-%config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-backup
-%config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-restore
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/start_osd
 
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/check_xtrust_crudini

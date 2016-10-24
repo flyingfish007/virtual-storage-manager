@@ -67,8 +67,6 @@ install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/auto_key_gen
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/vsm-assist
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/presentpool
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/rbd_ls
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/vsm-backup
-install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/vsm-restore
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/vsm-ceph-upgrade
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/exp_ceph_upgrade
 install -g root -o vsm -v -m 755 -t $VSM_ROOT_PATH/usr/bin bin/exp_ceph-common_upgrade

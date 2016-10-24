@@ -30,11 +30,9 @@ install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ __clean
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ clean-data
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ preinstall
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ replace-str
-install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ restart-all
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ vsm-controller
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ vsm-installer
 install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ vsm-node
-install -g root -o vsm -v -m 755 -t $VSM_DEPLOY_ROOT_PATH/usr/local/bin/ vsm-update
 
 cp -rf keys $VSM_DEPLOY_ROOT_PATH/usr/local/bin/
 cp -rf tools $VSM_DEPLOY_ROOT_PATH/usr/local/bin/
