@@ -290,15 +290,6 @@ class AgentAPI(vsm.openstack.common.rpc.proxy.RpcProxy):
                         version='1.0', timeout=6000)
         return res
 
-    def ceph_upgrade(self, context, node_id, host, key_url, pkg_url,restart):
-        topic = rpc.queue_get_for(context, self.topic, host)
-        self.test_service(context, topic)
-        res = self.call(context,
-                        self.make_msg('ceph_upgrade',node_id=node_id,key_url=key_url,pkg_url=pkg_url,restart=restart),
-                        topic,
-                        version='1.0', timeout=6000)
-        return res
-
     def osd_remove(self, context, osd_id, host):
         topic = rpc.queue_get_for(context, self.topic, host)
         #self.test_service(context, topic)

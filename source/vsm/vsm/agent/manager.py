@@ -903,9 +903,6 @@ class AgentManager(manager.Manager):
     def stop_server(self, context, node_id):
         return self.ceph_driver.stop_server(context, node_id)
 
-    def ceph_upgrade(self, context, node_id, key_url, pkg_url,restart):
-        return self.ceph_driver.ceph_upgrade(context, node_id, key_url, pkg_url,restart)
-
     def start_cluster(self, context):
         self.ceph_driver.start_cluster(context)
         utils.execute('ceph', 'osd', 'setcrushmap', '-i', FLAGS.crushmap_bin, \

@@ -120,9 +120,6 @@ class API(object):
     def stop_server(self, context, body=None):
         return self.scheduler_rpcapi.stop_server(context, body)
 
-    def ceph_upgrade(self, context, body=None):
-        return self.scheduler_rpcapi.ceph_upgrade(context, body)
-
     def start_cluster(self, context, body=None):
         return self.scheduler_rpcapi.start_cluster(context, body)
 

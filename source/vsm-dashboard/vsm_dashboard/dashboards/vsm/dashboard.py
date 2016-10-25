@@ -26,23 +26,12 @@ class Dashboard(horizon.PanelGroup):
 class ClusterMgmt(horizon.PanelGroup):
     slug = "clustermgmt"
     name = _("Cluster Management")
-    panels = ('clustermgmt', 'cluster-import', 'cephupgrade', 'poolsmanagement','ecprofiles-management','crushmap','zonemgmt')
-
-class ClusterMonitor(horizon.PanelGroup):
-    slug = "clustermonitor"
-    name = _("Cluster Monitoring")
-    panels = ('storage-group-status', 'pool-status', 'osd-status', 'monitor-status', \
-              'mds-status', 'pg-status', 'rbd-status')
+    panels = ('clustermgmt', 'poolsmanagement')
 
 class ServerMgmt(horizon.PanelGroup):
     slug = "servermgmt"
     name = _("Server Management")
     panels = ('storageservermgmt', 'devices-management',)
-
-class OpenstackMgmt(horizon.PanelGroup):
-    slug = "openstackmgmt"
-    name = _("OpenStack Integration")
-    panels = ('rbdpools', 'openstackconnect',)
 
 class UserMgmt(horizon.PanelGroup):
     slug = "usermgmt"
@@ -57,7 +46,7 @@ class HyperstashMgmt(horizon.PanelGroup):
 class VizDash(horizon.Dashboard):
     name = _("VSM")
     slug = "vsm"
-    panels = (Dashboard, ServerMgmt, ClusterMgmt, HyperstashMgmt, ClusterMonitor, OpenstackMgmt, UserMgmt)
+    panels = (Dashboard, HyperstashMgmt, ServerMgmt, ClusterMgmt, UserMgmt)
     default_panel = 'overview'
     roles = ('admin',)
 
