@@ -105,13 +105,6 @@ function create_release() {
         cp centos7/install.sh release/$BUILD
         cp uninstall.sh release/$BUILD
         cp centos7/rpms.lst release/$BUILD
-    elif [[ $OS =~ "SUSE" ]]; then
-        cp -rf suse/python-vsmclient ./source
-        cp -rf suse/vsm ./source
-        cp -rf suse/vsm-dashboard ./source
-        cp -rf suse/vsm-deploy ./source
-        cp suse/buildrpm .
-        bash +x buildrpm
     elif [[ $OS == "CentOS" && $OS_VERSION =~ "6" ]]; then
         bash +x buildrpm
         cp install.sh release/$BUILD
