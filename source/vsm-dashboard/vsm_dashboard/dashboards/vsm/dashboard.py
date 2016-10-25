@@ -28,11 +28,6 @@ class ClusterMgmt(horizon.PanelGroup):
     name = _("Cluster Management")
     panels = ('clustermgmt', 'poolsmanagement')
 
-class ServerMgmt(horizon.PanelGroup):
-    slug = "servermgmt"
-    name = _("Server Management")
-    panels = ('storageservermgmt', 'devices-management',)
-
 class UserMgmt(horizon.PanelGroup):
     slug = "usermgmt"
     name = _("VSM Management")
@@ -46,7 +41,7 @@ class HyperstashMgmt(horizon.PanelGroup):
 class VizDash(horizon.Dashboard):
     name = _("VSM")
     slug = "vsm"
-    panels = (Dashboard, HyperstashMgmt, ServerMgmt, ClusterMgmt, UserMgmt)
+    panels = (Dashboard, HyperstashMgmt, ClusterMgmt, UserMgmt)
     default_panel = 'overview'
     roles = ('admin',)
 

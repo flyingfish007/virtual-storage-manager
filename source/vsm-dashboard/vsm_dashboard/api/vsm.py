@@ -19,17 +19,9 @@ from __future__ import absolute_import
 
 import logging
 from vsmclient.v1 import client as vsm_client
-from vsmclient.v1.pool_usages import PoolUsageManager
-from vsmclient.v1.appnodes import AppNodeManager
-from vsm_dashboard.api.base import APIResourceWrapper
 from django.conf import settings
 
 LOG = logging.getLogger(__name__)
-
-class ExtensionManager:
-    def __init__(self, name, manager_class):
-        self.name = name
-        self.manager_class = manager_class
 
 def vsmclient(request):
     key_vsm_pass = getattr(settings,'KEYSTONE_VSM_SERVICE_PASSWORD')
@@ -38,20 +30,8 @@ def vsmclient(request):
                           key_vsm_pass,
                           'service',
                           key_url,
-                          extensions=[ExtensionManager('PoolUsageManager',
-                                                PoolUsageManager),
-                                      ExtensionManager('AppNodeManager',
-                                                AppNodeManager)])
+                          extensions=[])
     return c
-
-class Pool(APIResourceWrapper):
-    """Simple wrapper around vsmclient.vsms
-    """
-    _attrs = ['id', 'name', 'status', 'recipe_id', 'deleted']
-
-    def __init__(self, apiresource, request):
-        super(Pool, self).__init__(apiresource)
-        self.request = request
 
 def create_storage_pool(request, body):
     return vsmclient(request).vsms.create_storage_pool(body)
@@ -65,9 +45,6 @@ def remove_cache_tier(request, body):
 def get_storage_group_list(request):
     return vsmclient(request).vsms.get_storage_group_list()
 
-def osd_locations_choices_by_type(request):
-    return vsmclient(request).zones.osd_locations_choices()
-
 def pools_list(request, search_opts=None, all_pools=False):
     if search_opts is None:
         search_opts = {}
@@ -75,41 +52,15 @@ def pools_list(request, search_opts=None, all_pools=False):
         search_opts['all_pools'] = True
     return vsmclient(request).vsms.list_storage_pool(request, search_opts)
 
-#server api
-def add_servers(request, servers=[]):
-    return vsmclient(request).servers.add(servers)
-
-def remove_servers(request, servers=[]):
-    return vsmclient(request).servers.remove(servers)
-
-def reset_status(request, servers):
-    return vsmclient(request).servers.reset_status(servers)
-
 def get_server_list(request):
     return vsmclient(request).servers.list()
 
 def get_server(request, id):
     return vsmclient(request).servers.get(id)
 
-def start_server(request, servers=None):
-    """Start servers.
-       servers = [{'id': 1}, {'id': 2}]
-    """
-    return vsmclient(request).servers.start(servers)
-
-
-def stop_server(request, servers=None):
-    """Stop servers.
-       servers = [{'id': 1}, {'id': 2}]
-    """
-    LOG.debug("DEBUG in stop server of dashboard api")
-    return vsmclient(request).servers.stop(servers)
-
-#zone api
 def get_zone_list(request):
     return vsmclient(request).zones.list()
 
-#cluster api
 def get_cluster_list(request, opts=None):
     return vsmclient(request).vsms.get_cluster_list()
 
@@ -118,24 +69,9 @@ def create_cluster(request, servers=[]):
 
 def integrate_cluster(request, servers=[]):
     return vsmclient(request).clusters.integrate(servers=servers)
-#osd api
-def osd_get(request, osd_id):
-    return vsmclient(request).osds.get(osd_id)
-
-def osd_restart(request, osd_id):
-    return vsmclient(request).osds.restart(osd_id)
-
-def osd_remove(request, osd_id):
-    return vsmclient(request).osds.remove(osd_id)
-
-def osd_restore(request, osd_id):
-    return vsmclient(request).osds.restore(osd_id)
 
 def osd_status(request, paginate_opts=None):
     return vsmclient(request).osds.list(detailed=True, paginate_opts=paginate_opts)
-
-def osd_status_sort_and_filter(request, paginate_opts=None):
-    return vsmclient(request).osds.list(detailed='detail_filter_and_sort', paginate_opts=paginate_opts)
 
 def osd_summary(request):
     return vsmclient(request).osds.summary()
@@ -170,13 +106,7 @@ def pool_status(request):
 def ec_profiles(request):
     return vsmclient(request).storage_pools.ec_profiles()
 
-#device api
-def device_get_smartinfo(request,search_opts=None):
-    ret = vsmclient(request).devices.get_smart_info(search_opts=search_opts)
-    return ret
-
 def get_setting_dict(request,):
-    # TODO
     setting_list = vsmclient(request).vsm_settings.list()
     setting_dict = {}
     for setting in setting_list:
@@ -194,16 +124,6 @@ def get_metrics(request,search_opts):
 
 def get_metrics_all_types(request,search_opts):
     return vsmclient(request).performance_metrics.get_metrics_all_types(search_opts=search_opts)
-
-def add_osd_from_node_in_cluster(request,osd_states_id):
-    return  vsmclient(request).osds.add_osd_from_node_in_cluster(osd_states_id)
-
-def add_batch_new_disks_to_cluster(request, body):
-    return vsmclient(request).osds.add_batch_new_disks_to_cluster(body)
-
-
-def get_available_disks(request,  search_opts):
-    return vsmclient(request).devices.get_available_disks( search_opts=search_opts)
 
 def list_hs_instances(request):
     return vsmclient(request).hs_instances.list()
