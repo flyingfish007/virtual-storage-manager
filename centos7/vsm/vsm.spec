@@ -150,6 +150,7 @@ install -p -D -m 640 etc/logrotate.d/vsmceph %{buildroot}%{_sysconfdir}/logrotat
 install -d -m 755 %{buildroot}%{_sysconfdir}/vsm/
 cp -rf etc/vsm/prepools %{buildroot}%{_sysconfdir}/vsm/
 
+cp -rf vsm/db/sqlalchemy/migrate_repo/migrate.cfg %{buildroot}/usr/lib/python2.7/site-packages/vsm/db/sqlalchemy/migrate_repo
 
 #---------------------------
 # etc/init.d/
