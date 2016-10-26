@@ -1,4 +1,6 @@
 
+import os
+
 import diamond.collector
 
 import redis
@@ -32,12 +34,27 @@ class HyperstashCollector(diamond.collector.Collector):
         })
         return config
 
+    def _get_rbd_list(self):
+        rbd_conf_path = "/etc/rbc"
+        files = os.listdir(rbd_conf_path)
+        rbd_list = []
+        for file in files:
+            if os.path.isfile(rbd_conf_path + "/" + file):
+                rbd = file.split(".")[0]
+                rbd_list.append(rbd)
+        return rbd_list
+
     def collect(self):
+        rbd_list = self._get_rbd_list()
+
         r = redis.StrictRedis(host=self.config('redis_host'),
                               port=int(self.config('redis_port')),
                               db=int(self.config('redis_db')))
         hyperstash_metrics = self.config['hyperstash_metrics']
         hyperstash_metrics_list = hyperstash_metrics.split(',')
-        for metric in hyperstash_metrics_list:
-            m_value = r.get(metric)
-            self.publish(metric, m_value)
+        for rbd in rbd_list:
+            for metric in hyperstash_metrics_list:
+                metric = metric.strip(" ")
+                new_metric = rbd + "_" + metric
+                m_value = r.get(new_metric)
+                self.publish(metric, m_value)

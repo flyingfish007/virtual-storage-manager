@@ -1,4 +1,6 @@
 
+import os
+
 from Handler import Handler
 import MySQLdb
 
@@ -65,17 +67,37 @@ class HSMySQLHandler(Handler):
         # Just send the data
         self._send(str(metric))
 
+    def _get_rbd_list(self):
+        rbd_conf_path = "/etc/rbc"
+        files = os.listdir(rbd_conf_path)
+        rbd_list = []
+        for file in files:
+            if os.path.isfile(rbd_conf_path + "/" + file):
+                rbd = file.split(".")[0]
+                rbd_list.append(rbd)
+        return rbd_list
+
     def _send(self, data):
         """
         Insert the data
         """
+        rbd_list = self._get_rbd_list()
+
         data = data.strip().split(' ')
+        metric = data[0]
+        new_metric = None
+        rbd_name = None
+        for rbd in rbd_list:
+            if rbd in metric:
+                new_metric = metric.split(rbd)[1].strip("_")
+                rbd_name = rbd
+                break
         try:
             cursor = self.conn.cursor()
-            cursor.execute("INSERT INTO %s (%s, %s, %s) VALUES(%%s, %%s, %%s)"
+            cursor.execute("INSERT INTO %s (%s, %s, %s, %s) VALUES(%%s, %%s, %%s, %%s)"
                            % (self.table, self.col_metric,
-                              self.col_time, self.col_value),
-                           (data[0], data[2], data[1]))
+                              self.col_time, self.col_value, self.col_rbd_name),
+                           (new_metric, data[2], data[1], rbd_name))
             cursor.close()
             self.conn.commit()
         except BaseException, e:
