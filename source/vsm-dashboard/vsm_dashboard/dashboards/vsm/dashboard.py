@@ -14,35 +14,37 @@
 # specific language governing permissions and limitations
 # under the License.
 
+
 from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
+
 class Dashboard(horizon.PanelGroup):
-    slug = 'dashboard'
+    slug = "dashboard"
     name = _("Dashboard")
-    panels = ('overview',)
+    panels = ("overview",)
 
 class ClusterMgmt(horizon.PanelGroup):
     slug = "clustermgmt"
     name = _("Cluster Management")
-    panels = ('clustermgmt', 'poolsmanagement')
+    panels = ("clustermgmt",)
 
 class UserMgmt(horizon.PanelGroup):
     slug = "usermgmt"
     name = _("VSM Management")
-    panels = ("usermgmt", 'settings')
+    panels = ("usermgmt",)
 
 class HyperstashMgmt(horizon.PanelGroup):
     slug = "hyperstashmgmt"
     name = _("Hyperstash Management")
-    panels = ("hyperstash_status", )
+    panels = ("hyperstash_status",)
 
 class VizDash(horizon.Dashboard):
     name = _("VSM")
     slug = "vsm"
     panels = (Dashboard, HyperstashMgmt, ClusterMgmt, UserMgmt)
-    default_panel = 'overview'
-    roles = ('admin',)
+    default_panel = "overview"
+    roles = ("admin",)
 
 horizon.register(VizDash)

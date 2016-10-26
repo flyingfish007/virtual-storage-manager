@@ -223,10 +223,6 @@ def ClusterAction(request, action):
             vsmapi.create_cluster(request, data)
             status = "info"
             msg = "Began to Create Cluster"
-        elif action == "integrate":
-            vsmapi.integrate_cluster(request, data)
-            status = "info"
-            msg = "Began to integrate Cluster"
         else:
             status = "info"
             msg = "Began to Create Cluster"

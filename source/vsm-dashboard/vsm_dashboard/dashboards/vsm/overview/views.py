@@ -24,13 +24,7 @@ from vsm_dashboard.utils import get_time_delta
 LOG = logging.getLogger(__name__)
 
 def index(request):
-    pool_status = vsmapi.pool_status(None)
-    server_list = vsmapi.get_server_list(None)
-    status = [server.status for server in server_list]
-    if len(pool_status) != 0 or 'Active' in status:
         return render(request,'vsm/overview/index.html',{})
-    else:
-        return HttpResponseRedirect("/dashboard/vsm/clustermgmt/")
 
 #show osd summary
 def osd_summary(request):

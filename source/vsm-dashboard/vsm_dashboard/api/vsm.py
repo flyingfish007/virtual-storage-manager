@@ -15,13 +15,17 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
 from __future__ import absolute_import
 
-import logging
 from vsmclient.v1 import client as vsm_client
+
 from django.conf import settings
 
+import logging
+
 LOG = logging.getLogger(__name__)
+
 
 def vsmclient(request):
     key_vsm_pass = getattr(settings,'KEYSTONE_VSM_SERVICE_PASSWORD')
@@ -35,22 +39,6 @@ def vsmclient(request):
 
 def create_storage_pool(request, body):
     return vsmclient(request).vsms.create_storage_pool(body)
-
-def add_cache_tier(request, body):
-    return vsmclient(request).storage_pools.add_cache_tier(body)
-
-def remove_cache_tier(request, body):
-    return vsmclient(request).storage_pools.remove_cache_tier(body)
-
-def get_storage_group_list(request):
-    return vsmclient(request).vsms.get_storage_group_list()
-
-def pools_list(request, search_opts=None, all_pools=False):
-    if search_opts is None:
-        search_opts = {}
-    if all_pools:
-        search_opts['all_pools'] = True
-    return vsmclient(request).vsms.list_storage_pool(request, search_opts)
 
 def get_server_list(request):
     return vsmclient(request).servers.list()
@@ -67,9 +55,6 @@ def get_cluster_list(request, opts=None):
 def create_cluster(request, servers=[]):
     return vsmclient(request).clusters.create(servers=servers)
 
-def integrate_cluster(request, servers=[]):
-    return vsmclient(request).clusters.integrate(servers=servers)
-
 def osd_status(request, paginate_opts=None):
     return vsmclient(request).osds.list(detailed=True, paginate_opts=paginate_opts)
 
@@ -84,9 +69,6 @@ def monitor_summary(request):
 
 def storage_group_status(request):
     return vsmclient(request).storage_groups.list(detailed=True)
-
-def get_default_pg_num_by_storage_group(request, body):
-    return vsmclient(request).storage_groups.get_default_pg_num(search_opts=body)
 
 def placement_group_summary(request):
     return vsmclient(request).placement_groups.summary()
@@ -103,9 +85,6 @@ def vsm_summary(request):
 def pool_status(request):
     return vsmclient(request).storage_pools.list(detailed=True)
 
-def ec_profiles(request):
-    return vsmclient(request).storage_pools.ec_profiles()
-
 def get_setting_dict(request,):
     setting_list = vsmclient(request).vsm_settings.list()
     setting_dict = {}
@@ -115,9 +94,6 @@ def get_setting_dict(request,):
 
 def get_settings(request,):
     return vsmclient(request).vsm_settings.list()
-
-def update_setting(request, name, value):
-    return vsmclient(request).vsm_settings.create({'name': name, 'value':value})
 
 def get_metrics(request,search_opts):
     return vsmclient(request).performance_metrics.get_metrics(search_opts=search_opts)
