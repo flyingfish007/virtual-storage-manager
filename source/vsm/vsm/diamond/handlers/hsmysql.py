@@ -69,7 +69,10 @@ class HSMySQLHandler(Handler):
 
     def _get_rbd_list(self):
         rbd_conf_path = "/etc/rbc"
-        files = os.listdir(rbd_conf_path)
+        try:
+            files = os.listdir(rbd_conf_path)
+        except:
+            files = []
         rbd_list = []
         for file in files:
             if os.path.isfile(rbd_conf_path + "/" + file):
@@ -84,6 +87,7 @@ class HSMySQLHandler(Handler):
         rbd_list = self._get_rbd_list()
 
         data = data.strip().split(' ')
+        self.log.info("==========%s" % str(data))
         metric = data[0]
         new_metric = None
         rbd_name = None

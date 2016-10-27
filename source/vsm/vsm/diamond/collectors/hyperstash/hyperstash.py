@@ -11,7 +11,6 @@ class HyperstashCollector(diamond.collector.Collector):
         config_help = super(HyperstashCollector,
                             self).get_default_config_help()
         config_help.update({
-            'test': 'Test test',
             'redis_host': 'The host to connect redis',
             'redis_port': 'The port of redis',
             'redis_db': 'The db of redis to fetch data',
@@ -26,11 +25,10 @@ class HyperstashCollector(diamond.collector.Collector):
 
         config = super(HyperstashCollector, self).get_default_config()
         config.update({
-            'test': '',
             'redis_host': 'localhost',
-            'redis_port': 6379,
-            'redis_db': 0,
-            'hyperstash_metrics': 'free_cache_ratio,used_cache_ratio,dirty_cache_ratio'
+            'redis_port': '6379',
+            'redis_db': '0',
+            'hs_metrics': 'cache_size,cache_dirty_size'
         })
         return config
 
@@ -46,15 +44,21 @@ class HyperstashCollector(diamond.collector.Collector):
 
     def collect(self):
         rbd_list = self._get_rbd_list()
+        self.log.debug("==========rbd_list: %s" % str(rbd_list))
+        self.log.debug("==========host: %s" % str(self.config['redis_host']))
+        self.log.debug("==========redis_port: %s" % str(self.config['redis_port']))
+        self.log.debug("==========redis_db: %s" % str(self.config['redis_db']))
+        self.log.debug("==========hs_metrics: %s" % str(self.config['hs_metrics']))
 
-        r = redis.StrictRedis(host=self.config('redis_host'),
-                              port=int(self.config('redis_port')),
-                              db=int(self.config('redis_db')))
-        hyperstash_metrics = self.config['hyperstash_metrics']
-        hyperstash_metrics_list = hyperstash_metrics.split(',')
+        r = redis.StrictRedis(host=self.config['redis_host'],
+                              port=int(self.config['redis_port']),
+                              db=int(self.config['redis_db']))
+        hs_metrics = self.config['hs_metrics']
+        hs_metrics_list = hs_metrics.split(',')
         for rbd in rbd_list:
-            for metric in hyperstash_metrics_list:
+            for metric in hs_metrics_list:
                 metric = metric.strip(" ")
                 new_metric = rbd + "_" + metric
                 m_value = r.get(new_metric)
-                self.publish(metric, m_value)
+                self.publish(new_metric, m_value)
+        return
