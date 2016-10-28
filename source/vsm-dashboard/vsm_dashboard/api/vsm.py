@@ -101,6 +101,10 @@ def get_metrics(request,search_opts):
 def get_metrics_all_types(request,search_opts):
     return vsmclient(request).performance_metrics.get_metrics_all_types(search_opts=search_opts)
 
+def list_rbds(request):
+    return vsmclient(request).rbd_pools.list()
+
+# Hyperstash
 def list_hs_instances(request):
     return vsmclient(request).hs_instances.list()
 

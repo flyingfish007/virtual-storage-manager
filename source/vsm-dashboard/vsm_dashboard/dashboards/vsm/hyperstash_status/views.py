@@ -249,22 +249,33 @@ def update_action(request):
 
 def monitor(request, rbd_id):
     LOG.info("=========================rbd_id: %s" % str(rbd_id))
-    if int(rbd_id) == 1:
-        rbd_name = "testvol01"
-    elif int(rbd_id) == 2:
-        rbd_name = "testvol02"
-    elif int(rbd_id) == 3:
-        rbd_name = "testvol03"
-    elif int(rbd_id) == 4:
-        rbd_name = "testvol04"
-    elif int(rbd_id) == 5:
-        rbd_name = "testvol05"
-    else:
-        rbd_name = "testvol06"
+    rbds = vsmapi.list_rbds(request)
+    rbd_name = None
+    for rbd in rbds:
+        if int(rbd.id) == int(rbd_id):
+            rbd_name = rbd.image_name
+            break
     return render(request,
                   'vsm/hyperstash_status/monitor.html',
                   {"rbd_id": rbd_id,
                    "rbd_name": rbd_name})
+
+    # if int(rbd_id) == 1:
+    #     rbd_name = "testvol01"
+    # elif int(rbd_id) == 2:
+    #     rbd_name = "testvol02"
+    # elif int(rbd_id) == 3:
+    #     rbd_name = "testvol03"
+    # elif int(rbd_id) == 4:
+    #     rbd_name = "testvol04"
+    # elif int(rbd_id) == 5:
+    #     rbd_name = "testvol05"
+    # else:
+    #     rbd_name = "testvol06"
+    # return render(request,
+    #               'vsm/hyperstash_status/monitor.html',
+    #               {"rbd_id": rbd_id,
+    #                "rbd_name": rbd_name})
 
 def cache_ratio(request, rbd_id):
     LOG.info("=========================request: %s" % str(request))
