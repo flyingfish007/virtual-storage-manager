@@ -1542,6 +1542,25 @@ def do_hs_rbd_cache_config_update(cs, args):
         raise exceptions.CommandError("Failed to update hs_rbd_cache_config.")
 
 
+###################hyperstash performance metric##########################
+@utils.service_type('vsm')
+@utils.arg('--rbd-id',
+           metavar='<rbd-id>',
+           help='Id of rbd.')
+@utils.arg('--type',
+           metavar='<type>',
+           help='Metric type.')
+def do_hs_performance_metric_get_value(cs, args):
+    """Get the value of hyperstash performance metric by rbd id and type."""
+    if not args.rbd_id:
+        raise exceptions.CommandError("you need specify a rbd_id")
+    if not args.type:
+        raise exceptions.CommandError("you need specify a type")
+    hs_performance_metrics = cs.hs_performance_metrics.get_value(args.rbd_id, args.type)
+    columns = ["ID", "Metric", "Value", "RBD_Name", "TimeStamp"]
+    utils.print_list(hs_performance_metrics, columns)
+
+
 # TODO tag for those not completed commands
 # It will be removed later
 def _is_developing(method, message):

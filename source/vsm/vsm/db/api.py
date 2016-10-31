@@ -1345,3 +1345,6 @@ def hs_rbd_cache_config_get_all(context):
 
 def hs_rbd_cache_config_update(context, id, body):
     return IMPL.hs_rbd_cache_config_update(context, id, body)
+
+def hs_performance_metric_get(context, rbd_name):
+    return IMPL.hs_performance_metric_get(context, rbd_name)

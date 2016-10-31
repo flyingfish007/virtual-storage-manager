@@ -39,6 +39,7 @@ from vsmclient.v1 import ec_profiles
 from vsmclient.v1 import rgws
 from vsmclient.v1 import hs_instances
 from vsmclient.v1 import hs_rbd_cache_configs
+from vsmclient.v1 import hs_performance_metrics
 
 class Client(object):
     """
@@ -95,6 +96,7 @@ class Client(object):
         self.rgws = rgws.RgwManager(self)
         self.hs_instances = hs_instances.HsInstanceManager(self)
         self.hs_rbd_cache_configs = hs_rbd_cache_configs.HsRbdCacheConfigManager(self)
+        self.hs_performance_metrics = hs_performance_metrics.HsPerformanceMetricManager(self)
 
         # Add in any extensions...
         if extensions:

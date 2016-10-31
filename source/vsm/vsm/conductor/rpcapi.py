@@ -472,3 +472,7 @@ class ConductorAPI(vsm.openstack.common.rpc.proxy.RpcProxy):
         return self.call(context, self.make_msg('hs_rbd_cache_config_update',
                                                 id=id,
                                                 body=body))
+
+    def hs_performance_metric_get(self, context, rbd_name):
+        return self.call(context, self.make_msg('hs_performance_metric_get',
+                                                rbd_name=rbd_name))

@@ -674,3 +674,6 @@ class ConductorManager(manager.Manager):
 
     def hs_rbd_cache_config_update(self, context, id, body):
         return db.hs_rbd_cache_config_update(context, id, body)
+
+    def hs_performance_metric_get(self, context, rbd_name):
+        return db.hs_performance_metric_get(context, rbd_name)

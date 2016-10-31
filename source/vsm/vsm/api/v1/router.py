@@ -47,6 +47,7 @@ from vsm.api.v1 import ec_profiles
 from vsm.api.v1 import rgw
 from vsm.api.v1 import hs_instances
 from vsm.api.v1 import hs_rbd_cache_configs
+from vsm.api.v1 import hs_performance_metrics
 
 from vsm.openstack.common import log as logging
 
@@ -281,3 +282,11 @@ class APIRouter(vsm.api.openstack.APIRouter):
                             'get_by_rbd_id': 'get'
                         },
                         member={'action': 'post'})
+
+        self.resources['hs_performance_metrics'] = hs_performance_metrics.create_resource(ext_mgr)
+        mapper.resource("hs_performance_metrics", "hs_performance_metrics",
+                        controller=self.resources['hs_performance_metrics'],
+                        collection={
+                            'get_value': 'get'
+                        },
+                        member={})

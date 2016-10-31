@@ -4524,3 +4524,9 @@ def hs_rbd_cache_config_update(context, id, body, session=None):
         for (key, value) in body.iteritems():
             map_ref[key] = value
         map_ref.save(session=session)
+
+def hs_performance_metric_get(context, rbd_name, session=None):
+    result = model_query(context, models.HsPerformanceMetric, session=session).\
+        filter_by(rbd_name=rbd_name).\
+        all()
+    return result

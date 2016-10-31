@@ -356,3 +356,6 @@ class API(object):
 
     def hs_rbd_cache_config_update(self, context, id, body):
         return self.conductor_rpcapi.hs_rbd_cache_config_update(context, id, body)
+
+    def hs_performance_metric_get(self, context, rbd_name):
+        return self.conductor_rpcapi.hs_performance_metric_get(context, rbd_name)
