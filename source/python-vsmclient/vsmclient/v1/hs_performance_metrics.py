@@ -28,5 +28,5 @@ class HsPerformanceMetricManager(base.ManagerWithFind):
 
         query_string = "?%s" % urllib.urlencode(qparams) if qparams else ""
 
-        return self._get("/hs_performance_metrics/get_value%s" %
+        return self._list("/hs_performance_metrics/get_value%s" %
                          query_string, "hs_performance_metrics")
