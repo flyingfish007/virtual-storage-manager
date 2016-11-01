@@ -1,4 +1,6 @@
 
+import copy
+
 from vsm.api.openstack import wsgi
 from vsm import conductor
 from vsm.openstack.common import log as logging
@@ -24,20 +26,16 @@ class HsPerformanceMetric(wsgi.Controller):
         rbd_name = rbd['image']
 
         values = self.conductor_api.hs_performance_metric_get(context, rbd_name)
-        new_values_list = []
-        for value in values:
-            if value not in new_values_list:
-                new_values_list.append(value)
-            else:
-                break
 
         result = []
         type = req.GET['type']
         if type == "cache_size":
+            new_values_list = values[-2:]
             new_value = {}
             cache_used_size = None
             cache_dirty_size = None
             for new_value in new_values_list:
+                new_value.pop("id")
                 metric = new_value['metric']
                 if metric == 'cache_used_size':
                     result.append(new_value)
@@ -49,12 +47,14 @@ class HsPerformanceMetric(wsgi.Controller):
                 self.conductor_api.hs_rbd_cache_config_get_by_rbd_id(context, rbd_id)
             cache_free_size = int(hs_rbd_cache_config['cache_total_size']) - int(cache_used_size)
             cache_clean_size = int(cache_used_size) - int(cache_dirty_size)
-            new_value['metric'] = 'cache_free_size'
-            new_value['value'] = cache_free_size
-            result.append(new_value)
-            new_value['metric'] = 'cache_clean_size'
-            new_value['value'] = cache_clean_size
-            result.append(new_value)
+            free = copy.copy(new_value)
+            free['metric'] = 'cache_free_size'
+            free['value'] = cache_free_size
+            result.append(free)
+            clean = copy.copy(new_value)
+            clean['metric'] = 'cache_clean_size'
+            clean['value'] = cache_clean_size
+            result.append(clean)
         elif type == "cache_action":
             pass
         elif type == "cache_iops":
