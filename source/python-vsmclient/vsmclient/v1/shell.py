@@ -1557,7 +1557,7 @@ def do_hs_performance_metric_get_value(cs, args):
     if not args.type:
         raise exceptions.CommandError("you need specify a type")
     hs_performance_metrics = cs.hs_performance_metrics.get_value(args.rbd_id, args.type)
-    columns = ["ID", "Metric", "Value", "RBD_Name", "TimeStamp"]
+    columns = ["Metric", "Value", "RBD_Name", "TimeStamp"]
     utils.print_list(hs_performance_metrics, columns)
 
 
