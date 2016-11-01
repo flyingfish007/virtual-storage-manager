@@ -1,4 +1,5 @@
 
+import datetime
 import os
 
 from Handler import Handler
@@ -84,6 +85,8 @@ class HSMySQLHandler(Handler):
         """
         Insert the data
         """
+        utcnow = datetime.datetime.utcnow()
+
         rbd_list = self._get_rbd_list()
 
         data = data.strip().split(' ')
@@ -98,10 +101,12 @@ class HSMySQLHandler(Handler):
                 break
         try:
             cursor = self.conn.cursor()
-            cursor.execute("INSERT INTO %s (%s, %s, %s, %s) VALUES(%%s, %%s, %%s, %%s)"
-                           % (self.table, self.col_metric,
-                              self.col_time, self.col_value, self.col_rbd_name),
-                           (new_metric, data[2], data[1], rbd_name))
+            cursor.execute("INSERT INTO %s (%s, %s, %s, %s, created_at, updated_at, deleted) "
+                           "VALUES(%%s, %%s, %%s, %%s, %%s, %%s, %%s)"
+                           % (self.table, self.col_metric, self.col_time,
+                              self.col_value, self.col_rbd_name),
+                           (new_metric, data[2], data[1], rbd_name,
+                            utcnow, utcnow, 0))
             cursor.close()
             self.conn.commit()
         except BaseException, e:
