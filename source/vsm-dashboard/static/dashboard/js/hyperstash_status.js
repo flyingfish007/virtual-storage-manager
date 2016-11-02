@@ -5,7 +5,7 @@ require.config({
     }
 });
 
-var refreshInterval=15000;
+var refreshInterval=5000;
 var token = $("input[name=csrfmiddlewaretoken]").val();
 require(
     [
@@ -33,7 +33,7 @@ function loadCacheRatio(rbd_id){
         data: null,
         dataType:"json",
         success: function(data){
-                cCacheRatios.setOption(GetCacheRatio(data.free,data.used,data.clean,data.dirty))
+                cCacheRatios.setOption(GetCacheRatio(data.cache_free_size,data.cache_used_size,data.cache_clean_size,data.cache_dirty_size))
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             if(XMLHttpRequest.status == 401)
@@ -51,7 +51,7 @@ function GetCacheRatio(FREE,USED,CLEAN,DIRTY){
         legend: {
             orient: 'vertical',
             x: 'left',
-            data:['Free','Used','Clean','Dirty']
+            data:['Dirty','Clean','Used','Free']
         },
         series: [
             {

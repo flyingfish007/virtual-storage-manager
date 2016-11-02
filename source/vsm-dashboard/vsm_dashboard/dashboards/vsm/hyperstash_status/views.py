@@ -278,36 +278,50 @@ def monitor(request, rbd_id):
     #                "rbd_name": rbd_name})
 
 def cache_ratio(request, rbd_id):
-    LOG.info("=========================request: %s" % str(request))
-    if int(rbd_id) == 1:
-        cache_ratio =  {"free": 20,
-                        "used": 80,
-                        "clean": 60,
-                        "dirty": 20}
-    elif int(rbd_id) == 2:
-        cache_ratio =  {"free": 10,
-                        "used": 90,
-                        "clean": 65,
-                        "dirty": 25}
-    elif int(rbd_id) == 3:
-        cache_ratio =  {"free": 38,
-                        "used": 62,
-                        "clean": 2,
-                        "dirty": 60}
-    elif int(rbd_id) == 4:
-        cache_ratio =  {"free": 53,
-                        "used": 47,
-                        "clean": 27,
-                        "dirty": 20}
-    elif int(rbd_id) == 5:
-        cache_ratio =  {"free": 88,
-                        "used": 12,
-                        "clean": 10,
-                        "dirty": 2}
-    else:
-        cache_ratio =  {"free": 71,
-                        "used": 29,
-                        "clean": 22,
-                        "dirty": 7}
+    result = vsmapi.\
+        get_hs_performance_metric_value_by_rbd_id_and_type(request, rbd_id, "cache_size")
+    cache_ratio = {}
+    for i in result:
+        if i.metric == 'cache_free_size':
+            cache_ratio['cache_free_size'] = i.value
+        elif i.metric == 'cache_used_size':
+            cache_ratio['cache_used_size'] = i.value
+        elif i.metric == 'cache_clean_size':
+            cache_ratio['cache_clean_size'] = i.value
+        elif i.metric == 'cache_dirty_size':
+            cache_ratio['cache_dirty_size'] = i.value
     cache_ratio = json.dumps(cache_ratio)
     return HttpResponse(cache_ratio)
+
+    # if int(rbd_id) == 1:
+    #     cache_ratio =  {"free": 20,
+    #                     "used": 80,
+    #                     "clean": 60,
+    #                     "dirty": 20}
+    # elif int(rbd_id) == 2:
+    #     cache_ratio =  {"free": 10,
+    #                     "used": 90,
+    #                     "clean": 65,
+    #                     "dirty": 25}
+    # elif int(rbd_id) == 3:
+    #     cache_ratio =  {"free": 38,
+    #                     "used": 62,
+    #                     "clean": 2,
+    #                     "dirty": 60}
+    # elif int(rbd_id) == 4:
+    #     cache_ratio =  {"free": 53,
+    #                     "used": 47,
+    #                     "clean": 27,
+    #                     "dirty": 20}
+    # elif int(rbd_id) == 5:
+    #     cache_ratio =  {"free": 88,
+    #                     "used": 12,
+    #                     "clean": 10,
+    #                     "dirty": 2}
+    # else:
+    #     cache_ratio =  {"free": 71,
+    #                     "used": 29,
+    #                     "clean": 22,
+    #                     "dirty": 7}
+    # cache_ratio = json.dumps(cache_ratio)
+    # return HttpResponse(cache_ratio)

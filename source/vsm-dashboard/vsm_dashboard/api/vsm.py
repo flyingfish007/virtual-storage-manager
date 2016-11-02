@@ -128,3 +128,6 @@ def get_hs_rbd_cache_config_by_rbd_id(request, rbd_id):
 
 def update_hs_rbd_cache_config(request, id, info):
     return vsmclient(request).hs_rbd_cache_configs.update(id, info)
+
+def get_hs_performance_metric_value_by_rbd_id_and_type(request, rbd_id, type):
+    return vsmclient(request).hs_performance_metrics.get_value(rbd_id, type)
