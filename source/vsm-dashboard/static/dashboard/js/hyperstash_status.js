@@ -125,18 +125,7 @@ function GetCacheAction(data){
             {
                 type : 'category',
                 boundaryGap : false,
-                data : [
-                    '12:00:00',
-                    '13:00:00',
-                    '14:00:00',
-                    '15:00:00',
-                    '16:00:00',
-                    '17:00:00',
-                    '18:00:00',
-                    '18:00:00',
-                    '20:00:00',
-                    '21:00:00'
-                ]
+                data : data.date
             }
         ],
         yAxis : [
@@ -149,19 +138,19 @@ function GetCacheAction(data){
                 name:'Cache Promote',
                 type:'line',
                 tiled: 'total',
-                data:[120, 132, 101, 134, 90, 230, 210]
+                data:data.cache_promote
             },
             {
                 name:'Cache Flush',
                 type:'line',
                 tiled: 'total',
-                data:[220, 182, 191, 234, 290, 330, 310]
+                data:data.cache_flush
             },
             {
                 name:'Cache Evict',
                 type:'line',
                 tiled: 'total',
-                data:[150, 232, 201, 154, 190, 330, 410]
+                data:data.cache_evict
             }
         ]
     };

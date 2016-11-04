@@ -1,6 +1,7 @@
 
 import json
 import logging
+import time
 
 from vsm_dashboard.api import vsm as vsmapi
 
@@ -327,6 +328,27 @@ def cache_ratio(request, rbd_id):
     # return HttpResponse(cache_ratio)
 
 def cache_action(request, rbd_id):
-    result = {}
-    result = json.dumps(result)
-    return HttpResponse(result)
+    result = vsmapi.\
+        get_hs_performance_metric_value_by_rbd_id_and_type(request, rbd_id, "cache_action")
+    cache_action = {}
+    cache_action['date'] = []
+    cache_action['cache_promote'] = []
+    cache_action['cache_flush'] = []
+    cache_action['cache_evict'] = []
+    for i in result:
+        value = i.value
+        timestr = i.timestamp
+        timearry = time.localtime(timestr)
+        timestyle = time.strftime("%H:%M:%S", timearry)
+        if timestyle not in cache_action['date']:
+            cache_action['date'].append(timestyle)
+        if i.metric == "cache_promote":
+            cache_action['cache_promote'].append(value)
+        elif i.metric == "cache_flush":
+            cache_action['cache_flush'].append(value)
+        elif i.metric == "cache_evict":
+            cache_action['cache_evict'].append(value)
+    print "=================================="
+    print cache_action
+    cache_action = json.dumps(cache_action)
+    return HttpResponse(cache_action)

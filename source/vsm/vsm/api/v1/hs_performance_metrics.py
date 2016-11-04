@@ -30,8 +30,8 @@ class HsPerformanceMetric(wsgi.Controller):
         result = []
         type = req.GET['type']
         if type == "cache_size":
-            new_values_list = values[-2:]
             new_value = {}
+            new_values_list = values[-5:]
             cache_used_size = None
             cache_dirty_size = None
             for new_value in new_values_list:
@@ -56,7 +56,16 @@ class HsPerformanceMetric(wsgi.Controller):
             clean['value'] = cache_clean_size
             result.append(clean)
         elif type == "cache_action":
-            pass
+            new_values_list = values[-50:]
+            for new_value in new_values_list:
+                new_value.pop("id")
+                metric = new_value['metric']
+                if metric == 'cache_promote':
+                    result.append(new_value)
+                elif metric == 'cache_flush':
+                    result.append(new_value)
+                elif metric == 'cache_evict':
+                    result.append(new_value)
         elif type == "cache_iops":
             pass
         elif type == "cache_bw":
