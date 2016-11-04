@@ -38,6 +38,22 @@
     height:280px;
 }
 
+#divCacheAction{
+    width: 600px;
+	height: 420px;
+    margin-top: -20px;
+}
+
+#divCacheActionContent{
+    height: 320px;
+}
+
+#divCacheActionRect{
+	/*margin-left: 20px;*/
+    width:99%;
+    height:280px;
+}
+
 #divMain{
     text-align: left;
     width: 1024px;

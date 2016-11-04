@@ -18,10 +18,13 @@ require(
     function(ec){
         cCacheRatios = ec.init(document.getElementById('divCacheRatioRect'));
         rbd_id = document.getElementById('divCacheRatioRect').title;
-    	//load Capacity
+        cCacheAction = ec.init(document.getElementById('divCacheActionRect'));
+    	//load
         loadCacheRatio(rbd_id);
+        loadCacheAction(rbd_id);
         setInterval(function(){
             loadCacheRatio(rbd_id);
+            loadCacheAction(rbd_id);
         },refreshInterval);
     }
 );
@@ -34,6 +37,24 @@ function loadCacheRatio(rbd_id){
         dataType:"json",
         success: function(data){
                 cCacheRatios.setOption(GetCacheRatio(data.cache_free_size,data.cache_used_size,data.cache_clean_size,data.cache_dirty_size))
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            if(XMLHttpRequest.status == 401)
+                window.location.href = "/dashboard/auth/logout/";
+        }
+     });
+}
+
+function loadCacheAction(rbd_id){
+    $.ajax({
+        type: "get",
+        url: "/dashboard/vsm/hyperstash_status/"+rbd_id+"/cache_action",
+        data: null,
+        dataType:"json",
+        success: function(data){
+                cCacheAction.setOption(
+                    GetCacheAction(data)
+                )
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             if(XMLHttpRequest.status == 401)
@@ -85,6 +106,62 @@ function GetCacheRatio(FREE,USED,CLEAN,DIRTY){
                     {value:CLEAN, name:'Clean'},
                     {value:DIRTY, name:'Dirty'}
                 ]
+            }
+        ]
+    };
+    return option;
+}
+
+function GetCacheAction(data){
+    option = {
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['Cache Promote','Cache Flush','Cache Evict']
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : [
+                    '12:00:00',
+                    '13:00:00',
+                    '14:00:00',
+                    '15:00:00',
+                    '16:00:00',
+                    '17:00:00',
+                    '18:00:00',
+                    '18:00:00',
+                    '20:00:00',
+                    '21:00:00'
+                ]
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'Cache Promote',
+                type:'line',
+                tiled: 'total',
+                data:[120, 132, 101, 134, 90, 230, 210]
+            },
+            {
+                name:'Cache Flush',
+                type:'line',
+                tiled: 'total',
+                data:[220, 182, 191, 234, 290, 330, 310]
+            },
+            {
+                name:'Cache Evict',
+                type:'line',
+                tiled: 'total',
+                data:[150, 232, 201, 154, 190, 330, 410]
             }
         ]
     };

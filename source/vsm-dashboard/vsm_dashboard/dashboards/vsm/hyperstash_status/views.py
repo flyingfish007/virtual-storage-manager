@@ -325,3 +325,8 @@ def cache_ratio(request, rbd_id):
     #                     "dirty": 7}
     # cache_ratio = json.dumps(cache_ratio)
     # return HttpResponse(cache_ratio)
+
+def cache_action(request, rbd_id):
+    result = {}
+    result = json.dumps(result)
+    return HttpResponse(result)
