@@ -4530,3 +4530,17 @@ def hs_performance_metric_get(context, rbd_name, session=None):
         filter_by(rbd_name=rbd_name).\
         all()
     return result
+
+def hs_performance_metric_clean_data(context, seconds):
+    session = get_session()
+    result = model_query(context, models.HsPerformanceMetric, session=session).\
+        all()
+    LOG.info("+++++++++++++++++++++++++++++++++++++++++++++")
+    last = result[-1]
+    LOG.info("last: %s" % str(last))
+    timestamp = last.timestamp
+    LOG.info("timestamp: %s" % str(timestamp))
+    min_timestamp = int(timestamp) - int(seconds)
+    LOG.info("min_timestamp: %s" % str(min_timestamp))
+    sql_str = "UPDATE hs_performance_metric SET deleted=1 WHERE timestamp < %s;" % min_timestamp
+    session.execute(sql_str)

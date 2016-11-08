@@ -28,7 +28,11 @@ class HyperstashCollector(diamond.collector.Collector):
             'redis_host': 'localhost',
             'redis_port': '6379',
             'redis_db': '0',
-            'hs_metrics': 'cache_used_size,cache_dirty_size'
+            'hs_metrics': 'cache_used_size,'
+                          'cache_dirty_size,'
+                          'cache_promote,'
+                          'cache_flush,'
+                          'cache_evict'
         })
         return config
 

@@ -32,6 +32,7 @@ from vsm import manager
 from vsm.openstack.common import excutils
 from vsm.openstack.common import importutils
 from vsm.openstack.common import log as logging
+from vsm.openstack.common.periodic_task import periodic_task
 from vsm.openstack.common.notifier import api as notifier
 from vsm.openstack.common import timeutils
 
@@ -677,3 +678,12 @@ class ConductorManager(manager.Manager):
 
     def hs_performance_metric_get(self, context, rbd_name):
         return db.hs_performance_metric_get(context, rbd_name)
+
+    #----------------------------------------------------------------------
+    @periodic_task(service_topic=FLAGS.conductor_topic,
+                   spacing=int(FLAGS.keep_hs_performance_data_seconds))
+    def clean_hs_performance_metric_data(self, context):
+        seconds = int(FLAGS.keep_hs_performance_data_seconds)
+        LOG.info("=================================")
+        LOG.info("seconds: %s" % str(seconds))
+        return db.hs_performance_metric_clean_data(context, seconds)

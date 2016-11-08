@@ -514,6 +514,9 @@ vsm_settings_opts = [
     cfg.IntOpt('keep_performance_data_days',
            default=7,
            help='keep performance data days(days)'),
+    cfg.IntOpt('keep_hs_performance_data_seconds',
+           default=86400,
+           help='keep hyperstash performance data seconds'),
 ]
 
 FLAGS.register_opts(vsm_settings_opts)
