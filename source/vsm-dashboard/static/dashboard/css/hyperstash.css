@@ -24,8 +24,6 @@
 
 #divCacheRatio{
     width: 420px;
-	height: 420px;
-    margin-top: -20px;
 }
 
 #divCacheRatioContent{
@@ -40,8 +38,6 @@
 
 #divCacheAction{
     width: 600px;
-	height: 420px;
-    margin-top: -20px;
 }
 
 #divCacheActionContent{
@@ -53,6 +49,16 @@
     width:99%;
     height:280px;
 }
+
+#divCacheIOWorkload{
+    width: 500px;
+    margin-top: -20px;
+}
+
+#divCacheIOWorkloadContent{
+    height: 180px;
+}
+
 
 #divMain{
     text-align: left;

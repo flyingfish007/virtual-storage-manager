@@ -10,6 +10,7 @@ from .views import cache_ratio
 from .views import create_hs_instance
 from .views import update_action
 from .views import cache_action
+from .views import cache_io_workload
 
 
 urlpatterns = patterns('',
@@ -21,5 +22,6 @@ urlpatterns = patterns('',
     url(r'^(?P<rbd_id>[^/]+)/monitor/$', monitor, name='monitor'),
     url(r'^(?P<rbd_id>[^/]+)/cache_ratio/$', cache_ratio, name='cache_ratio'),
     url(r'^(?P<rbd_id>[^/]+)/cache_action/$', cache_action, name='cache_action'),
+    url(r'^(?P<rbd_id>[^/]+)/cache_io_workload/$', cache_io_workload, name='cache_io_workload'),
     url(r'^update_action/$', update_action, name='update_action'),
 )

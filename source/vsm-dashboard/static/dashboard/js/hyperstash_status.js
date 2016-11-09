@@ -5,7 +5,7 @@ require.config({
     }
 });
 
-var refreshInterval=5000;
+var refreshInterval=20000;
 var token = $("input[name=csrfmiddlewaretoken]").val();
 require(
     [
@@ -22,9 +22,11 @@ require(
     	//load
         loadCacheRatio(rbd_id);
         loadCacheAction(rbd_id);
+        loadCacheIOWorkload(rbd_id);
         setInterval(function(){
             loadCacheRatio(rbd_id);
             loadCacheAction(rbd_id);
+            loadCacheIOWorkload(rbd_id);
         },refreshInterval);
     }
 );
@@ -55,6 +57,29 @@ function loadCacheAction(rbd_id){
                 cCacheAction.setOption(
                     GetCacheAction(data)
                 )
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            if(XMLHttpRequest.status == 401)
+                window.location.href = "/dashboard/auth/logout/";
+        }
+     });
+}
+
+function loadCacheIOWorkload(rbd_id){
+    $.ajax({
+        type: "get",
+        url: "/dashboard/vsm/hyperstash_status/"+rbd_id+"/cache_io_workload",
+        data: null,
+        dataType:"json",
+        success: function(data){
+            $("#ldBW")[0].innerHTML =data.cache_bw;
+            $("#ldCacheReadIOPS")[0].innerHTML =data.cache_read;
+            $("#ldCacheReadMissIOPS")[0].innerHTML =data.cache_read_miss;
+            $("#ldCacheWriteIOPS")[0].innerHTML =data.cache_write;
+            $("#ldCacheWriteMissIOPS")[0].innerHTML =data.cache_write_miss;
+            $("#ldCacheTotalIOPS")[0].innerHTML =Number(data.cache_read)+Number(data.cache_write);
+            $("#ldCacheTotalMissIOPS")[0].innerHTML =Number(data.cache_read_miss)+Number(data.cache_write_miss);
+            $("#ldLatency")[0].innerHTML =data.cache_latency;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             if(XMLHttpRequest.status == 401)

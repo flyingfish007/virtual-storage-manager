@@ -31,7 +31,7 @@ class HsPerformanceMetric(wsgi.Controller):
         type = req.GET['type']
         if type == "cache_size":
             new_value = {}
-            new_values_list = values[-5:]
+            new_values_list = values[-11:]
             cache_used_size = None
             cache_dirty_size = None
             for new_value in new_values_list:
@@ -56,7 +56,7 @@ class HsPerformanceMetric(wsgi.Controller):
             clean['value'] = cache_clean_size
             result.append(clean)
         elif type == "cache_action":
-            new_values_list = values[-50:]
+            new_values_list = values[-110:]
             for new_value in new_values_list:
                 new_value.pop("id")
                 metric = new_value['metric']
@@ -66,12 +66,23 @@ class HsPerformanceMetric(wsgi.Controller):
                     result.append(new_value)
                 elif metric == 'cache_evict':
                     result.append(new_value)
-        elif type == "cache_iops":
-            pass
-        elif type == "cache_bw":
-            pass
-        elif type == "cache_latency":
-            pass
+        elif type == "cache_io_workload":
+            new_values_list = values[-11:]
+            for new_value in new_values_list:
+                new_value.pop("id")
+                metric = new_value['metric']
+                if metric == 'cache_read':
+                    result.append(new_value)
+                elif metric == 'cache_read_miss':
+                    result.append(new_value)
+                elif metric == 'cache_write':
+                    result.append(new_value)
+                elif metric == 'cache_write_miss':
+                    result.append(new_value)
+                elif metric == 'cache_bw':
+                    result.append(new_value)
+                elif metric == 'cache_latency':
+                    result.append(new_value)
         return {'hs_performance_metrics': result}
 
 def create_resource(ext_mgr):

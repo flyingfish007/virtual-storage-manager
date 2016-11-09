@@ -352,3 +352,25 @@ def cache_action(request, rbd_id):
     print cache_action
     cache_action = json.dumps(cache_action)
     return HttpResponse(cache_action)
+
+def cache_io_workload(request, rbd_id):
+    result = vsmapi.\
+        get_hs_performance_metric_value_by_rbd_id_and_type(request, rbd_id, "cache_io_workload")
+
+    cache_io_workload = {}
+    for i in result:
+        if i.metric == "cache_read":
+            cache_io_workload['cache_read'] = i.value
+        elif i.metric == "cache_read_miss":
+            cache_io_workload['cache_read_miss'] = i.value
+        elif i.metric == "cache_write":
+            cache_io_workload['cache_write'] = i.value
+        elif i.metric == "cache_write_miss":
+            cache_io_workload['cache_write_miss'] = i.value
+        elif i.metric == "cache_bw":
+            cache_io_workload['cache_bw'] = i.value
+        elif i.metric == "cache_latency":
+            cache_io_workload['cache_latency'] = i.value
+
+    cache_io_workload = json.dumps(cache_io_workload)
+    return HttpResponse(cache_io_workload)

@@ -34,7 +34,61 @@
                     </div>
                 </div>
             </div>
-    </div>
+
+            <!--Cache I/O Workload-->
+            <div id="divCacheIOWorkload" class="vsm-block">
+                <h4 class="vsm-block-title">{% trans "Cache I/O Workload" %}</h4>
+                <div id="divCacheIOWorkloadContent" class="vsm-block-content">
+                    <table id="tCacheIOWorkloadInfo" style="width:470px;">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td style="width:30px;height:110px;font-size:28px;font-weight:bold;">BW: </td>
+                                        <td id="ldBW" style="width:80px;height:110px;font-size:28px;font-weight:bold;text-align:center;">--</td>
+                                        <td style="width:125px;height:110px;font-size:18px;">MB/s</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td style="width:60px;height:26px"></td>
+                                        <td style="width:85px;height:26px">Total IOPS</td>
+                                        <td style="width:5px;height:26px"></td>
+                                        <td style="width:85px;height:26px">Miss IOPS</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:60px;height:32px;text-align:center;">Read</td>
+                                        <td id="ldCacheReadIOPS" style="width:85px;height:26px;background-color:#CCCCCC;text-align:center;font-size:12px;font-weight:bold;">--</td>
+                                        <td style="width:5px;height:26px"></td>
+                                        <td id="ldCacheReadMissIOPS" style="width:85px;height:26px;background-color:#CCCCCC;text-align:center;font-size:12px;font-weight:bold;">--</td>
+                                    </tr>
+                                    <tr style="height: 5px;"></tr>
+                                    <tr>
+                                        <td style="width:60px;height:32px;text-align:center;">Write</td>
+                                        <td id="ldCacheWriteIOPS" style="width:85px;height:26px;background-color:#CCCCCC;text-align:center;font-size:12px;font-weight:bold;">--</td>
+                                        <td style="width:5px;height:26px"></td>
+                                        <td id="ldCacheWriteMissIOPS" style="width:85px;height:26px;background-color:#CCCCCC;text-align:center;font-size:12px;font-weight:bold;">--</td>
+                                    </tr>
+                                    <tr style="height: 5px;"></tr>
+                                    <tr>
+                                        <td style="width:60px;height:32px;text-align:center;">Total</td>
+                                        <td id="ldCacheTotalIOPS" style="width:85px;height:26px;background-color:#CCCCCC;text-align:center;font-size:12px;font-weight:bold;">--</td>
+                                        <td style="width:5px;height:26px"></td>
+                                        <td id="ldCacheTotalMissIOPS" style="width:85px;height:26px;background-color:#CCCCCC;text-align:center;font-size:12px;font-weight:bold;">--</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <span id="ldLatencyMark" style="min-width:50px;display:inline-block;margin-right:10px;">Latency:</span>
+                    <span id="ldLatency" class="vsm-label-90">--</span>
+                </div>
+            </div>
+        </div>
 
     <div id="divFooter" style="width:100%;height:60px;clear:both">
     </div>
