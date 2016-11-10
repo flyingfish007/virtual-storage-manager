@@ -644,3 +644,11 @@ class AgentAPI(vsm.openstack.common.rpc.proxy.RpcProxy):
                                                multiple_hosts=multiple_hosts),
                         topic, version='1.0', timeout=6000)
         return res
+
+    def rbd_get_by_rbd_name(self, context, host, rbd_name, pool_name):
+        topic = rpc.queue_get_for(context, self.topic, host)
+        res = self.call(context, self.make_msg('rbd_get_by_rbd_name',
+                                               rbd_name=rbd_name,
+                                               pool_name=pool_name),
+                        topic, version='1.0', timeout=6000)
+        return res

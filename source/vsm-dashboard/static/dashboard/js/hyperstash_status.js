@@ -23,13 +23,20 @@ require(
         loadCacheRatio(rbd_id);
         loadCacheAction(rbd_id);
         loadCacheIOWorkload(rbd_id);
+        loadRBDBasicInfo(rbd_id);
+        HidePageHeader();
         setInterval(function(){
             loadCacheRatio(rbd_id);
             loadCacheAction(rbd_id);
             loadCacheIOWorkload(rbd_id);
+            loadRBDBasicInfo(rbd_id);
         },refreshInterval);
     }
 );
+
+function HidePageHeader(){
+    $(".page-header").hide();
+}
 
 function loadCacheRatio(rbd_id){
     $.ajax({
@@ -80,6 +87,30 @@ function loadCacheIOWorkload(rbd_id){
             $("#ldCacheTotalIOPS")[0].innerHTML =Number(data.cache_read)+Number(data.cache_write);
             $("#ldCacheTotalMissIOPS")[0].innerHTML =Number(data.cache_read_miss)+Number(data.cache_write_miss);
             $("#ldLatency")[0].innerHTML =data.cache_latency;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            if(XMLHttpRequest.status == 401)
+                window.location.href = "/dashboard/auth/logout/";
+        }
+     });
+}
+
+function loadRBDBasicInfo(rbd_id){
+    $.ajax({
+        type: "get",
+        url: "/dashboard/vsm/hyperstash_status/"+rbd_id+"/get_rbd_basic_info",
+        data: null,
+        dataType:"json",
+        success: function(data){
+            $("#ldRBDName")[0].innerHTML =data.name;
+            $("#ldRBDObjects")[0].innerHTML =data.objects;
+            $("#ldRBDSize")[0].innerHTML =data.size;
+            $("#ldRBDOrder")[0].innerHTML =data.order;
+            $("#ldRBDObjectSize")[0].innerHTML =data.object_size;
+            $("#ldRBDFormat")[0].innerHTML =data.format;
+            $("#ldRBDPrefix")[0].innerHTML =data.block_name_prefix;
+            $("#ldRBDFeature")[0].innerHTML =data.features;
+            $("#ldRBDFlags")[0].innerHTML =data.flags;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             if(XMLHttpRequest.status == 401)

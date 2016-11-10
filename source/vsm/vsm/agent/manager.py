@@ -2786,3 +2786,7 @@ class AgentManager(manager.Manager):
             self._rgw_simple_create(context, name, host, keyring, log_file, rgw_frontends,
                                     is_ssl, s3_user_uid, s3_user_display_name, s3_user_email,
                                     swift_user_subuser, swift_user_access, swift_user_key_type)
+
+    def rbd_get_by_rbd_name(self, context, rbd_name, pool_name):
+        rbd_dict = self.ceph_driver.get_rbd_image_info(rbd_name, pool_name)
+        return rbd_dict

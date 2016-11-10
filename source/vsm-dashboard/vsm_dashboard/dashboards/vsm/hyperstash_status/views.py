@@ -348,8 +348,6 @@ def cache_action(request, rbd_id):
             cache_action['cache_flush'].append(value)
         elif i.metric == "cache_evict":
             cache_action['cache_evict'].append(value)
-    print "=================================="
-    print cache_action
     cache_action = json.dumps(cache_action)
     return HttpResponse(cache_action)
 
@@ -374,3 +372,34 @@ def cache_io_workload(request, rbd_id):
 
     cache_io_workload = json.dumps(cache_io_workload)
     return HttpResponse(cache_io_workload)
+
+def get_rbd_basic_info(request, rbd_id):
+    result = vsmapi.\
+        get_hs_performance_metric_value_by_rbd_id_and_type(request, rbd_id, "rbd_basic_info")
+    rbd = result[0]
+    rbd_basic_info = {}
+    rbd_basic_info['name'] = rbd.name
+    rbd_basic_info['size'] = rbd.size
+    rbd_basic_info['objects'] = rbd.objects
+    rbd_basic_info['order'] = rbd.order
+    rbd_basic_info['object_size'] = rbd.object_size
+    rbd_basic_info['block_name_prefix'] = rbd.block_name_prefix
+    rbd_basic_info['format'] = rbd.format
+    feature = rbd.features
+    f_str = ''
+    for _feature in feature:
+        if not f_str:
+            f_str = _feature
+        else:
+            f_str = f_str + ',' + _feature
+    rbd_basic_info['features'] = f_str
+    flags = rbd.flags
+    f_flag = ''
+    for _flag in flags:
+        if not f_flag:
+            f_flag = _flag
+        else:
+            f_flag = f_flag + ',' + _flag
+    rbd_basic_info['flags'] = f_flag
+    rbd_basic_info = json.dumps(rbd_basic_info)
+    return HttpResponse(rbd_basic_info)

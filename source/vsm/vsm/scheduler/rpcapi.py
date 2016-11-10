@@ -249,3 +249,8 @@ class SchedulerAPI(vsm.openstack.common.rpc.proxy.RpcProxy):
                                              display_name=display_name,
                                              email=email, sub_user=sub_user,
                                              access=access, key_type=key_type))
+
+    def rbd_get_by_rbd_name(self, ctxt, rbd_name, pool_name):
+        return self.call(ctxt, self.make_msg('rbd_get_by_rbd_name',
+                                             rbd_name=rbd_name,
+                                             pool_name=pool_name))

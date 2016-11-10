@@ -2131,3 +2131,18 @@ class SchedulerManager(manager.Manager):
         self._agent_rpcapi.rgw_create(context, host, server_name, rgw_instance_name,
                                       is_ssl, uid, display_name, email, sub_user,
                                       access, key_type)
+
+    def rbd_get_by_rbd_name(self, context, rbd_name, pool_name):
+        server_list = db.init_node_get_all(context)
+
+        active_monitor_list = []
+        for monitor_node in server_list:
+            if monitor_node['status'] == "Active" \
+               and "monitor" in monitor_node['type']:
+                active_monitor_list.append(monitor_node)
+
+        # select an active monitor
+        idx = random.randint(0, len(active_monitor_list)-1)
+        active_monitor = active_monitor_list[idx]
+        return self._agent_rpcapi.rbd_get_by_rbd_name(context, active_monitor['host'],
+                                                      rbd_name, pool_name)

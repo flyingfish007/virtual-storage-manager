@@ -180,3 +180,6 @@ class API(object):
         return self.scheduler_rpcapi.rgw_create(context, server_name, rgw_instance_name,
                                                 is_ssl, uid, display_name, email, sub_user,
                                                 access, key_type)
+
+    def rbd_get_by_rbd_name(self, context, rbd_name, pool_name):
+        return self.scheduler_rpcapi.rbd_get_by_rbd_name(context, rbd_name, pool_name)

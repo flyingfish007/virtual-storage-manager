@@ -3,8 +3,8 @@ import copy
 
 from vsm.api.openstack import wsgi
 from vsm import conductor
+from vsm import scheduler
 from vsm.openstack.common import log as logging
-from vsm import utils
 
 LOG = logging.getLogger(__name__)
 
@@ -14,6 +14,7 @@ class HsPerformanceMetric(wsgi.Controller):
 
     def __init__(self, ext_mgr):
         self.conductor_api = conductor.API()
+        self.scheduler_api = scheduler.API()
         self.ext_mgr = ext_mgr
         super(HsPerformanceMetric, self).__init__()
 
@@ -83,7 +84,19 @@ class HsPerformanceMetric(wsgi.Controller):
                     result.append(new_value)
                 elif metric == 'cache_latency':
                     result.append(new_value)
+        elif type == "rbd_basic_info":
+            result = self._get_rbd_basic_info(context, rbd_id)
         return {'hs_performance_metrics': result}
+
+    def _get_rbd_basic_info(self, context, rbd_id):
+        rbd = self.conductor_api.rbd_get(context, rbd_id)
+        LOG.info("=====================rbd: %s" % str(rbd))
+        pool_name = rbd['pool']
+        rbd_name = rbd['image']
+        rbd_dict = self.scheduler_api.rbd_get_by_rbd_name(context, rbd_name, pool_name)
+        result = []
+        result.append(rbd_dict)
+        return result
 
 def create_resource(ext_mgr):
     return wsgi.Resource(HsPerformanceMetric(ext_mgr))
