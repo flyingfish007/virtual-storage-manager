@@ -1,6 +1,4 @@
 
-import json
-
 from vsm_dashboard.api import vsm as vsmapi
 
 from django.utils.translation import ugettext_lazy as _
@@ -35,18 +33,6 @@ class DeleteAction(tables.DeleteAction):
 
     def delete(self, request, obj_id):
         return vsmapi.delete_hs_instance(request, obj_id)
-
-        # hs_instance_str = open("/opt/hyperstash_instances.json").read()
-        # hs_instance_json = json.loads(hs_instance_str)
-        # hs_instance_list = hs_instance_json['hs_instances']
-        # for hs_instance in hs_instance_list:
-        #     if int(hs_instance['id']) == int(obj_id):
-        #         hs_instance_list.remove(hs_instance)
-        # hs_instance_json['hs_instances'] = hs_instance_list
-        # hs_instance_str = json.dumps(hs_instance_json)
-        # with open("/opt/hyperstash_instances.json", "w") as file:
-        #     file.write(hs_instance_str)
-        #     file.close()
 
 class ListHyperstashInstanceTable(tables.DataTable):
 
