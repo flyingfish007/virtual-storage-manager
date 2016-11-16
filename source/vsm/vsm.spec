@@ -81,14 +81,14 @@ the creation and day-to-day management of Ceph cluster for
 cloud and datacenter storage administrators.
 
 %prep
-%setup -q -n vsm-%{version}
+%setup -q -n vsm-%{version}.%{release}
 
 %build
-export PBR_VERSION=%{version}
+export PBR_VERSION=%{version}.%{release}
 %{__python} setup.py build
 
 %install
-export PBR_VERSION=%{version}
+export PBR_VERSION=%{version}.%{release}
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
 
 #---------------------------

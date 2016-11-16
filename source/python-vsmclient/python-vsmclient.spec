@@ -26,14 +26,14 @@ vsmclient module), and a command-line script (vsm). Each implements
 100% of the vsm API.
 
 %prep
-%setup -q -n python-vsmclient-%{version}
+%setup -q -n python-vsmclient-%{version}.%{release}
 
 %build
-export PBR_VERSION=%{version}
+export PBR_VERSION=%{version}.%{release}
 %{__python} setup.py build
 
 %install
-export PBR_VERSION=%{version}
+export PBR_VERSION=%{version}.%{release}
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
 
 %files

@@ -54,7 +54,7 @@ VERSION=`cat VERSION`
 export VERSION
 RELEASE=`cat RELEASE`
 export RELEASE
-BUILD="${VERSION}-${RELEASE}"
+BUILD="${VERSION}.${RELEASE}"
 
 is_lsb_release=0
 lsb_release -a >/dev/null 2>&1 && is_lsb_release=1
