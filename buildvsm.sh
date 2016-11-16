@@ -56,8 +56,6 @@ RELEASE=`cat RELEASE`
 export RELEASE
 BUILD="${VERSION}-${RELEASE}"
 
-sed -i "s,Version: *.*,Version: $BUILD,g" $TOPDIR/source/vsm/PKG-INFO
-
 is_lsb_release=0
 lsb_release -a >/dev/null 2>&1 && is_lsb_release=1
 

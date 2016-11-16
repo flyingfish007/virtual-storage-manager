@@ -84,10 +84,11 @@ cloud and datacenter storage administrators.
 %setup -q -n vsm-%{version}
 
 %build
-#mkdir -p %{buildroot}
+export PBR_VERSION=%{version}
 %{__python} setup.py build
 
 %install
+export PBR_VERSION=%{version}
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
 
 #---------------------------
@@ -107,7 +108,6 @@ install -d -m 755 %{buildroot}%{_sysconfdir}/sudoers.d
 install -p -D -m 640 etc/vsm/vsm.conf.sample %{buildroot}%{_sysconfdir}/vsm/vsm.conf
 install -p -D -m 640 etc/vsm/ceph.conf.template %{buildroot}%{_sysconfdir}/vsm/ceph.conf.template
 install -p -D -m 640 etc/vsm/rootwrap.conf %{buildroot}%{_sysconfdir}/vsm/rootwrap.conf
-install -p -D -m 640 etc/vsm/cache-tier.conf %{buildroot}%{_sysconfdir}/vsm/cache-tier.conf
 install -p -D -m 640 etc/vsm/api-paste.ini %{buildroot}%{_sysconfdir}/vsm/api-paste.ini
 install -p -D -m 640 etc/vsm/policy.json %{buildroot}%{_sysconfdir}/vsm/policy.json
 install -p -D -m 640 etc/vsm/logging_sample.conf %{buildroot}%{_sysconfdir}/vsm/logging.conf
@@ -147,6 +147,8 @@ install -p -D -m 755 bin/vsm-physical %{buildroot}%{_bindir}/vsm-physical
 install -p -D -m 755 bin/vsm-conductor %{buildroot}%{_bindir}/vsm-conductor
 install -p -D -m 755 bin/vsm-scheduler %{buildroot}%{_bindir}/vsm-scheduler
 install -p -D -m 755 bin/vsm-rootwrap %{buildroot}%{_bindir}/vsm-rootwrap
+install -p -D -m 755 bin/vsm-all %{buildroot}%{_bindir}/vsm-all
+install -p -D -m 755 bin/vsm-manage %{buildroot}%{_bindir}/vsm-manage
 install -p -D -m 755 bin/key %{buildroot}%{_bindir}/key
 install -p -D -m 755 bin/auto_key_gen %{buildroot}%{_bindir}/auto_key_gen
 install -p -D -m 755 bin/vsm-assist %{buildroot}%{_bindir}/vsm-assist
@@ -155,8 +157,6 @@ install -p -D -m 755 bin/rbd_ls %{buildroot}%{_bindir}/rbd_ls
 install -p -D -m 755 bin/check_xtrust_crudini %{buildroot}%{_usr}/local/bin/check_xtrust_crudini
 install -p -D -m 755 bin/vsm-ceph-upgrade %{buildroot}%{_bindir}/vsm-ceph-upgrade
 install -p -D -m 755 bin/nvme %{buildroot}%{_usr}/sbin/nvme
-
-install -p -D -m 755 tools/get_storage %{buildroot}%{_usr}/local/bin/get_storage
 
 %pre
 getent group vsm >/dev/null || groupadd -r vsm --gid 165
@@ -178,10 +178,9 @@ fi
 
 exit 0
 
-
 %files
 %defattr(-,root,root,-)
-%doc LICENSE doc
+%doc LICENSE
 %{python_sitelib}/*
 
 %dir %{_sysconfdir}/logrotate.d
@@ -195,7 +194,6 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_sysconfdir}/vsm/rootwrap.conf
 %config(noreplace) %attr(-, root, vsm) %{_sysconfdir}/vsm/policy.json
 %config(noreplace) %attr(-, root, vsm) %{_sysconfdir}/vsm/logging.conf
-%config(noreplace) %attr(-, root, vsm) %{_sysconfdir}/vsm/cache-tier.conf
 %dir %{_sysconfdir}/vsm/rootwrap.d
 %config(noreplace) %attr(-, root, vsm) %{_sysconfdir}/vsm/rootwrap.d/vsm.filters
 
@@ -228,9 +226,6 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_usr}/sbin/nvme
 
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/check_xtrust_crudini
-
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/get_storage
-
 
 #-----------------------------
 # Prepools
