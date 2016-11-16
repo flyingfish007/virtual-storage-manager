@@ -81,7 +81,7 @@ the creation and day-to-day management of Ceph cluster for
 cloud and datacenter storage administrators.
 
 %prep
-%setup -q -n vsm-%{version}.%{release}
+%setup -q -n vsm-%{version}
 
 %build
 export PBR_VERSION=%{version}.%{release}
