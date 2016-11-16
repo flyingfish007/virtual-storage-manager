@@ -27,8 +27,6 @@ vsmclient module), and a command-line script (vsm). Each implements
 
 %prep
 %setup -q
-sed -i '/setup_requires/d; /install_requires/d; /dependency_links/d' setup.py
-rm -rf python_vsmclient.egg-info
 
 %build
 %{__python} setup.py build
