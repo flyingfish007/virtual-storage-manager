@@ -58,9 +58,6 @@ cluster_manifest
 #---------------------------------------------
 # Repo
 #---------------------------------------------
-if [ -z "$NET_DEV" ]; then
-    NET_DEV=eth0
-fi   
 
 HOST_IP=`nic_ip ${NET_DEV}`
 REPO_HOST=${REPO_HOST:-$HOST_IP}
@@ -135,16 +132,10 @@ sed -i "/exit/d" /etc/rc.d/rc.local
 sed -i "/service vsm-api restart/d" /etc/rc.d/rc.local
 sed -i "/service vsm-scheduler restart/d" /etc/rc.d/rc.local
 sed -i "/service vsm-conductor restart/d" /etc/rc.d/rc.local
-sed -i "/service httpd restart/d" /etc/rc.d/rc.local
-sed -i "/service rabbitmq-server restart/d" /etc/rc.d/rc.local
-sed -i "/service mysql restart/d" /etc/rc.d/rc.local
 
-echo "service mysql restart" >> /etc/rc.d/rc.local
-echo "service rabbitmq-server restart" >> /etc/rc.d/rc.local
 echo "service vsm-api restart" >> /etc/rc.d/rc.local
 echo "service vsm-scheduler restart" >> /etc/rc.d/rc.local
 echo "service vsm-conductor restart" >> /etc/rc.d/rc.local
-echo "service httpd restart" >> /etc/rc.d/rc.local
 echo "exit 0" >> /etc/rc.d/rc.local
 
 chmod +x /etc/rc.d/rc.local

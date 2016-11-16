@@ -2,18 +2,13 @@
 %define release %{getenv:RELEASE}
 
 Name:             python-vsmclient
-%if 0%{?suse_version}
-Version:          2.0.0
-Release:          217
-%else
 Version:          %{version}
 Release:          %{release}
-%endif
-Summary:          Python API and CLI for VSM
+Summary:          Python API and CLI for  vsm
 
 Group:            Development/Languages
-License:          Apache License 2.0
-URL:              http://github.com/01org/virtual-storage-manager
+License:          Intel Reserved
+URL:              http://intel.com/itflex
 Source:           %{name}-%{version}.tar.gz
 
 #
@@ -21,15 +16,10 @@ Source:           %{name}-%{version}.tar.gz
 #
 BuildArch:        noarch
 BuildRequires:    python-setuptools
-BuildRequires:    python-argparse
 BuildRequires:    python-prettytable
 BuildRequires:    python-requests
 BuildRequires:    python-simplejson
-%if 0%{?suse_version}
-BuildRequires:    fdupes
-%else
 Requires:         python-httplib2
-%endif
 Requires:         python-prettytable
 Requires:         python-setuptools
 
@@ -51,10 +41,6 @@ rm -rf python_vsmclient.egg-info
 
 # Delete tests
 rm -fr %{buildroot}%{python_sitelib}/tests
-
-%if 0%{?suse_version}
-%fdupes %{buildroot}
-%endif
 
 %files
 %doc LICENSE
