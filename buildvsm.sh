@@ -56,7 +56,6 @@ RELEASE=`cat RELEASE`
 export RELEASE
 BUILD="${VERSION}-${RELEASE}"
 
-sed -i "s,Version: *.*,Version: $BUILD,g" $TOPDIR/source/python-vsmclient/PKG-INFO
 sed -i "s,Version: *.*,Version: $BUILD,g" $TOPDIR/source/vsm/PKG-INFO
 
 is_lsb_release=0
