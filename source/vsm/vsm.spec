@@ -1,4 +1,3 @@
-%global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 %define version %{getenv:VERSION}
 %define release %{getenv:RELEASE}
 %define _binaries_in_noarch_packages_terminate_build 0
@@ -76,36 +75,16 @@ Requires:    python-psutil
 Requires:    mod_ssl
 
 %description
-Virtual Storage Manager (VSM) is software that Intel has developed to help manage Ceph clusters. VSM simplifies the creation and day-to-day management of Ceph cluster for cloud and datacenter storage administrators.
-
-%if 0%{?with_doc}
-%package doc
-Summary:          Documentation for Virtual Storage Manager for Ceph
-Group:            Documentation
-
-#Requires:         %{name} = %{version}-%{release}
-BuildRequires:    graphviz
-BuildRequires:    python-eventlet
-BuildRequires:    python-routes
-BuildRequires:    python-sqlalchemy
-BuildRequires:    python-webob
-BuildRequires:    python-migrate
-BuildRequires:    python-iso8601
-
-%description      doc
-OpenStack Volume (codename Cinder) provides services to manage and
-access block storage volumes for use by Virtual Machine instances.
-
-This package contains documentation files for vsm.
-%endif
+Virtual Storage Manager (VSM) is software that Intel
+has developed to help manage Ceph clusters. VSM simplifies
+the creation and day-to-day management of Ceph cluster for
+cloud and datacenter storage administrators.
 
 %prep
-%setup -q -n %{name}-%{version}
-sed -i '/setup_requires/d; /install_requires/d; /dependency_links/d' setup.py
+%setup -q -n vsm-%{version}
 
 %build
-
-mkdir -p %{buildroot}
+#mkdir -p %{buildroot}
 %{__python} setup.py build
 
 %install
@@ -135,13 +114,6 @@ install -p -D -m 640 etc/vsm/logging_sample.conf %{buildroot}%{_sysconfdir}/vsm/
 install -p -D -m 640 etc/vsm/rootwrap.d/vsm.filters %{buildroot}%{_sysconfdir}/vsm/rootwrap.d/vsm.filters
 install -p -D -m 440 etc/sudoers.d/vsm %{buildroot}%{_sysconfdir}/sudoers.d/vsm
 install -p -D -m 640 etc/logrotate.d/vsmceph %{buildroot}%{_sysconfdir}/logrotate.d/vsmceph
-
-#---------------------------
-#  SSH Keys
-#---------------------------
-# TODO check this line whether is needed
-#cp -rf etc/vsm/*.sh %{buildroot}%{_sysconfdir}/vsm/
-
 
 #---------------------------
 #  Prepools
