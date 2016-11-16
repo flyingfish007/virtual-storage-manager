@@ -4,16 +4,13 @@
 Name:             python-vsmclient
 Version:          %{version}
 Release:          %{release}
-Summary:          Python API and CLI for  vsm
+Summary:          Python API and CLI for vsm
 
 Group:            Development/Languages
 License:          Intel Reserved
 URL:              http://intel.com/itflex
 Source:           %{name}-%{version}.tar.gz
 
-#
-# patches_base=1.0.1
-#
 BuildArch:        noarch
 BuildRequires:    python-setuptools
 BuildRequires:    python-prettytable
@@ -24,9 +21,9 @@ Requires:         python-prettytable
 Requires:         python-setuptools
 
 %description
-This is a client for the  vsm API. There's a Python API (the
+This is a client for the vsm API. There's a Python API (the
 vsmclient module), and a command-line script (vsm). Each implements
-100% of the  vsm API.
+100% of the vsm API.
 
 %prep
 %setup -q
@@ -38,9 +35,6 @@ rm -rf python_vsmclient.egg-info
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
-
-# Delete tests
-rm -fr %{buildroot}%{python_sitelib}/tests
 
 %files
 %doc LICENSE
