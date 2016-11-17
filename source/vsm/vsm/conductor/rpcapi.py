@@ -426,17 +426,6 @@ class ConductorAPI(vsm.openstack.common.rpc.proxy.RpcProxy):
         return self.call(context,self.make_msg('get_cpu_usage', \
                                search_opts=search_opts))
 
-    def get_poolusage(self, context, poolusage_id):
-        return self.call(context, self.make_msg('get_poolusage',
-                                                poolusage_id=poolusage_id))
-
-    def get_appnode(self, context, appnode_id):
-        return self.call(context, self.make_msg('get_appnode',
-                                                appnode_id=appnode_id))
-
-    def delete_pool_usage(self, context, poolusage_id):
-        return self.call(context, self.make_msg('delete_pool_usage',
-                                                poolusage_id=poolusage_id))
 
     def hs_instance_get_all(self, context):
         return self.call(context, self.make_msg('hs_instance_get_all'))

@@ -214,28 +214,6 @@ def storage_get_all_by_host(context, host):
     """Get all storages belonging to a host."""
     return IMPL.storage_get_all_by_host(context, host)
 
-def storage_get_all_by_instance_uuid(context, instance_uuid):
-    """Get all storages belonging to a instance."""
-    return IMPL.storage_get_all_by_instance_uuid(context, instance_uuid)
-
-def storage_get_all_by_project(context, project_id, marker, limit, sort_key,
-                              sort_dir):
-    """Get all storages belonging to a project."""
-    return IMPL.storage_get_all_by_project(context, project_id, marker, limit,
-                                          sort_key, sort_dir)
-
-def storage_get_iscsi_target_num(context, storage_id):
-    """Get the target num (tid) allocated to the storage."""
-    return IMPL.storage_get_iscsi_target_num(context, storage_id)
-
-def storage_update(context, storage_id, values):
-    """Set the given properties on an storage and update it.
-
-    Raises NotFound if storage does not exist.
-
-    """
-    return IMPL.storage_update(context, storage_id, values)
-
 ####################
 
 def snapshot_create(context, values):
@@ -290,194 +268,6 @@ def snapshot_metadata_update(context, snapshot_id, metadata, delete):
     """Update metadata if it exists, otherwise create it."""
     IMPL.snapshot_metadata_update(context, snapshot_id, metadata, delete)
 
-####################
-
-def storage_metadata_get(context, storage_id):
-    """Get all metadata for a storage."""
-    return IMPL.storage_metadata_get(context, storage_id)
-
-def storage_metadata_delete(context, storage_id, key):
-    """Delete the given metadata item."""
-    IMPL.storage_metadata_delete(context, storage_id, key)
-
-def storage_metadata_update(context, storage_id, metadata, delete):
-    """Update metadata if it exists, otherwise create it."""
-    IMPL.storage_metadata_update(context, storage_id, metadata, delete)
-
-##################
-
-def storage_type_create(context, values):
-    """Create a new storage type."""
-    return IMPL.storage_type_create(context, values)
-
-def storage_type_get_all(context, inactive=False):
-    """Get all storage types."""
-    return IMPL.storage_type_get_all(context, inactive)
-
-def storage_type_get(context, id):
-    """Get storage type by id."""
-    return IMPL.storage_type_get(context, id)
-
-def storage_type_get_by_name(context, name):
-    """Get storage type by name."""
-    return IMPL.storage_type_get_by_name(context, name)
-
-def storage_type_destroy(context, id):
-    """Delete a storage type."""
-    return IMPL.storage_type_destroy(context, id)
-
-def storage_get_active_by_window(context, begin, end=None, project_id=None):
-    """Get all the storages inside the window.
-
-    Specifying a project_id will filter for a certain project."""
-    return IMPL.storage_get_active_by_window(context, begin, end, project_id)
-
-####################
-
-def storage_type_extra_specs_get(context, storage_type_id):
-    """Get all extra specs for a storage type."""
-    return IMPL.storage_type_extra_specs_get(context, storage_type_id)
-
-def storage_type_extra_specs_delete(context, storage_type_id, key):
-    """Delete the given extra specs item."""
-    IMPL.storage_type_extra_specs_delete(context, storage_type_id, key)
-
-def storage_type_extra_specs_update_or_create(context,
-                                             storage_type_id,
-                                             extra_specs):
-    """Create or update storage type extra specs. This adds or modifies the
-    key/value pairs specified in the extra specs dict argument"""
-    IMPL.storage_type_extra_specs_update_or_create(context,
-                                                  storage_type_id,
-                                                  extra_specs)
-
-###################
-
-def storage_glance_metadata_create(context, storage_id, key, value):
-    """Update the Glance metadata for the specified storage."""
-    return IMPL.storage_glance_metadata_create(context,
-                                              storage_id,
-                                              key,
-                                              value)
-
-def storage_glance_metadata_get(context, storage_id):
-    """Return the glance metadata for a storage."""
-    return IMPL.storage_glance_metadata_get(context, storage_id)
-
-def storage_snapshot_glance_metadata_get(context, snapshot_id):
-    """Return the Glance metadata for the specified snapshot."""
-    return IMPL.storage_snapshot_glance_metadata_get(context, snapshot_id)
-
-def storage_glance_metadata_copy_to_snapshot(context, snapshot_id, storage_id):
-    """
-    Update the Glance metadata for a snapshot by copying all of the key:value
-    pairs from the originating storage. This is so that a storage created from
-    the snapshot will retain the original metadata.
-    """
-    return IMPL.storage_glance_metadata_copy_to_snapshot(context, snapshot_id,
-                                                        storage_id)
-
-def storage_glance_metadata_copy_to_storage(context, storage_id, snapshot_id):
-    """
-    Update the Glance metadata from a storage (created from a snapshot) by
-    copying all of the key:value pairs from the originating snapshot. This is
-    so that the Glance metadata from the original storage is retained.
-    """
-    return IMPL.storage_glance_metadata_copy_to_storage(context, storage_id,
-                                                      snapshot_id)
-
-def storage_glance_metadata_delete_by_storage(context, storage_id):
-    """Delete the glance metadata for a storage."""
-    return IMPL.storage_glance_metadata_delete_by_storage(context, storage_id)
-
-def storage_glance_metadata_delete_by_snapshot(context, snapshot_id):
-    """Delete the glance metadata for a snapshot."""
-    return IMPL.storage_glance_metadata_delete_by_snapshot(context, snapshot_id)
-
-def storage_glance_metadata_copy_from_storage_to_storage(context,
-                                                      src_storage_id,
-                                                      storage_id):
-    """
-    Update the Glance metadata for a storage by copying all of the key:value
-    pairs from the originating storage. This is so that a storage created from
-    the storage (clone) will retain the original metadata.
-    """
-    return IMPL.storage_glance_metadata_copy_from_storage_to_storage(
-        context,
-        src_storage_id,
-        storage_id)
-
-###################
-
-def sm_backend_conf_create(context, values):
-    """Create a new SM Backend Config entry."""
-    return IMPL.sm_backend_conf_create(context, values)
-
-def sm_backend_conf_update(context, sm_backend_conf_id, values):
-    """Update a SM Backend Config entry."""
-    return IMPL.sm_backend_conf_update(context, sm_backend_conf_id, values)
-
-def sm_backend_conf_delete(context, sm_backend_conf_id):
-    """Delete a SM Backend Config."""
-    return IMPL.sm_backend_conf_delete(context, sm_backend_conf_id)
-
-def sm_backend_conf_get(context, sm_backend_conf_id):
-    """Get a specific SM Backend Config."""
-    return IMPL.sm_backend_conf_get(context, sm_backend_conf_id)
-
-def sm_backend_conf_get_by_sr(context, sr_uuid):
-    """Get a specific SM Backend Config."""
-    return IMPL.sm_backend_conf_get_by_sr(context, sr_uuid)
-
-def sm_backend_conf_get_all(context):
-    """Get all SM Backend Configs."""
-    return IMPL.sm_backend_conf_get_all(context)
-
-####################
-
-def sm_flavor_create(context, values):
-    """Create a new SM Flavor entry."""
-    return IMPL.sm_flavor_create(context, values)
-
-def sm_flavor_update(context, sm_flavor_id, values):
-    """Update a SM Flavor entry."""
-    return IMPL.sm_flavor_update(context, values)
-
-def sm_flavor_delete(context, sm_flavor_id):
-    """Delete a SM Flavor."""
-    return IMPL.sm_flavor_delete(context, sm_flavor_id)
-
-def sm_flavor_get(context, sm_flavor):
-    """Get a specific SM Flavor."""
-    return IMPL.sm_flavor_get(context, sm_flavor)
-
-def sm_flavor_get_all(context):
-    """Get all SM Flavors."""
-    return IMPL.sm_flavor_get_all(context)
-
-####################
-
-def sm_storage_create(context, values):
-    """Create a new child Zone entry."""
-    return IMPL.sm_storage_create(context, values)
-
-def sm_storage_update(context, storage_id, values):
-    """Update a child Zone entry."""
-    return IMPL.sm_storage_update(context, values)
-
-def sm_storage_delete(context, storage_id):
-    """Delete a child Zone."""
-    return IMPL.sm_storage_delete(context, storage_id)
-
-def sm_storage_get(context, storage_id):
-    """Get a specific child Zone."""
-    return IMPL.sm_storage_get(context, storage_id)
-
-def sm_storage_get_all(context):
-    """Get all child Zones."""
-    return IMPL.sm_storage_get_all(context)
-
-###################
 
 def quota_create(context, project_id, resource, limit):
     """Create a quota for the given project and resource."""
@@ -1104,21 +894,6 @@ def zone_update_or_create(context, values):
 def storage_group_update_or_create(context, values):
     return IMPL.storage_group_update_or_create(context, values)
 
-#region vsmapp db APIs
-def appnodes_get_by_id(context, id):
-    return IMPL.appnodes_get_by_id(context, id)
-
-def appnodes_get_all(context):
-    return IMPL.appnodes_get_all(context)
-
-def appnodes_create(context, values, allow_duplicate=False):
-    return IMPL.appnodes_create(context, values, allow_duplicate)
-
-def appnodes_update(context, appnode_id, values):
-    return IMPL.appnodes_update(context, appnode_id, values)
-
-def appnodes_destroy(context, appnode_id=None):
-    return IMPL.appnodes_destroy(context, appnode_id)
 
 def vsmapps_get_by_user(context):
     return IMPL.vsmapps_get_by_user(context)
@@ -1127,22 +902,10 @@ def vsmapps_get_by_id(context, vsmapp_id):
     return IMPL.vsmapps_get_by_id(context, vsmapp_id)
 #endregion
 
-#region storage pool usage db APIs
-def storage_pool_usage_create(context, pools):
-    return IMPL.sp_usage_create(context, pools)
-
-def storage_pool_usage_update(context, usage_id, values):
-    return IMPL.sp_usage_update(context, usage_id, values)
 
 def get_storage_pool_usage(context):
     return IMPL.get_sp_usage(context)
 
-def get_sp_usage_by_poolid_vsmappid(context, pool_id, vsmapp_id):
-    return IMPL.get_sp_usage_by_poolid_vsmappid(context, pool_id, vsmapp_id)
-
-def destroy_storage_pool_usage(context, id):
-    return IMPL.sp_usage_destroy(context, id)
-#endregion
 
 #region summary api
 def summary_create(context, values):
@@ -1315,9 +1078,6 @@ def get_bandwidth_all_types(context, search_opts):
 def clean_performance_history_data(context,days):
     return IMPL.clean_performance_history_data(context,days)
 
-def get_poolusage(context, poolusage_id):
-    return IMPL.get_poolusage(context, poolusage_id=poolusage_id)
-#endregion
 
 def hs_instance_get_all(context):
     return IMPL.hs_instance_get_all(context)

@@ -24,7 +24,6 @@ from vsm import db
 from vsm.openstack.common import log as logging
 from vsm.api.views import agents as agents_views
 from vsm import context
-from vsm.agent import appnodes
 from vsm.manifest.parser import ManifestParser
 from vsm.openstack.common.db import exception as db_exc
 
@@ -311,30 +310,6 @@ class AgentsController(wsgi.Controller):
 
         return ret
 
-    def _write_openstack_ip(self):
-        """ Write Openstack nova controller ips
-            and cinder volume ips into DB.
-
-         Openstack Ips:
-            10.239.82.xx
-            10.239.82.yy
-         Just write Ip addr here.
-        """
-        ip_list = self._cluster_info['openstack_ip']
-        if ip_list:
-            try:
-                # fake one user id and project id
-                self._context.user_id = 32 * '1'
-                self._context.project_id = 32 * '1'
-                node_list = appnodes.create(self._context, ip_list, allow_duplicate=True)
-                #LOG.debug('app nodes added %s' % node_list)
-                for node in node_list:
-                    status = 'reachable'
-                    appnodes.update(self._context, node.id, status)
-            except Exception as e:
-                LOG.error('Failed to add app nodes with error %s' % e)
-                return False
-        return True
 
     def _write_storage_groups(self):
         """Write storage groups into DB.
@@ -391,14 +366,13 @@ class AgentsController(wsgi.Controller):
         write_cluster_ret = self._write_cluster_info()
         write_zone_ret = self._write_zone_info()
         write_storage_groups = self._write_storage_groups()
-        write_openstack_ip = self._write_openstack_ip()
         write_settings = self._write_vsm_settings()
         write_ec_profiles = self._write_ec_profiles()
         write_cache_tier_defaults = self._write_cache_tier_defaults()
 
         self._have_write_cluter_into_db = \
             write_cluster_ret and write_zone_ret \
-            and write_storage_groups and write_openstack_ip \
+            and write_storage_groups \
             and write_settings and write_ec_profiles \
             and write_cache_tier_defaults
 

@@ -60,12 +60,6 @@ class SchedulerAPI(vsm.openstack.common.rpc.proxy.RpcProxy):
         ret = self.call(ctxt, self.make_msg('list_storage_pool'))
         return ret
 
-    def present_storage_pools(self, ctxt, body=None):
-        ret = self.cast(ctxt, self.make_msg('present_storage_pools', body=body))
-        return ret
-
-    def revoke_storage_pool(self, ctxt, id):
-        self.call(ctxt, self.make_msg('revoke_storage_pool', id=id))
 
     def get_storage_group_list(self, ctxt):
         ret = self.call(ctxt, self.make_msg('get_storage_group_list'))

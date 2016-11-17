@@ -493,67 +493,6 @@ class AgentManager(manager.Manager):
         res = self.ceph_driver.create_storage_pool(context, body)
         return res
 
-    def present_storage_pools(self, context, body=None):
-        vsmapp_id = body[0]['vsmapp_id']
-        values = {'attach_status': 'success'}
-        try:
-            LOG.info(' PRESENT POOL BEGIN!')
-            self.ceph_driver.present_storage_pools(context, body)
-            LOG.info(' PRESENT POOL OVER!')
-            for pool in body:
-                sp_usage_ref = db.get_sp_usage_by_poolid_vsmappid(context, pool['pool_id'], vsmapp_id)
-                db.storage_pool_usage_update(context, sp_usage_ref['id'], values)
-
-            return values
-        except:
-            LOG.info(' PRESENT POOL FAILED')
-            values = {'attach_status': 'failed'}
-            for pool in body:
-                sp_usage_ref = db.get_sp_usage_by_poolid_vsmappid(context, pool['pool_id'], vsmapp_id)
-                db.storage_pool_usage_update(context, sp_usage_ref['id'], values)
-            return values
-
-    def revoke_storage_pool(self, context, id):
-        LOG.info("Start to revoke storage pool from openstack cinder")
-
-        poolusage = self._conductor_rpcapi.get_poolusage(context, id)
-        cinder_volume_host = poolusage.get('cinder_volume_host')
-        appnode_id = poolusage.get('appnode_id')
-        appnode = self._conductor_rpcapi.get_appnode(context, appnode_id)
-        uuid = appnode.get('uuid')
-        pool_id = poolusage.get('pool_id')
-        storagepool = self._conductor_rpcapi.get_storage_pool(context, pool_id)
-        pool_name = storagepool.get('name')
-        pool_storage_class = storagepool.get('storage_group').get('storage_class')
-
-        type_name = pool_storage_class + "-" + pool_name
-        self.ceph_driver.delete_cinder_type(context, type_name,
-                                            username=appnode.get('os_username'),
-                                            password=appnode.get('os_password'),
-                                            tenant_name = appnode.get('os_tenant_name'),
-                                            auth_url=appnode.get('os_auth_url'),
-                                            region_name=appnode.get('os_region_name'))
-
-        auth_host = appnode.get('os_auth_url').split(":")[1][2:]
-        ssh_user = appnode.get('ssh_user')
-        self.ceph_driver.revoke_storage_pool_from_cinder_conf(context, auth_host,
-                                                              cinder_volume_host,
-                                                              ssh_user, pool_name)
-
-        entity = "client." + uuid
-        auth_caps = self.ceph_driver.auth_get(context, entity)
-
-        osd_caps = auth_caps["caps"]["osd"]
-        osd_caps_list = osd_caps.split(",")
-        for caps in osd_caps_list:
-            if pool_name in caps:
-                osd_caps_list.remove(caps)
-        new_osd_caps = ",".join(osd_caps_list)
-        self.ceph_driver.auth_caps(context, entity, mon=auth_caps["caps"]["mon"],
-                                   osd=new_osd_caps)
-
-        self._conductor_rpcapi.delete_pool_usage(context, id)
-        LOG.info("Succeed to revoke storage pool from openstack cinder")
 
     def _get_info_dict(self, context):
         """Get info dict from DB."""
@@ -649,7 +588,6 @@ class AgentManager(manager.Manager):
         _try_pass(self.update_pg_and_pgp)
         _try_pass(self.update_pg_status)
         _try_pass(self.update_ec_profiles)
-        _try_pass(self.update_pool_usage)
         _try_pass(self.update_mon_health)
         _try_pass(self.update_server_status)
         _try_pass(self.update_ceph_status)
@@ -1145,7 +1083,6 @@ class AgentManager(manager.Manager):
     @utils.pass_lock('4663a886-1faf-4eed-9927-8d76d49ae8f3')
     def update_pool_state(self, context):
         self.update_pool_stats(context)
-        self.update_pool_usage(context)
         self.update_pool_status(context)
 
     #@require_active_host
@@ -1528,28 +1465,6 @@ class AgentManager(manager.Manager):
             for pg in pg_list:
                 db.pg_update_or_create(context, pg)
 
-    #@require_active_host
-    @periodic_task(run_immediately=True, service_topic=FLAGS.agent_topic,
-                   spacing=_get_interval_time('ceph_pg_dump_osds'))
-    def update_pool_usage(self, context):
-        pool_usage = self.ceph_driver.get_pool_usage()
-        #TODO: need to list pools by cluster id
-        pools = self._conductor_rpcapi.list_storage_pool(context)
-        if pools:
-            #LOG.debug('Update pool usage.')
-            pool_ids = [pool.get('pool_id') for pool in pools.values()]
-            for usage in pool_usage:
-                pid = usage.get('poolid')
-                if pid in pool_ids:
-                    values = usage.get('stat_sum')
-                    if values:
-                        values['pool_id'] = pid
-                        #LOG.debug('pool usage values %s ' % values)
-                        self._conductor_rpcapi.update_storage_pool(context, pid, values)
-                    else:
-                        LOG.info('No stat sum for pool %s.' % pid)
-                else:
-                    LOG.info('pool %s does not exist in the existing pool list.' % pid)
 
     #@require_active_host
     @periodic_task(run_immediately=True, service_topic=FLAGS.agent_topic,

@@ -640,14 +640,6 @@ class ConductorManager(manager.Manager):
     def get_cpu_usage(self, context, search_opts):
         return db.get_cpu_usage(context, search_opts=search_opts)
 
-    def get_poolusage(self, context, poolusage_id):
-        return db.get_poolusage(context, poolusage_id=poolusage_id)
-
-    def get_appnode(self, context, appnode_id):
-        return db.appnodes_get_by_id(context, appnode_id)
-
-    def delete_pool_usage(self, context, poolusage_id):
-        return db.destroy_storage_pool_usage(context, poolusage_id)
 
     def hs_instance_get_all(self, context):
         return db.hs_instance_get_all(context)

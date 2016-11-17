@@ -146,8 +146,6 @@ class PolicyNotAuthorized(NotAuthorized):
 class ImageNotAuthorized(VsmException):
     message = _("Not authorized for image %(image_id)s.")
 
-class AppNodeNotAuthorized(NotAuthorized):
-    message = _("Not authorized for Appnodes.")
 
 class Invalid(VsmException):
     message = _("Unacceptable parameters.")
@@ -508,21 +506,11 @@ class InvalidBackup(Invalid):
 class SwiftConnectionFailed(VsmException):
     message = _("Connection to swift failed") + ": %(reason)s"
 
-class AppNodeNotFound(NotFound):
-    message = _("App Node %(appnode_id) could not be found.")
 
 class VsmappNotFound(NotFound):
     code = "E-AB30"
     message = _("Vsm app could not be found under the account.")
 
-class AppNodeInvalidInfo(Invalid):
-    message = _("Invalid request for App nodes.")
-
-class DuplicateAppnode(VsmException):
-    message = _("App node %(ip) already exists: %(err)s.")
-
-class AppNodeFailure(VsmException):
-    message = _("Failure on app nodes db operations") + ": %(reason)s"
 
 class DuplicateVsmApp(VsmException):
     message = _("Vsmapp for project %(id) already exists: %(err)s.")

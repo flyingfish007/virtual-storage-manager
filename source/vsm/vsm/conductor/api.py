@@ -323,11 +323,6 @@ class API(object):
     def get_cpu_usage(self, context, search_opts):
         return self.conductor_rpcapi.get_cpu_usage(context, search_opts)
 
-    def get_poolusage(self, context, poolusage_id):
-        return self.conductor_rpcapi.get_poolusage(context, poolusage_id)
-
-    def get_appnode(self, context, id):
-        return self.conductor_rpcapi.get_appnode(context, id)
 
     def hs_instance_get_all(self, context):
         return self.conductor_rpcapi.hs_instance_get_all(context)

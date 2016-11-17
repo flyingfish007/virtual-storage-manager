@@ -22,7 +22,6 @@ WSGI middleware for OpenStack Hardware API.
 from vsm.api import extensions
 import vsm.api.openstack
 from vsm.api.v1 import limits
-from vsm.api.v1 import types
 from vsm.api import versions
 from vsm.api.v1 import conductor
 from vsm.api.v1 import storage_pool
@@ -32,7 +31,6 @@ from vsm.api.v1 import zones
 from vsm.api.v1 import agents
 from vsm.api.v1 import osds
 from vsm.api.v1 import mdses
-from vsm.api.v1 import monitors 
 from vsm.api.v1 import placement_groups
 from vsm.api.v1 import storage_groups
 from vsm.api.v1 import rbd_pools
@@ -42,7 +40,6 @@ from vsm.api.v1 import vsm_settings
 from vsm.api.v1 import vsms
 from vsm.api.v1 import licenses
 from vsm.api.v1 import performance_metrics
-from vsm.api.contrib import poolusages
 from vsm.api.v1 import ec_profiles
 from vsm.api.v1 import rgw
 from vsm.api.v1 import hs_instances
@@ -68,9 +65,6 @@ class APIRouter(vsm.api.openstack.APIRouter):
 
         mapper.redirect("", "/")
 
-        self.resources['types'] = types.create_resource()
-        mapper.resource("type", "types",
-                        controller=self.resources['types'])
 
         self.resources['limits'] = limits.create_resource()
         mapper.resource("limit", "limits",
@@ -244,11 +238,6 @@ class APIRouter(vsm.api.openstack.APIRouter):
                                     },
                         member={'action':'post'})
 
-        self.resources['poolusages'] = poolusages.create_resource(ext_mgr)
-        mapper.resource("poolusages", "poolusages",
-                        controller=self.resources['poolusages'],
-                        collection={'revoke_pool': "post"},
-                        member={'action':'post'})
 
         self.resources['ec_profiles'] = ec_profiles.create_resource(ext_mgr)
         mapper.resource("ec_profiles", "ec_profiles",
