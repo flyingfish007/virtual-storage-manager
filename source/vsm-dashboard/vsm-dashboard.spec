@@ -122,9 +122,6 @@ chown -R apache:apache %{_datadir}/vsm-dashboard
 chown -R apache:apache %{_sysconfdir}/vsm-dashboard
 chown -R apache:apache %{_sysconfdir}/httpd/conf.d/vsm-dashboard.conf
 
-VSM_VERSION=%{version}-%{release}
-sed -i "s,%VSM_VERSION%,$VSM_VERSION,g" %{_datadir}/vsm-dashboard/vsm_dashboard/dashboards/vsm/overview/summarys.py
-
 %files
 %defattr(-,root,root,-)
 %dir %{_sysconfdir}/httpd/conf.d

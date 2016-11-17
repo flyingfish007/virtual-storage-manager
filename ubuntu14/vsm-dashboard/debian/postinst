@@ -12,6 +12,3 @@ chmod -R a+r /usr/share/vsm-dashboard
 #chown -R apache:apache /usr/share/vsm-dashboard
 #chown -R apache:apache /etc/vsm-dashboard
 #chown -R apache:apache /etc/httpd/conf.d/vsm-dashboard.conf
-
-VSM_VERSION="2015.03-1.2"
-sed -i "s,%VSM_VERSION%,$VSM_VERSION,g" /usr/share/vsm-dashboard/vsm_dashboard/dashboards/vsm/overview/summarys.py
