@@ -508,17 +508,6 @@ class CephDriver(object):
 
         config.save_conf(FLAGS.ceph_conf)
 
-    def mkcephfs(self):
-        LOG.info('mkcephfs in agent/driver.py')
-        utils.execute('mkcephfs',
-                      '-a',
-                      '-c', FLAGS.ceph_conf,
-                      '-k', FLAGS.keyring_admin,
-                      # '--mkfs',
-                      run_as_root=True)
-        LOG.info('mkcephfs over in agent/driver.py')
-        return True
-
     def start_ceph(self, context):
         utils.execute('service', 'ceph', '-a', 'start', run_as_root=True)
         return True
@@ -1869,110 +1858,6 @@ class CephDriver(object):
 
         return max_line + 1
 
-    def parse_nvme_output(self, attributes, start_offset=0, end_offset=-1):
-        import string
-
-        att_list = attributes.split('\n')
-        att_list = att_list[start_offset:end_offset]
-        dev_info={}
-        for att in att_list:
-            att_kv = att.split(':')
-            if not att_kv[0]: continue
-            if len(att_kv) > 1:
-                dev_info[string.strip(att_kv[0])] = string.strip(att_kv[1])
-            else:
-                dev_info[string.strip(att_kv[0])] = ''
-
-        return dev_info
-
-    def get_nvme_smart_info(self, device):
-        smart_info_dict = {'basic':{},'smart':{}}
-
-        if "/dev/nvme" in device:
-            LOG.info("This is a nvme device : " + device)
-            dev_info = {}
-            dev_smart_log = {}
-            dev_smart_add_log = {}
-
-            import commands
-
-            # get nvme device meta data
-            attributes, err =  utils.execute('nvme', 'id-ctrl', device, run_as_root=True)
-            if not err:
-                basic_info_dict = self.parse_nvme_output(attributes)
-                LOG.info("basic_info_dict=" + str(basic_info_dict))
-                smart_info_dict['basic']['Drive Family'] = basic_info_dict.get('mn') or ''
-                smart_info_dict['basic']['Serial Number'] = basic_info_dict.get('sn') or ''
-                smart_info_dict['basic']['Firmware Version'] = basic_info_dict.get('fr') or ''
-                smart_info_dict['basic']['Drive Status'] = 'PASSED'
-            else:
-                smart_info_dict['basic']['Drive Status'] = 'WARN'
-                LOG.warn("Fail to get device identification with error: " + str(err))
-
-            # get nvme devic smart data
-            attributes, err = utils.execute('nvme', 'smart-log', device, run_as_root=True)
-            if not err:
-                dev_smart_log_dict = self.parse_nvme_output(attributes, 1)
-                LOG.info("device smart log=" + str(dev_smart_log_dict))
-                for key in dev_smart_log_dict:
-                    smart_info_dict['smart'][key] = dev_smart_log_dict[key]
-            else:
-                smart_info_dict['basic']['Drive Status'] = 'WARN'
-                LOG.warn("Fail to get device smart log with error: " + str(err))
-
-            # get nvme device smart additional data
-            attributes, err = utils.execute('nvme', 'smart-log-add', device, run_as_root=True)
-            if not err:
-                dev_smart_log_add_dict = self.parse_nvme_output(attributes, 2)
-                LOG.info("device additional smart log=" + str(dev_smart_log_add_dict))
-                smart_info_dict['smart']['<<< additional smart log'] = ' >>>'
-                for key in dev_smart_log_add_dict:
-                    smart_info_dict['smart'][key] = dev_smart_log_add_dict[key]
-            else:
-                smart_info_dict['basic']['Drive Status'] = 'WARN'
-                LOG.warn("Fail to get device additional (vendor specific) smart log with error: "  + str(err))
-
-        LOG.info(smart_info_dict)
-        return smart_info_dict
-
-    def get_smart_info(self, context, device):
-        LOG.info('retrieve device info for ' + str(device))
-        if "/dev/nvme" in device:
-            return self.get_nvme_smart_info(device)
-
-        attributes, err = utils.execute('smartctl', '-A', device, run_as_root=True)
-        attributes = attributes.split('\n')
-        start_line = self.find_attr_start_line(attributes)
-        smart_info_dict = {'basic':{},'smart':{}}
-        if start_line < 10:
-            for attr in attributes[start_line:]:
-                attribute = attr.split()
-                if len(attribute) > 1 and attribute[1] != "Unknown_Attribute":
-                    smart_info_dict['smart'][attribute[1]] = attribute[9]
-
-
-        basic_info, err = utils.execute('smartctl', '-i', device, run_as_root=True)
-        basic_info = basic_info.split('\n')
-        basic_info_dict = {}
-        if len(basic_info)>=5:
-            for info in basic_info[4:]:
-                info_list = info.split(':')
-                if len(info_list) == 2:
-                    basic_info_dict[info_list[0]] = info_list[1]
-        smart_info_dict['basic']['Drive Family'] = basic_info_dict.get('Device Model') or basic_info_dict.get('Vendor') or ''
-        smart_info_dict['basic']['Serial Number'] = basic_info_dict.get('Serial Number') or ''
-        smart_info_dict['basic']['Firmware Version'] = basic_info_dict.get('Firmware Version') or ''
-
-        status_info,err = utils.execute('smartctl', '-H', device, run_as_root=True)
-        status_info = status_info.split('\n')
-        smart_info_dict['basic']['Drive Status'] = ''
-        if len(status_info)>4:
-            status_list = status_info[4].split(':')
-            if len(status_list)== 2:
-                smart_info_dict['basic']['Drive Status'] = len(status_list[1]) < 10 and status_list[1] or ''
-        LOG.info("get_smart_info_dict:%s"%(smart_info_dict))
-        return smart_info_dict
-
     def get_available_disks(self, context):
         all_disk_info,err = utils.execute('blockdev','--report',run_as_root=True)
         all_disk_info = all_disk_info.split('\n')
@@ -2048,21 +1933,6 @@ class CephDriver(object):
                                  run_as_root=True)
         LOG.info("run_add_disk_hook:%s--%s"%(out,err))
         return out
-
-    def get_ceph_admin_keyring(self, context):
-        """
-        read ceph keyring from CEPH_PATH
-        """
-        with open(FLAGS.keyring_admin, "r") as fp:
-            keyring_str = fp.read()
-        return keyring_str
-
-    def save_ceph_admin_keyring(self, context, keyring_str):
-        """
-        read ceph keyring from CEPH_PATH
-        """
-        open(FLAGS.keyring_admin, 'w').write(keyring_str)
-        return True
 
     def refresh_osd_number(self, context):
         LOG.info("Start Refresh OSD number ")
@@ -2948,95 +2818,6 @@ class CephDriver(object):
         utils.execute("ceph", "osd", "pool", "create", ".users.swift", 8, 8, run_as_root=True)
         utils.execute("ceph", "osd", "pool", "create", ".users.uid", 8, 8, run_as_root=True)
 
-
-class DbDriver(object):
-    """Executes commands relating to TestDBs."""
-    def __init__(self, execute=utils.execute, *args, **kwargs):
-        pass
-
-    def init_host(self, host):
-        pass
-
-    def update_recipe_info(self, context):
-        LOG.info("DEBUG in update_recipe_info() in DbDriver()")
-        res = db.recipe_get_all(context)
-        recipe_id_list = []
-        for x in res:
-            recipe_id_list.append(int(x.recipe_id))
-   
-        str0 = os.popen("ssh root@10.239.82.125 \'ceph osd lspools\' ").read()
-        str = str0[0:-2]
-        LOG.info('DEBUG str from mon %s' % str)
-        items = str.split(',')
-        ##
-        items.remove('5 -help')
-        LOG.info("DEBUG items %s" % items)
-        ## 
-        pool_name_list = []
-        attr_names = ['size', 'min_size', 'crash_replay_interval', 'pg_num',
-                     'pgp_num', 'crush_ruleset',]
- 
-        for item in items:
-            x = item.split()
-            pool_name_list.append(x[1])
-            pool_name = x[1]
-            pool_id = int(x[0])
-            values = {}
-            values['recipe_name'] = pool_name
-            for attr_name in attr_names:
-                val = os.popen("ssh root@10.239.82.125 \'ceph osd pool\
-                                get %s %s\'" % (pool_name, attr_name)).read()
-                LOG.info("DEBUG val from cmon %s" % val)
-                _list = val.split(':')
-                values[attr_name] = int(_list[1])
-            if pool_id in recipe_id_list:
-                LOG.info('DEBUG update pool: %s recipe values %s' % (pool_name, values))
-                db.recipe_update(context, pool_id, values)
-            else:
-                values['recipe_id'] = pool_id
-                LOG.info('DEBUG create pool: %s recipe values %s' % (pool_name, values))
-                db.recipe_create(context, values)
-
-    def update_pool_info(self, context):
-        LOG.info("DEBUG in update_pool_info() in DbDriver()")
-        attr_names = ['size', 'min_size', 'crash_replay_interval', 'pg_num',
-                     'pgp_num', 'crush_ruleset',]
-        res = db.pool_get_all(context)
-        pool_list = []
-        for x in res:
-            pool_list.append(int(x.pool_id))
-            LOG.info('x.id = %s' % x.pool_id)
-
-        #str0 = "0 data,1 metadata,2 rbd,3 testpool_after_periodic"
-        str0 = os.popen("ssh root@10.239.82.125 \'ceph osd lspools\' ").read()
-        str = str0[0:-2]
-        items = str.split(',')
-        LOG.info("DEBUG items %s pool_list %s" % (items, pool_list))
-        for i in items:
-            x = i.split()
-            values = {}
-            pool_id = int(x[0])
-            LOG.info('DEBUG x[0] %s' % pool_id)
-            pool_name = x[1]
-            for attr_name in attr_names:
-                val = os.popen("ssh root@10.239.82.125 \'ceph osd pool\
-                                get %s %s\'" % (pool_name, attr_name)).read()
-                LOG.info("DEBUG val from cmon %s" % val)
-                _list = val.split(':')
-                values[attr_name] = int(_list[1])
-
-            if pool_id in pool_list:
-                #pool_id = x[0]
-                values['name'] = x[1]
-                db.pool_update(context, pool_id, values)
-            else:
-                values['pool_id'] = pool_id
-                values['name'] = x[1]
-                values['recipe_id'] = pool_id
-                values['status'] = 'running'
-                db.pool_create(context, values)
-
-        return res
 
 class CreateCrushMapDriver(object):
     """Create crushmap file"""

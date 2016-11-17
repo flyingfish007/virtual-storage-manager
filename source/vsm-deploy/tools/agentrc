@@ -47,7 +47,7 @@ VSM_HOST=10.239.82.123
 MYSQL_VSM_USER=vsm
 MYSQL_VSM_PASSWORD=vsm_password
 KEYSTONE_VSM_SERVICE_PASSWORD=keystone_vsm_password
-VSM_RUNNING_SERVICE=vsm-agent,vsm-physical
+VSM_RUNNING_SERVICE=vsm-agent
 
 #---------------------------------------------
 # VSM-Dashboard

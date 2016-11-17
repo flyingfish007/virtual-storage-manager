@@ -115,20 +115,12 @@ install -p -D -m 640 etc/vsm/rootwrap.d/vsm.filters %{buildroot}%{_sysconfdir}/v
 install -p -D -m 440 etc/sudoers.d/vsm %{buildroot}%{_sysconfdir}/sudoers.d/vsm
 install -p -D -m 640 etc/logrotate.d/vsmceph %{buildroot}%{_sysconfdir}/logrotate.d/vsmceph
 
-#---------------------------
-#  Prepools
-#---------------------------
-
-install -d -m 755 %{buildroot}%{_sysconfdir}/vsm/
-cp -rf etc/vsm/prepools %{buildroot}%{_sysconfdir}/vsm/
-
 cp -rf vsm/db/sqlalchemy/migrate_repo/migrate.cfg %{buildroot}/usr/lib/python2.7/site-packages/vsm/db/sqlalchemy/migrate_repo
 
 #---------------------------
 # etc/init.d/
 #---------------------------
 install -d -m 755 %{buildroot}%{_initrddir}
-install -p -D -m 755 etc/init.d/vsm-physical %{buildroot}%{_initrddir}/vsm-physical
 install -p -D -m 755 etc/init.d/vsm-agent %{buildroot}%{_initrddir}/vsm-agent
 install -p -D -m 755 etc/init.d/vsm-api %{buildroot}%{_initrddir}/vsm-api
 install -p -D -m 755 etc/init.d/vsm-conductor %{buildroot}%{_initrddir}/vsm-conductor
@@ -143,7 +135,6 @@ install -d -m 755 %{buildroot}%{_bindir}/
 install -p -D -m 755 bin/start_osd %{buildroot}%{_usr}/local/bin/start_osd
 install -p -D -m 755 bin/vsm-api %{buildroot}%{_bindir}/vsm-api
 install -p -D -m 755 bin/vsm-agent %{buildroot}%{_bindir}/vsm-agent
-install -p -D -m 755 bin/vsm-physical %{buildroot}%{_bindir}/vsm-physical
 install -p -D -m 755 bin/vsm-conductor %{buildroot}%{_bindir}/vsm-conductor
 install -p -D -m 755 bin/vsm-scheduler %{buildroot}%{_bindir}/vsm-scheduler
 install -p -D -m 755 bin/vsm-rootwrap %{buildroot}%{_bindir}/vsm-rootwrap
@@ -152,11 +143,8 @@ install -p -D -m 755 bin/vsm-manage %{buildroot}%{_bindir}/vsm-manage
 install -p -D -m 755 bin/key %{buildroot}%{_bindir}/key
 install -p -D -m 755 bin/auto_key_gen %{buildroot}%{_bindir}/auto_key_gen
 install -p -D -m 755 bin/vsm-assist %{buildroot}%{_bindir}/vsm-assist
-install -p -D -m 755 bin/presentpool %{buildroot}%{_bindir}/presentpool
 install -p -D -m 755 bin/rbd_ls %{buildroot}%{_bindir}/rbd_ls
-install -p -D -m 755 bin/check_xtrust_crudini %{buildroot}%{_usr}/local/bin/check_xtrust_crudini
 install -p -D -m 755 bin/vsm-ceph-upgrade %{buildroot}%{_bindir}/vsm-ceph-upgrade
-install -p -D -m 755 bin/nvme %{buildroot}%{_usr}/sbin/nvme
 
 %pre
 getent group vsm >/dev/null || groupadd -r vsm --gid 165
@@ -201,7 +189,6 @@ exit 0
 %config(noreplace) %attr(-, root, root) %{_sysconfdir}/sudoers.d/vsm
 
 %dir %{_initrddir}
-%config(noreplace) %attr(-, root, vsm) %{_initrddir}/vsm-physical
 %config(noreplace) %attr(-, root, vsm) %{_initrddir}/vsm-agent
 %config(noreplace) %attr(-, root, vsm) %{_initrddir}/vsm-api
 %config(noreplace) %attr(-, root, vsm) %{_initrddir}/vsm-conductor
@@ -210,7 +197,6 @@ exit 0
 #%dir %{_bindir}
 %config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/start_osd
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-rootwrap
-%config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-physical
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-agent
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-api
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-conductor
@@ -220,16 +206,5 @@ exit 0
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/key
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/auto_key_gen
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-assist
-%config(noreplace) %attr(-, root, vsm) %{_bindir}/presentpool
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/rbd_ls
 %config(noreplace) %attr(-, root, vsm) %{_bindir}/vsm-ceph-upgrade
-%config(noreplace) %attr(-, root, vsm) %{_usr}/sbin/nvme
-
-%config(noreplace) %attr(-, root, vsm) %{_usr}/local/bin/check_xtrust_crudini
-
-#-----------------------------
-# Prepools
-#-----------------------------
-%dir %{_sysconfdir}/vsm/prepools
-%config(noreplace) %attr(-, root, vsm) %{_sysconfdir}/vsm/prepools/*
-# TODO check this line whether needed

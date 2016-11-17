@@ -1,53 +1,23 @@
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright 2014 Intel
-# All Rights Reserved.
-#
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
-
-# pylint: disable=W0703
-# pylint: disable=R0912
-# pylint: disable=R0914
-
-"""
-Scheduler Service
-"""
-
+import time
 import random
-import time
-from oslo.config import cfg
-import datetime
-import time
-from vsm import db
-from vsm import exception
-from vsm import flags
-from vsm import manager
-from vsm import utils
-from vsm.openstack.common import excutils
-from vsm.openstack.common import importutils
-from vsm.openstack.common import log as logging
-from vsm.openstack.common.notifier import api as notifier
-from vsm.openstack.common import timeutils
-from vsm.openstack.common.rpc import common as rpc_exc
-from vsm.conductor import rpcapi as conductor_rpcapi
-from vsm.agent import rpcapi as agent_rpc
-from vsm.conductor import api as conductor_api
+
 from vsm.agent.cephconfigutils import CephConfigParser
 from vsm.agent.crushmap_parser import CrushMap
+from vsm.agent import rpcapi as agent_rpc
+from vsm.conductor import api as conductor_api
+from vsm.conductor import rpcapi as conductor_rpcapi
+from vsm import db
 from vsm.exception import *
+from vsm import manager
 from vsm.manifest.parser import ManifestParser
-LOG = logging.getLogger(__name__)
+from vsm.openstack.common.rpc import common as rpc_exc
+from vsm import utils
+
 FLAGS = flags.FLAGS
+
+LOG = logging.getLogger(__name__)
+
 
 class SchedulerManager(manager.Manager):
     """Chooses a host to create storages."""
@@ -65,13 +35,10 @@ class SchedulerManager(manager.Manager):
         self._conductor_api = conductor_api.API()
 
     def init_host(self):
-        LOG.info('init_host in manager ')
-
-    def test_service(self, context, body=None):
-        return {'key': 'test_service in scheduler'}
+        LOG.info('init_host in scheduler manager')
 
     def list_storage_pool(self, context):
-        res = self._conductor_driver.list_storage_pool(context)
+        res = self._conductor_rpcapi.list_storage_pool(context)
         LOG.info('scheduler/manager.py conductor value %s' % res)
         return res
 
@@ -79,7 +46,6 @@ class SchedulerManager(manager.Manager):
         res = self._conductor_rpcapi.get_storage_group_list(context)
         LOG.info('scheduler/manager.py get_storage_group_list values %s' % res)
         return res
-
 
     def create_storage_pool(self, context, body=None,cluster_id = None):
         LOG.info('scheduler/manager.py create_storage_pool')
@@ -188,11 +154,6 @@ class SchedulerManager(manager.Manager):
         return self._agent_rpcapi.get_ceph_config(context,
                                                   active_server['host'])
 
-    def _sync_config_from_host(self, context, host):
-        # This function should not be used anymore.
-        # We haved add sync function for every save_conf of cephconfigparser.
-        return True
-
     def _start_add(self, context, host_id):
         server = self._conductor_api.init_node_get_by_id(context, host_id)
         LOG.info("server status before add role %s " % server['status'])
@@ -249,19 +210,6 @@ class SchedulerManager(manager.Manager):
         else:
             val = {"type": role_type, "status": status}
         self._conductor_api.init_node_update(context, host_id, val)
-
-    def _add_or_remove_failed(self, context, host_id, role, is_unavail=False):
-        server = self._conductor_api.init_node_get_by_id(context, host_id)
-        current_roles = [x.strip() for x in server['type'].split(",") if x.strip()]
-        if len(current_roles):
-            status = "Active"
-        else:
-            status = "available"
-        if is_unavail:
-            status = 'unavailable'
-
-        self._conductor_api.init_node_update(context, host_id,
-             {"status": status})
 
     def _get_active_monitor(self, context, beyond_list=None, cluster_id = None):
         def __is_in(host):
@@ -463,20 +411,6 @@ class SchedulerManager(manager.Manager):
         idx = random.randint(0, len(active_monitor_list)-1)
         LOG.info("monitor_node:%s" % active_monitor_list[idx])
         return active_monitor_list[idx]
-
-    def add_mds(self, context, server_list):
-        try:
-            active_monitor = self._get_active_node(context, server_list)
-            self._agent_rpcapi.add_mds(context, host=active_monitor['host'])
-        except rpc_exc.Timeout:
-            self._update_server_list_status(context,
-                server_list, 'rpc timeout error: check network')
-        except rpc_exc.RemoteError:
-            self._update_server_list_status(context,
-                server_list, 'rpc remote error')
-        except:
-            self._update_server_list_status(context,
-                server_list, 'ERROR: add_mds')
 
     def add_osd(self, context, server_list):
         # storage will be add
@@ -994,11 +928,6 @@ class SchedulerManager(manager.Manager):
 
         return True
 
-    def get_cluster_list(self, context):
-        res = self._conductor_rpcapi.get_server_list(context)
-        LOG.info('scheduler/manager.py get cluster_list values %s' % res)
-        return res
-
     def get_ceph_health_list(self, context, body=None):
         cluster_id = body and body.get('cluster_id',1) or 1
         active_monitor = self._get_active_monitor(context, cluster_id=cluster_id)
@@ -1121,26 +1050,6 @@ class SchedulerManager(manager.Manager):
         active_server = self._set_active_server(context)
         #TODO db.update_mount_points()
         return self._agent_rpcapi.integrate_cluster_update_status(context, active_server['host'])
-    #
-    # def check_pre_existing_cluster(self,context,body):
-    #     '''
-    #     :param context:
-    #     :param body:
-    #     {u'cluster_conf': u'/etc/ceph/ceph.conf', u'monitor_host_name': u'centos-storage1', u'monitor_host_id': u'1', u'monitor_keyring': u'/etc/keying'}
-    #     :return:
-    #     '''
-    #     monitor_pitched_host = body.get('monitor_host_name')
-    #     message = {}
-    #     try:
-    #         message = self._agent_rpcapi.check_pre_existing_cluster(context, body, monitor_pitched_host)
-    #     except rpc_exc.Timeout:
-    #         LOG.error('ERROR: check_pre_existing_cluster rpc timeout')
-    #     except rpc_exc.RemoteError:
-    #         LOG.error('ERROR: check_pre_existing_cluster rpc remote')
-    #     except:
-    #         LOG.error('ERROR: check_pre_existing_cluster')
-    #         raise
-    #     return message
 
     def check_pre_existing_cluster(self, context, body):
         messages = []
@@ -1162,8 +1071,6 @@ class SchedulerManager(manager.Manager):
             message_ret[key] = ','.join(value)
         message_ret['crushmap_tree_data'] = crushmap_tree_data
         return message_ret
-
-
 
     def check_pre_existing_ceph_conf(self, context, body):
         message = {'code':[],'error':[],'info':[]}
@@ -1197,22 +1104,6 @@ class SchedulerManager(manager.Manager):
                     mds_header = value
                 elif key.find('global')!=-1:
                     global_header = value
-        # if not global_header:
-        #     message['code'].append('-21')
-        #     message['error'].append('missing global section in ceph configration file.')
-        # else:
-        #     pass
-        # if not mon_header:
-        #     message['code'].append('-22')
-        #     message['error'].append('missing mon header section in ceph configration file.')
-        # else:
-        #     pass
-        # if not osd_header:
-        #     message['code'].append('-23')
-        #     message['error'].append('missing osd header section in ceph configration file.')
-        # else:
-        #     pass
-
         osd_fields = ['devs','host','cluster addr','public addr','osd journal']
         for osd in osd_list:
             osd_name = osd.keys()[0]
@@ -1230,7 +1121,6 @@ class SchedulerManager(manager.Manager):
                 message['error'].append('missing field %s for %s in ceph configration file.'%(fields_missing,mon_name))
         message['osd_num'] = len(osd_list)
         return message
-
 
     def check_pre_existing_crushmap(self, context, body):
         '''
@@ -1342,42 +1232,6 @@ class SchedulerManager(manager.Manager):
             LOG.error('ERROR: get_crushmap_tree_data')
             raise
         return {'tree_node':tree_node}
-
-    def get_osds_by_rules(self,context,body):
-        '''
-        :param context:
-        :param body:
-        {'rules':[rule_name,rule_name],
-         'cluster_id':1,
-        }
-        :return:
-        '''
-        monitor_pitched_host = self._get_monitor_by_cluster_id(context, body.get('cluster_id',1))
-        #LOG.info("000000000000000=%s"%monitor_pitched_host)
-        monitor_keyring = None
-        rules = body.get('rules')
-        rule_osds = {}
-        try:
-            #LOG.info("111111111111111=%s"%monitor_pitched_host)
-            message = self._agent_rpcapi.detect_crushmap(context, monitor_keyring, monitor_pitched_host)
-            crushmap_str = message['crushmap']
-            crush_map_new = '%s-crushmap.json'%FLAGS.ceph_conf
-            utils.write_file_as_root(crush_map_new, crushmap_str, 'w')
-            crushmap = CrushMap(json_file=crush_map_new)
-            for rule in rules:
-                osds = crushmap.get_all_osds_by_rule(rule)
-                osds = [osd['name'] for osd in osds]
-                osds = list(set(osds))
-                rule_osds[rule] = osds
-            #LOG.info("222222==%s"%tree_node)
-        except rpc_exc.Timeout:
-            LOG.error('ERROR: get_crushmap_tree_data rpc timeout')
-        except rpc_exc.RemoteError:
-            LOG.error('ERROR: get_crushmap_tree_data rpc remote')
-        except:
-            LOG.error('ERROR: get_crushmap_tree_data')
-            raise
-        return rule_osds
 
     def import_cluster(self,context,body):
         '''
@@ -1710,159 +1564,10 @@ class SchedulerManager(manager.Manager):
         return {'message':'res'}
 
     @utils.single_lock
-    def refresh_osd_number(self, context):
-        LOG.info(" Scheduler Refresh Osd num")
-        server_list = db.init_node_get_all(context)
-
-        active_monitor_list = []
-        for monitor_node in server_list:
-            if monitor_node['status'] == "Active" \
-               and "monitor" in monitor_node['type']:
-                active_monitor_list.append(monitor_node)
-
-        # select an active monitor
-        idx = random.randint(0, len(active_monitor_list)-1)
-        active_monitor = active_monitor_list[idx]
-        self._agent_rpcapi.refresh_osd_num(context, host=active_monitor['host'])
-
-    @utils.single_lock
-    def osd_remove(self, context, osd_id):
-        # NOTE osd_id here stands for the DB item id in osd_states table.
-        LOG.info('osd_remove osd_id = %s' % osd_id)
-        osd = db.osd_state_get(context, osd_id)
-        init_node = db.init_node_get_by_service_id(context, \
-                                                   osd['service_id'])
-        if init_node['status'] == 'Active':
-            try:
-                self._agent_rpcapi.osd_remove(context, osd_id, init_node['host'])
-                self._agent_rpcapi.update_osd_state(context, init_node['host'])
-            except rpc_exc.Timeout:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_remove rpc timeout')
-                LOG.error('ERROR: osd_remove rpc timeout')
-            except rpc_exc.RemoteError:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_remove rpc remote')
-                LOG.error('ERROR: osd_remove rpc remote')
-            except:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_remove')
-                LOG.error('ERROR: osd_remove')
-                raise
-        else:
-            return False
-
-    @utils.single_lock
-    def osd_restart(self, context, osd_id):
-        LOG.info('scheduler manager:osd_restart')
-        osd = db.osd_state_get(context, osd_id)
-        init_node = db.init_node_get_by_service_id(context, \
-                                                 osd['service_id'])
-        if init_node['status'] == 'Active':
-            try:
-                self._agent_rpcapi.osd_restart(context, osd_id, init_node['host'])
-                self._agent_rpcapi.update_osd_state(context, init_node['host'])
-            except rpc_exc.Timeout:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restart rpc timeout')
-                LOG.error('ERROR: osd_restart rpc timeout')
-            except rpc_exc.RemoteError:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restart rpc remote error')
-                LOG.error('ERROR: osd_restart rpc remote error')
-            except:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restart')
-                LOG.error('ERROR: osd_restart')
-                raise
-        else:
-            return False
-
-    @utils.single_lock
-    def osd_add(self, context, osd_id):
-        LOG.info('scheduler manager:osd_add')
-        osd = db.osd_state_get(context, osd_id)
-        init_node = db.init_node_get_by_service_id(context, \
-                                                 osd['service_id'])
-        if init_node['status'] == 'Active':
-            try:
-                self._agent_rpcapi.osd_add(context, osd_id, init_node['host'])
-                self._agent_rpcapi.update_osd_state(context, init_node['host'])
-            except rpc_exc.Timeout:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restart rpc timeout')
-                LOG.error('ERROR: osd_add rpc timeout')
-            except rpc_exc.RemoteError:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restart rpc remote error')
-                LOG.error('ERROR: osd_add rpc remote error')
-            except:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restart')
-                LOG.error('ERROR: osd_add')
-                raise
-        else:
-            return False
-
-    @utils.single_lock
-    def osd_restore(self, context, osd_id):
-        LOG.info('osd_restoree osd_id = %s' % osd_id)
-        osd = db.osd_state_get(context, osd_id)
-        init_node = db.init_node_get_by_service_id(context,
-                                                   osd['service_id'])
-        if init_node['status'] == 'Active':
-            LOG.debug('agent.rpcapi.osd_restore host = %s' % init_node['host'])
-            try:
-                self._agent_rpcapi.osd_restore(context, osd_id, init_node['host'])
-                self._agent_rpcapi.update_osd_state(context, init_node['host'])
-            except rpc_exc.Timeout:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restore rpc timeout error')
-                LOG.error('ERROR: osd_restore rpc timeout error')
-                 
-            except rpc_exc.RemoteError:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restore rpc remote error')
-                LOG.error('ERROR: osd_restore rpc remote error')
-            except:
-                #self._conductor_api.init_node_update_status_by_id(context,
-                #    init_node['id'], 'ERROR: osd_restore')
-                LOG.error('ERROR: osd_restore') 
-                raise
-        else:
-            return False
-
-    @utils.single_lock
-    def osd_refresh(self, context):
-        LOG.info('refresh osd status')
-        active_server = self._get_active_server(context)
-        return self._agent_rpcapi.osd_refresh(context, active_server['host'])
-
-    @utils.single_lock
     def cluster_refresh(self, context):
         LOG.info('refresh cluster status')
         active_server = self._get_active_server(context)
         return self._agent_rpcapi.cluster_refresh(context, active_server['host'])
-
-    def health_status(self, context):
-        record = {}
-        def _thd_fun(host):
-            ret = self._agent_rpcapi.health_status(context,
-                                                   host=host)
-            record[host] = ret
-
-        ceph_nodes = db.init_node_get_all(context)
-        thd_list = []
-        for ser in ceph_nodes:
-            thd = utils.MultiThread(_thd_fun, host=ser['host'])
-            thd_list.append(thd)
-
-        utils.start_threads(thd_list)
-
-        for v in record.values():
-            if v.find('ERROR') == -1:
-                return v
-        return 'CRITICAL_ERROR'
 
     def _get_active_server(self, context):
 
@@ -1893,51 +1598,6 @@ class SchedulerManager(manager.Manager):
         active_server = self._get_active_server(context)
         self._agent_rpcapi.remove_cache_tier(context, body,active_server['host'])
 
-    def get_smart_info(self, context, body):
-        ser = body['server']
-        device = body['device_path']
-        status = ser['status']
-        host =  ser['host']
-        if status == 'Active' or status == 'available':
-            res = self._agent_rpcapi.get_smart_info(context, host, device)
-            return res
-
-    @utils.single_lock
-    def monitor_restart(self, context, monitor_id):
-        LOG.info('scheduler manager:monitor_restart')
-        mon_obj = db.monitor_get(context,monitor_id)
-        init_nodes = db.init_node_get_all(context)
-        monitor_num = mon_obj.name
-        mon_address = mon_obj.address.split(':')[0]
-        #LOG.info('scheduler manager:monitor_restart--mon_address==%s'%mon_address)
-        init_node = None
-        for node in init_nodes:
-            raw_ip = node.raw_ip.split(',')
-            if mon_address in raw_ip:
-                init_node = node
-                LOG.info("scheduler manager:monitor_restart-- init_node['host']==%s"% init_node['host'])
-                break
-        if init_node['status'] == 'Active':
-            try:
-                self._agent_rpcapi.monitor_restart(context, monitor_num, init_node['host'])
-            except rpc_exc.Timeout:
-                LOG.error('ERROR: monitor_restart rpc timeout')
-            except rpc_exc.RemoteError:
-                LOG.error('ERROR: moitor_restart rpc remote error')
-            except:
-                LOG.error('ERROR: monitorrestart')
-                raise
-        else:
-            return False
-
-    def get_available_disks(self, context, body):
-        server_id = body['server_id']
-        server = db.init_node_get_by_id(context,id=server_id)
-        status = server['status']
-        if status == 'Active':
-            res = self._agent_rpcapi.get_available_disks(context,server['host'])
-            return res
-
     def add_new_disks_to_cluster(self, context, body):
         server_id = body.get('server_id',None)
         server_name = body.get('server_name',None)
@@ -1952,152 +1612,6 @@ class SchedulerManager(manager.Manager):
                                         server["id"],
                                         values)
 
-    def add_batch_new_disks_to_cluster(self, context, body):
-        """
-
-        :param context:
-        :param body: {"disks":[
-                                {'server_id':'1','osdinfo':[{'storage_group_id':
-                                                            "weight":
-                                                            "journal":
-                                                            "data":},{}]},
-                                {'server_id':'2','osdinfo':[{'storage_group_id':
-                                                            "weight":
-                                                            "journal":
-                                                            "data":},{}]},
-                            ]
-                    }
-        :return:
-        """
-        disks = body.get('disks',[])
-        try:
-            for disk_in_same_server in disks:
-                self.add_new_disks_to_cluster(context, disk_in_same_server)
-        except:
-            return {"message":"data error"}
-        return {"message": "success"}
-
-
-    def reconfig_diamond(self, context, body):
-        servers = db.init_node_get_all(context)
-        for server in servers:
-            if server['status'] == 'Active':
-                self._agent_rpcapi.reconfig_diamond(context, body, server['host'])
-
-    def add_storage_group_to_crushmap_and_db(self, context, body):
-        '''
-
-        :param context:
-        :param body:{'storage_group': [{
-                        'id':None,
-                        'name': 'storage_group_name',
-                        'friendly_name': 'storage_group_name',
-                        'storage_class': 'storage_group_name',
-                        'marker': '#FFFFF',
-                        'rule_info':{
-                                    'rule_name':'storage_group_name',
-                                    'rule_id':None,
-                                    'type':'replicated',
-                                    'min_size':0,
-                                    'max_size':10,
-                                    'takes': [{'take_id':-12,
-                                            'choose_leaf_type':'host',
-                                            'choose_num':2,
-                                            },
-                                            ]
-                                }
-                        'cluster_id':1  //bad code. the origin is 1
-                    },
-                    ]
-                }
-        :return:
-        '''
-        LOG.info('add_storage_group_to_crushmap_and_db body=%s'%body)
-        storage_groups = body.get('storage_group')
-        cluster_id = body.get('cluster_id',None)
-        active_monitor = self._get_active_monitor(context, cluster_id=cluster_id)
-        LOG.info('sync call to host = %s' % active_monitor['host'])
-        for storage_group in storage_groups:
-
-            rule_info = storage_group['rule_info']
-            LOG.info('add_storage_group_to_crushmap_and_db storage_group=%s'%rule_info)
-            ret = self._agent_rpcapi.add_rule_to_crushmap(context, rule_info, active_monitor['host'])
-            rule_id = ret.get('rule_id')
-            take_order = 0
-            #LOG.info('take==333333=====%s'%storage_group.get('take'))
-            for take in storage_group.get('rule_info').get('takes'):
-                storage_group_to_db = {
-                    'name':storage_group['name'],
-                    'storage_class':storage_group['storage_class'],
-                    'friendly_name':storage_group['friendly_name'],
-                    'marker':storage_group['marker'],
-                    'rule_id':rule_id,
-                    'take_id':take.get('take_id'),
-                    'take_order':take_order,
-                    'choose_type':take.get('choose_leaf_type'),#TODO
-                    'choose_num':take.get('choose_num'),#"TODO"
-                    'status':'IN',
-                }
-                #LOG.info('take==444444444=====%s'%storage_group_to_db)
-                db.storage_group_update_or_create(context, storage_group_to_db)
-                take_order += 1
-        message = {'info':'Add storage group %s success!'%(','.join([ storage_group['name'] for storage_group in storage_groups])),
-                   'error_code':'','error_msg':''}
-        return message
-
-    def update_storage_group_to_crushmap_and_db(self, context, body):
-        LOG.info('update_storage_group_to_crushmap_and_db body=%s'%body)
-        storage_groups = body.get('storage_group')
-        cluster_id = body.get('cluster_id',None)
-        active_monitor = self._get_active_monitor(context, cluster_id=cluster_id)
-        LOG.info('sync call to host = %s' % active_monitor['host'])
-        message = {'info':'Update success!','error_code':[],'error_msg':[]}
-        for storage_group in storage_groups:
-            rule_info = storage_group.get('rule_info')
-            storage_group_in_db = db.storage_group_get_by_name(context,storage_group['name'])
-            rule_id = storage_group_in_db['rule_id']
-            pools = db.pool_get_by_ruleset(context,rule_id)
-            if len(pools) > 0:
-                db.update_storage_group_marker(context,storage_group['name'],storage_group['marker'])
-                pool_names = [ pool['name'] for pool in pools ]
-                #message['error_code'].append('-1')
-                message['info'] = 'Storage group %s was used by pool %s currently and Only marker update success!'%(storage_group['name'],pool_names)
-                continue
-            ret = self._agent_rpcapi.modify_rule_in_crushmap(context, rule_info, active_monitor['host'])
-            rule_id = ret.get('rule_id')
-            take_order = 0
-            LOG.info('update_storage_group_to_crushmap_and_db=====%s'%storage_group.get('take'))
-            for take in storage_group.get('rule_info').get('takes'):
-                storage_group_to_db = {
-                    'name':storage_group['name'],
-                    'storage_class':storage_group['storage_class'],
-                    'friendly_name':storage_group['friendly_name'],
-                    'marker':storage_group['marker'],
-                    'rule_id':rule_id,
-                    'take_id':take.get('take_id'),
-                    'take_order':take_order,
-                    'choose_type':take.get('choose_leaf_type'),#TODO
-                    'choose_num':take.get('choose_num'),#"TODO"
-                }
-                LOG.info('update_storage_group_to_crushmap_and_db=====%s'%storage_group_to_db)
-                db.storage_group_update_or_create(context, storage_group_to_db)
-                take_order += 1
-            db.storage_group_delete_by_order_and_name(context,take_order=take_order,name=storage_group['name'])
-        message['error_code'] = ','.join(message['error_code'])
-        message['error_msg'] = ','.join(message['error_msg'])
-        LOG.info('---888--%s'%message)
-        return message
-
-    def update_zones_from_crushmap_to_db(self, context, body):
-        if body is not None:
-            cluster_id = body.get('cluster_id',None)
-        else:
-            cluster_id = None
-        active_monitor = self._get_active_monitor(context, cluster_id=cluster_id)
-        LOG.info('update_zones_from_crushmap_to_db sync call to host = %s' % active_monitor['host'])
-        self._agent_rpcapi.update_zones_from_crushmap_to_db(context,body,active_monitor['host'])
-        return {'message':'success'}
-
     def add_zone_to_crushmap_and_db(self, context, body):
         if body is not None:
             cluster_id = body.get('cluster_id',None)
@@ -2107,23 +1621,6 @@ class SchedulerManager(manager.Manager):
         LOG.info('add_zone_to_crushmap_and_db sync call to host = %s' % active_monitor['host'])
         self._agent_rpcapi.add_zone_to_crushmap_and_db(context,body,active_monitor['host'])
         return {'message':'success'}
-
-    def get_default_pg_num_by_storage_group(self, context, body):
-        if body is not None:
-            cluster_id = body.get('cluster_id',None)
-        else:
-            cluster_id = None
-        active_monitor = self._get_active_monitor(context, cluster_id=cluster_id)
-        LOG.info('get_default_pg_num_by_storage_group sync call to host = %s' % active_monitor['host'])
-        pg_num_default = self._agent_rpcapi.get_default_pg_num_by_storage_group(context,body,active_monitor['host'])
-        return {'pg_num_default':pg_num_default}
-
-    def rgw_create(self, context, server_name, rgw_instance_name, is_ssl,
-                   uid, display_name, email, sub_user, access, key_type):
-        host = server_name
-        self._agent_rpcapi.rgw_create(context, host, server_name, rgw_instance_name,
-                                      is_ssl, uid, display_name, email, sub_user,
-                                      access, key_type)
 
     def rbd_get_by_rbd_name(self, context, rbd_name, pool_name):
         server_list = db.init_node_get_all(context)

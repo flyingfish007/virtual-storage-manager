@@ -131,15 +131,10 @@ service vsm-agent restart
 chkconfig vsm-agent on
 sed -i '/exit/d' /etc/rc.d/rc.local
 sed -i "/service vsm-agent restart/d" /etc/rc.local
-sed -i "/service vsm-physical restart/d" /etc/rc.local
 echo "service vsm-agent restart" >> /etc/rc.d/rc.local
-echo "service vsm-physical restart" >> /etc/rc.d/rc.local
 echo "exit 0" >> /etc/rc.d/rc.local
-chmod +x /etc/vsm/prepools/main
 echo "..."
 sleep 5
-service vsm-physical restart
-chkconfig vsm-physical on
 echo "The End!"
 
 set +o xtrace

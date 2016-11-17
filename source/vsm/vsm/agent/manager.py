@@ -1,27 +1,4 @@
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright 2014 Intel
-# All Rights Reserved.
-#
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
-
-# pylint: disable=W0621
-
-"""
-Agent Service
-"""
-
-import copy
 import glob
 import json
 import operator
@@ -52,14 +29,11 @@ from vsm.openstack.common.rpc import common as rpc_exc
 from vsm import utils
 
 CTXT = context.get_admin_context()
-LOG = logging.getLogger(__name__)
+
 FLAGS = flags.FLAGS
 
-#@decorator
-#def require_active_host(func, *args, **kwargs):
-#    init_node = db.init_node_get_by_host(args[0], FLAGS.host)
-#    if init_node['status'] == "Active":
-#        return func(*args, **kwargs)
+LOG = logging.getLogger(__name__)
+
 
 def _get_interval_time(key):
     LOG.debug('get interval_time %s' % key)
@@ -76,21 +50,14 @@ class AgentManager(manager.Manager):
     RPC_API_VERSION = '1.2'
 
     def __init__(self, service_name=None, *args, **kwargs):
-        #if not scheduler_driver:
-        #    scheduler_driver = FLAGS.scheduler_driver
-        #self.driver = importutils.import_object(scheduler_driver)
         super(AgentManager, self).__init__(*args, **kwargs)
         self._context = context.get_admin_context()
-        self._driver = driver.DbDriver()
         self.ceph_driver = driver.CephDriver(self._context)
         self.crushmap_driver = driver.CreateCrushMapDriver()
         self.crushmap_manager_driver = driver.ManagerCrushMapDriver()
         self.diamond_driver= driver.DiamondDriver()
         self._smp = ManifestParser()
         self._node_info = self._smp.format_to_json()
-        #TODO (jiyou)
-        # if conductor all is shutdown.
-        # self._conductor_rpcapi = self.db
         self._conductor_rpcapi = conductor_rpcapi.ConductorAPI()
         self._agent_rpcapi = agent_rpc.AgentAPI()
         self._init_node_number = 0
@@ -102,9 +69,6 @@ class AgentManager(manager.Manager):
         self._cluster_id = None
         self._is_init_ceph = False
         self._drive_num_count = 0
-
-    def test_service(self, context):
-        return {'status': 'ok'}
 
     def _get_cluster_ref(self):
         controller_ip = self._node_info['controller_ip']
@@ -374,9 +338,6 @@ class AgentManager(manager.Manager):
             LOG.info('Get error in update_ssh_keys')
         finally:
             self._is_update_ssh = False
-    def get_smart_info(self, context, device):
-        """When find new servers, insert new server's key."""
-        return self.ceph_driver.get_smart_info(context, device)
 
     def _set_ssh_chanel(self):
         # Get self id from init_node table.
@@ -438,11 +399,6 @@ class AgentManager(manager.Manager):
 
             if find_error:
                 LOG.info('Check /etc/hosts file failed.')
-                # utils.execute('service',
-                #               'vsm-agent',
-                #               'stop',
-                #               run_as_root=True)
-                # raise
 
     def init_host(self):
         #TODO Do not call ssh_key_here here.
@@ -472,27 +428,9 @@ class AgentManager(manager.Manager):
         CephConfigSynchronizer().sync_before_read(FLAGS.ceph_conf)
         LOG.info('agent/manager.py update ceph.conf from db. OVER')
 
-    def get_ceph_admin_keyring(self, context):
-        return self.ceph_driver.get_ceph_admin_keyring(context)
-
-    def save_ceph_admin_keyring(self, context, keyring_str):
-        return self.ceph_driver.save_ceph_admin_keyring(context,
-                                                        keyring_str)
-
-    def update_pool_info(self, context, body=None):
-        LOG.info('DEBUG in update_pool_info of agent manager.py')
-        res = self._driver.update_pool_info(context)
-        return res
-
-    def update_recipe_info(self, context, body=None):
-        LOG.info('DEBUG in update_recipe_info of agent manager.py')
-        res = self._driver.update_recipe_info(context)
-        return res
-
     def create_storage_pool(self, context, body=None):
         res = self.ceph_driver.create_storage_pool(context, body)
         return res
-
 
     def _get_info_dict(self, context):
         """Get info dict from DB."""
@@ -554,23 +492,6 @@ class AgentManager(manager.Manager):
         self._conductor_rpcapi.cluster_update(context,
                 cluster_id, values)
 
-    def mkcephfs(self, context):
-        self._is_init_ceph = True
-        try_times = 0
-        while self._is_update_ssh:
-            time.sleep(1)
-            try_times = try_times + 1
-            LOG.info('Wait for update ssh keys.')
-            if try_times > 60:
-                break
-
-        status = self.ceph_driver.mkcephfs()
-        LOG.info('Begin to update keyring admin into DB.')
-        self.upload_keyring_admin_into_db(context)
-        LOG.info('End to update keyring admin into DB.')
-        self._is_init_ceph = False
-        return status
-
     def update_all_status(self, context):
         def _try_pass(func):
             try:
@@ -578,17 +499,7 @@ class AgentManager(manager.Manager):
             except:
                 pass
         _try_pass(self.update_summary)
-        _try_pass(self.update_pool_status)
-        _try_pass(self.update_osds_status)
-        _try_pass(self.update_osds_weight)
-        _try_pass(self.update_device_capacity)
-        _try_pass(self.update_rbd_status)
-        _try_pass(self.update_pool_stats)
-        _try_pass(self.update_mds_status)
-        _try_pass(self.update_pg_and_pgp)
-        _try_pass(self.update_pg_status)
         _try_pass(self.update_mon_health)
-        _try_pass(self.update_server_status)
         _try_pass(self.update_ceph_status)
 
     def add_osd(self, context, host_id):
@@ -627,24 +538,11 @@ class AgentManager(manager.Manager):
     def get_ceph_config(self, context):
         return self.ceph_driver.get_ceph_config(context)
 
-    def start_monitor(self, context):
-        # Start all the monitors
-        return self.ceph_driver.start_monitor(context)
-
     def add_mds(self, context):
         return self.ceph_driver.add_mds(context)
 
-    def start_mds(self, context):
-        return self.ceph_driver.start_mds(context)
-
     def start_osd(self, context):
         return self.ceph_driver.start_osd(context)
-
-    def start_ceph(self, context):
-        return self.ceph_driver.start_ceph(context)
-
-    def start_osd_daemon(self, context, num):
-        return self.ceph_driver.start_osd_daemon(context, num)
 
     def get_ceph_health(self, context):
         return self.ceph_driver.get_ceph_health(context)
@@ -854,65 +752,9 @@ class AgentManager(manager.Manager):
     def stop_mds(self, context):
         return self.ceph_driver.stop_mds(context)
 
-    def refresh_osd_number(self, context):
-        return self.ceph_driver.refresh_osd_number(context)
-
-    def osd_remove(self, context, osd_id):
-        def _update_osd_db():
-            value= {}
-            value['id'] = osd_id
-            value['osd_name'] = 'osd.x'
-            value['state'] = 'Out-Down'
-            value['operation_status'] = FLAGS.vsm_status_removed
-            db.osd_state_update(context, osd_id, value)
-
-        def _update_device_db():
-            value = {}
-            value['id'] = osd['device']['id']
-            value['total_capacity_kb'] = 0
-            value['used_capacity_kb'] = 0
-            value['avail_capacity_kb'] = 0
-            db.device_update(context, osd['device']['id'], value)
-
-        osd = db.get_zone_hostname_storagegroup_by_osd_id(context, osd_id)
-        osd = osd[0]
-        osd_inner_id = osd['osd_name'].split('.')[-1]
-        umount_path = osd['device']['name']
-        osd_host = osd['service']['host']
-        self.ceph_driver.osd_remove(context,
-                                    osd_inner_id,
-                                    osd.get('device'),
-                                    osd_host,
-                                    umount_path)
-        _update_osd_db()
-        _update_device_db()
-        return True
-
-    def osd_restart(self, context, osd_id):
-        self.ceph_driver.osd_restart(context, osd_id)
-        return True
-
-    def osd_add(self, context, osd_id):
-        return self.ceph_driver.add_osd(context, host_id=None, osd_id_in=osd_id)
-
-    def osd_restore(self, context, osd_id):
-        self.ceph_driver.osd_restore(context, osd_id)
-        return True
-
-    def osd_refresh(self, context):
-        LOG.info("refresh osd status")
-        self.update_osd_state(context)
-        return True
-
     def cluster_refresh(self, context):
         LOG.info("refresh all status")
         self.update_all_status(context)
-        return True
-
-    def integrate_cluster_from_ceph(self, context):
-        LOG.info("integrate cluster from ceph")
-        self.update_all_status(context)
-        self.sync_osd_states_from_ceph(context)
         return True
 
     def integrate_cluster_update_status(self, context):
@@ -1008,65 +850,9 @@ class AgentManager(manager.Manager):
             db.device_update(context, device['id'], device_values)
         return
 
-    def sync_osd_states_from_ceph(self, context):
-        osd_json = self.ceph_driver.get_osds_status()
-        config = CephConfigParser(FLAGS.ceph_conf)
-        osds_mount_point =  config.get("osd", "osd data")
-        if osd_json is None:
-            return None
-        osd_dict = json.loads(osd_json)
-        osd_list = osd_dict['osds']
-        for osd in osd_list:
-            osd_num = osd['osd']
-            osd_name = 'osd.' + (str(osd_num))
-            osd_mount_point = osds_mount_point.replace("$id",str(osd_num))
-            if osd['in'] and osd['up']:
-                osd_status = FLAGS.osd_in_up
-            elif osd['in'] and not osd['up']:
-                osd_status = FLAGS.osd_in_down
-            elif not osd['in'] and osd['up']:
-                osd_status = FLAGS.osd_out_up
-            else:
-                if FLAGS.osd_state_autoout in osd['state']:
-                    osd_status = FLAGS.osd_out_down_autoout
-                else:
-                    osd_status = FLAGS.osd_out_down
-            values = {}
-            values['osd_name'] = osd_name
-            values['state'] = osd_status
-            node = db.init_node_get_by_host(context , config.get(osd_name, "host"))
-            values['service_id'] = node["service_id"]
-            values['cluster_ip'] = config.get(osd_name, "cluster addr")
-            values['public_ip'] = config.get(osd_name, "public addr")
-
-            device = db.device_get_by_name(context, config.get(osd_name, "devs"))
-            values['device_id'] = device["id"]
-
-            cluster_id = node['cluster_id']
-            values['cluster_id'] = cluster_id
-            values['weight'] = 1.0
-            values['storage_group_id'] = 1
-
-            values['zone_id'] = node['zone_id']
-            values['operation_status'] = 'Present'
-            self._conductor_rpcapi.\
-                osd_state_update_or_create(context, values)
-
-            device_values = {}
-            device_values["mount_point"]=osd_mount_point
-            db.device_update(context,device["id"],device_values)
-
-
     def _get_cluster_id(self, context):
         init_node = db.init_node_get_by_host(context, FLAGS.host)
         return init_node['cluster_id']
-
-    def get_pool_id_by_name(self, context, name):
-        pools = self.ceph_driver.get_pool_stats()
-        for pool in pools:
-            if pool['pool_name'] == name:
-                return pool['pool_id']
-        return None
 
     def set_pool_pg_pgp_num(self, context, pool, pg_num, pgp_num):
         self.ceph_driver.set_pool_pg_pgp_num(context, pool, pg_num, pgp_num)
@@ -1074,388 +860,7 @@ class AgentManager(manager.Manager):
 
     @utils.pass_lock('d7f6685d-a90b-4a69-b178-4b8119a5bdde')
     def update_osd_state(self, context):
-        self.update_osds_weight(context)
-        self.update_device_capacity(context)
-        self.update_osds_status(context)
         self.update_summary(context, sum_type=FLAGS.summary_type_osd)
-
-    @utils.pass_lock('4663a886-1faf-4eed-9927-8d76d49ae8f3')
-    def update_pool_state(self, context):
-        self.update_pool_stats(context)
-        self.update_pool_status(context)
-
-    #@require_active_host
-    @periodic_task(service_topic=FLAGS.agent_topic,
-                   spacing=_get_interval_time('ceph_osd_dump'))
-    def update_osds_status(self, context):
-        osd_json = self.ceph_driver.get_osds_status()
-        if osd_json is None:
-            return None
-        osd_dict = json.loads(osd_json)
-        osd_list = osd_dict['osds']
-        db_osds = db.osd_get_all(context)
-        for osd in osd_list:
-            osd_num = osd['osd']
-            osd_name = 'osd.' + (str(osd_num))
-            for db_osd in db_osds:
-                if osd_name == db_osd.osd_name:
-                    # OSD is present in Ceph and in DB
-                    db_osds.remove(db_osd)
-                    break
-            if osd['in'] and osd['up']:
-                osd_status = FLAGS.osd_in_up
-            elif osd['in'] and not osd['up']:
-                osd_status = FLAGS.osd_in_down
-            elif not osd['in'] and osd['up']:
-                osd_status = FLAGS.osd_out_up
-            else:
-                if FLAGS.osd_state_autoout in osd['state']:
-                    osd_status = FLAGS.osd_out_down_autoout
-                else:
-                    osd_status = FLAGS.osd_out_down
-            values = {}
-            values['osd_name'] = osd_name
-            values['state'] = osd_status
-            self._conductor_rpcapi.\
-                osd_state_update(context, values)
-        for db_osd in db_osds:
-            # OSD's remaining in the db_osds list were found in the DB but not in Ceph output
-            # They have been removed from the ceph cluster but still not changed from the vsm db.
-            LOG.info("OSD removed from cluster: %s" % db_osd.osd_name)
-            if db_osd.osd_name != 'osd.x' and db_osd.operation_status != FLAGS.vsm_status_uninitialized:
-                osd_id = db_osd.id
-                device_id = db_osd.device_id
-
-                # Do the same action like removing osd through vsm
-                # Update the osd and device on DB.
-                value= {}
-                value['id'] = osd_id
-                value['osd_name'] = 'osd.x'
-                value['state'] = str(FLAGS.vsm_status_uninitialized)
-                value['operation_status'] = FLAGS.vsm_status_removed
-                db.osd_state_update(context, osd_id, value)
-
-                value = {}
-                value['id'] = device_id
-                value['total_capacity_kb'] = 0
-                value['used_capacity_kb'] = 0
-                value['avail_capacity_kb'] = 0
-                db.device_update(context, device_id, value)
-
-                # db.osd_delete(context, osd_id)
-                # db.device_delete(context, device_id)
-
-    @periodic_task(service_topic=FLAGS.agent_topic,
-                   spacing=10)
-    def clean_performance_history_data(self, context):
-        key = 'keep_performance_data_days'
-        setting = db.vsm_settings_get_by_name(CTXT, key)
-        if setting:
-            days = setting.get('value')
-        else:
-            days = '7'
-            db.vsm_settings_update_or_create(context, {'name':key,'value':days})
-        db.clean_performance_history_data(context,days)
-
-    #@require_active_host
-    @periodic_task(run_immediately=True, service_topic=FLAGS.agent_topic,
-                   spacing=_get_interval_time('ceph_osd_tree'))
-    def update_osds_weight(self, context):
-        weight_list = self.ceph_driver.get_osds_tree()
-        #LOG.debug('osd tree : %s' % weight_list)
-        osd_states = db.osd_state_get_all(context)
-        #LOG.debug('osd_state info : %s' % osd_states)
-        if osd_states:
-            #LOG.debug('Update crush weight.')
-            osd_names = [osd.osd_name for osd in osd_states]
-            for osd in weight_list:
-                name = osd.get('name')
-                if name and name in osd_names:
-                    values = dict()
-                    values['osd_name'] = name
-                    values['weight'] = osd.get('crush_weight')
-                    values['osd_location'] = osd.get('osd_location')
-                    #LOG.debug('update crush weight values: %s' % values)
-                    self._conductor_rpcapi.\
-                        osd_state_update_or_create(context, values, create=False)
-
-    #@require_active_host
-    @periodic_task(run_immediately=True, service_topic=FLAGS.agent_topic,
-                   spacing=_get_interval_time('ceph_pg_dump_osds'))
-    def update_device_capacity(self, context):
-        capacity_list = self.ceph_driver.get_osd_capacity()
-        #LOG.debug('capacity list : %s' % capacity_list)
-        devices = db.device_get_all(context)
-
-        if devices:
-            #LOG.debug('Update osd capacity.')
-            #device_names = dict([(dev.get('name'), dev.get('id')) for dev in devices])
-            #LOG.debug('device id and name dict: %s' % device_names)
-            osd_states = db.osd_state_get_all(context)
-            osd_names = dict([(osd_state.get('osd_name'), osd_state.get("device_id"))
-                              for osd_state in osd_states])
-            #LOG.debug('device id and osd name dict: %s' % osd_names)
-            for osd in capacity_list:
-                osd_id = osd.get('osd', None)
-                if isinstance(osd_id, int):
-                    osd_name = 'osd.' + (str(osd_id))
-                    #LOG.debug('osd name in db %s' % osd_name)
-                    if osd_name in osd_names.keys():
-                        values = dict()
-                        values['id'] = osd_names.get(osd_name)
-                        values['total_capacity_kb'] = osd.get('kb')
-                        values['used_capacity_kb'] = osd.get('kb_used')
-                        values['avail_capacity_kb'] = osd.get('kb_avail')
-                        #LOG.debug('update device capacity values: %s' % values)
-                        self._conductor_rpcapi.\
-                            device_update_or_create(context, values, create=False)
-
-    def _compute_pg_num(self, context, osd_num, replication_num):
-        """compute pg_num"""
-        try:
-            pg_count_factor = 100
-            settings = db.vsm_settings_get_all(context)
-            for setting in settings:
-                if setting['name'] == 'pg_count_factor':
-                    pg_count_factor = int(setting['value'])
-
-            pg_num = pg_count_factor * osd_num//replication_num
-
-        except ZeroDivisionError,e:
-            raise ZeroDivisionError
-        if pg_num < 1:
-            msg = _("Could not compute proper pg_num.")
-            raise
-        return pg_num
-    @periodic_task(run_immediately=True,
-                   service_topic=FLAGS.agent_topic,
-                   spacing=FLAGS.update_ceph_version_info)
-    def get_ceph_version_to_db(self, context):
-        ceph_ver = self.ceph_driver.get_ceph_version()
-        db.init_node_update(context,self._init_node_id,{'ceph_ver':ceph_ver})
-
-    @periodic_task(run_immediately=True,
-                   service_topic=FLAGS.agent_topic,
-                   spacing=FLAGS.reset_pg_heart_beat)
-    def update_pg_and_pgp(self, context):
-        LOG.info("Updating pg_num and pg_placement_num for pools")
-        db_pools = db.pool_get_all(context)
-        for pool in db_pools:
-            # storage_group = db.storage_group_get_by_rule_id(context, \
-            #                                         pool['crush_ruleset'])
-            # if storage_group:
-            crushmap = self.get_crushmap_json_format()
-            osd_num_per_group = crushmap.osd_count_by_rule_id( pool['crush_ruleset'])
-            #reset pgs
-            max_pg_num_per_osd = pool['max_pg_num_per_osd']
-            if not max_pg_num_per_osd:
-                settings = db.vsm_settings_get_all(context)
-                for setting in settings:
-                    if setting['name'] == 'pg_count_factor':
-                         max_pg_num_per_osd = int(setting['value'])
-            auto_growth_pg = pool['auto_growth_pg']
-            if auto_growth_pg:
-                size = pool['size']
-                if pool['size'] == 0:
-                    pool_default_size = db.vsm_settings_get_by_name(context,'osd_pool_default_size')
-                    size = int(pool_default_size.value)
-                max_pg_num_finally = max_pg_num_per_osd * osd_num_per_group//size
-                if max_pg_num_finally > pool['pg_num']:
-                    pg_num = max_pg_num_finally#self._compute_pg_num(context, osd_num_per_group, pool['size'])
-                    LOG.info("pool['crush_ruleset'] id %s has %s osds" % (pool['crush_ruleset'], osd_num_per_group))
-                    if osd_num_per_group > 64:
-                        osd_num_per_group = 64
-                        LOG.info("osd_num_per_group > 64, use osd_num_per_group=64")
-                    step_max_pg_num = osd_num_per_group * 32
-                    max_pg_num = step_max_pg_num + pool['pg_num']
-                    if pg_num > max_pg_num_finally:
-                        pgp_num = pg_num = max_pg_num_finally
-                        self.set_pool_pg_pgp_num(context, pool['name'], pg_num, pgp_num)
-                    elif pg_num > max_pg_num:
-                        pgp_num = pg_num = max_pg_num
-                        self.set_pool_pg_pgp_num(context, pool['name'], pg_num, pgp_num)
-                    elif pg_num > pool['pg_num']:
-                        pgp_num = pg_num
-                        self.set_pool_pg_pgp_num(context, pool['name'], pg_num, pgp_num)
-                    else:
-                        continue
-
-        ceph_pools = self.ceph_driver.get_pool_status()
-        for pool in ceph_pools:
-            # TODO cluster_id is hardcode here, fix it later
-            # fix issue after import ceph cluster, at this time no pool in db
-
-            cluster_id = 1
-            pool_name = pool.get('pool_name')
-            db_pool = db.pool_get_by_name(context, pool_name, cluster_id)
-            if db_pool:
-                pool_id = pool.get('pool')
-                pg_num = pool.get('pg_num')
-                pg_placement_num = pool.get('pg_placement_num')
-                values = {
-                    'pg_num': pg_num,
-                    'pgp_num': pg_placement_num
-                }
-                LOG.info("Update pool %s with pg_num %s pg_placement_num %s" %
-                         (pool_name, pg_num, pg_placement_num))
-                db.pool_update_by_pool_id(context, pool_id, values)
-            else:
-                LOG.warn("Not found pool %s in db now, will add and update it later" % pool_name)
-
-    #@require_active_host
-    @periodic_task(run_immediately=True,
-                   service_topic=FLAGS.agent_topic,
-                   spacing=_get_interval_time('ceph_osd_dump'))
-    def update_pool_status(self, context):
-        ceph_list = self.ceph_driver.get_pool_status()
-        cluster_id = self._get_cluster_id(context)
-        db_pools = self._conductor_rpcapi.list_storage_pool(context)
-
-        db_names = [pool.get('name') for pool in db_pools.values()]
-        ceph_names = [pool.get('pool_name') for pool in ceph_list]
-
-        # pools in db. Not in ceph.
-        # Delete it.
-        deleted_pools = set(db_names) - set(ceph_names)
-        for pool_name in deleted_pools:
-            LOG.info('Pool in DB, not in ceph, delete %s.' % pool_name)
-            self._conductor_rpcapi.destroy_storage_pool(context, pool_name)
-
-        # Pools in ceph, not int db.
-        # Add it.
-        add_pools = set(ceph_names) - set(db_names)
-        for pool_name in add_pools:
-            # if is in ceph, not in db.
-            # and not created by vsm.
-            for pool in ceph_list:
-                if pool['pool_name'] == pool_name:
-                    storage_group = db.storage_group_get_by_rule_id(context, \
-                                                    pool.get('crush_ruleset'))
-                    values = {
-                        'pool_id': pool.get('pool'),
-                        'name': pool.get('pool_name'),
-                        'pg_num': pool.get('pg_num'),
-                        'pgp_num': pool.get('pg_placement_num'),
-                        'size': pool.get('size'),
-                        'min_size': pool.get('min_size'),
-                        'crush_ruleset': pool.get('crush_ruleset'),
-                        'crash_replay_interval': pool.get('crash_replay_interval')
-                    }
-                    values['created_by'] = 'ceph'
-                    values['cluster_id'] = cluster_id
-                    values['tag'] = 'SYSTEM'
-                    values['status'] = 'running'
-                    if storage_group:
-                        values['primary_storage_group_id'] = storage_group['id']
-                    LOG.debug('Pool %s in ceph, not in db, add it.' % values)
-                    self._conductor_rpcapi.create_storage_pool(context, values)
-
-        for pool in ceph_list:
-            values = {}
-            if pool.get('pg_num') > pool.get('pg_placement_num'):
-                self.ceph_driver.set_pool_pgp_num(context, pool['pool_name'], pool['pg_num'])
-                values['pg_num'] = pool['pg_num']
-                values['pgp_num'] = pool['pg_num']
-            if pool.get('erasure_code_profile'):
-                values['ec_status'] = pool['erasure_code_profile']
-            if values:
-                db.pool_update_by_pool_id(context, pool['pool'], values)
-
-        # If both in ceph/db. Update info in db.
-        upd_pools = []
-        for p in ceph_list:
-            if p['pool_name'] in db_names:
-                upd_pools.append(p)
-
-        for pool in upd_pools:
-            values = {
-               'pool_id': pool.get('pool'),
-               'name': pool.get('pool_name'),
-               'pg_num': pool.get('pg_num'),
-               'pgp_num': pool.get('pg_placement_num'),
-               'size': pool.get('size'),
-               'min_size': pool.get('min_size'),
-               'crush_ruleset': pool.get('crush_ruleset'),
-               'crash_replay_interval': pool.get('crash_replay_interval')
-            }
-            self._conductor_rpcapi.update_storage_pool_by_name(context,
-                pool.get('pool_name'), cluster_id, values)
-
-    #@require_active_host
-    @periodic_task(run_immediately=True,
-                   service_topic=FLAGS.agent_topic,
-                   spacing=_get_interval_time('rbd_ls_-l_{pool_name}'))
-    def update_rbd_status(self, context):
-        rbd_list = self.ceph_driver.get_rbd_status()
-        rbd_image_list = []
-        for rbd in rbd_list:
-            rbd_image = rbd['image']
-            rbd_image_list.append(rbd_image)
-        # rbd_list = rbd_list[:100]
-        old_rbd_list = self._conductor_rpcapi.rbd_get_all(context,
-                                                          None,
-                                                          None,
-                                                          None,
-                                                          None)
-        for old_rbd in old_rbd_list:
-            old_rbd_image = old_rbd["image"]
-            if old_rbd_image and old_rbd_image not in rbd_image_list:
-                deleted_at = timeutils.utcnow()
-                old_rbd["deleted_at"] = deleted_at
-                old_rbd["deleted"] = 1
-                db.rbd_update_or_create(context, old_rbd)
-        for rbd in rbd_list:
-            db.rbd_update_or_create(context, rbd)
-
-    #@require_active_host
-    @periodic_task(run_immediately=True, service_topic=FLAGS.agent_topic,
-                   spacing=_get_interval_time('ceph_osd_pool_stats'))
-    def update_pool_stats(self, context):
-        pool_stats = self.ceph_driver.get_pool_stats()
-        #TODO: need to list pools by cluster id
-        pools = self._conductor_rpcapi.list_storage_pool(context)
-        if pools:
-            #LOG.debug('Update pool stats.')
-            pool_ids = [pool.get('pool_id') for pool in pools.values()]
-            for stat in pool_stats:
-                pid = stat.get('pool_id')
-                if pid in pool_ids:
-                    values = stat.get('client_io_rate')
-                    if values:
-                        values['pool_id'] = pid
-                        #LOG.debug('pool stats values %s ' % values)
-                        self._conductor_rpcapi.update_storage_pool(context, pid, values)
-                    else:
-                        LOG.info('No client io rate update for pool %s.' % pid)
-
-
-    #@require_active_host
-    @periodic_task(run_immediately=True,
-                   service_topic=FLAGS.agent_topic,
-                   spacing=_get_interval_time('ceph_mds_dump'))
-    def update_mds_status(self, context):
-        mds_list = self.ceph_driver.get_mds_status()
-        if mds_list:
-            for mds in mds_list:
-                db.mds_update_or_create(context, mds)
-                address = mds['address'].split(':')
-                if len(address)>0:
-                    LOG.info('mds addresss========%s'%address[0])
-                    node = db.init_node_get_by_cluster_ip(context,address[0])
-                    if node['mds'] != 'yes':
-                        values = {'mds':'yes'}
-                        db.init_node_update(context,node['id'],values)
-
-    #@require_active_host
-    #@periodic_task(run_immediately=True,
-    #               service_topic=FLAGS.agent_topic,
-    #               spacing=_get_interval_time('ceph_pg_dump_pgs_brief'))
-    def update_pg_status(self, context):
-        pg_list = self.ceph_driver.get_pg_status()
-        if pg_list:
-            for pg in pg_list:
-                db.pg_update_or_create(context, pg)
-
 
     #@require_active_host
     @periodic_task(run_immediately=True, service_topic=FLAGS.agent_topic,
@@ -1544,113 +949,6 @@ class AgentManager(manager.Manager):
                 except Exception:
                     LOG.warn('Exception in update_summary:', exc_info=True)
 
-    @periodic_task(service_topic=FLAGS.agent_topic, spacing=FLAGS.server_ping_time)
-    def update_server_status(self, context):
-        """Update server status in every 5 seconds."""
-        def _try_connect(host):
-            try:
-                self._agent_rpcapi.test_service(context,
-                                                FLAGS.agent_topic,
-                                                host)
-                return True
-            except rpc_exc.Timeout, rpc_exc.RemoteError:
-                return False
-            except:
-                return False
-
-        def _thread_func_for_unavailable(host, node_id, pre_status):
-            if _try_connect(host):
-                db.init_node_update_status_by_id(context,
-                                                 node_id,
-                                                 pre_status)
-            else:
-                for i in range(10):
-                    if _try_connect(host):
-                        db.init_node_update_status_by_id(context,
-                                                         node_id,
-                                                         pre_status)
-                        break
-
-        def _thread_func_for_other(host, node_id, pre_status):
-            if not _try_connect(host):
-                error_num = 0
-                for i in range(10):
-                    if not _try_connect(host):
-                        error_num += 1
-                if error_num > 8:
-                    db.init_node_update_status_by_id(context,
-                                                     node_id,
-                                                     'unavailable')
-
-        nodes = db.init_node_get_all(context)
-        unav_list = []
-        health_list = []
-        for node in nodes:
-            if not node.get('host', None):
-                continue
-
-            if node.get('status', None) == 'unavailable':
-                unav_list.append(node)
-            else:
-                health_list.append(node)
-
-        nav_list = []
-        for node in unav_list:
-            host = node.get('host', None)
-            node_id = node.get('id', None)
-            pre_status = node.get('pre_status', None)
-            thd = utils.MultiThread(_thread_func_for_unavailable,
-                                    host, node_id, pre_status)
-            nav_list.append(thd)
-
-        hel_list = []
-        for node in health_list:
-            host = node.get('host', None)
-            node_id = node.get('id', None)
-            pre_status = node.get('pre_status', None)
-            thd = utils.MultiThread(_thread_func_for_other,
-                                    host, node_id, pre_status)
-            hel_list.append(thd)
-
-        utils.start_threads(nav_list)
-        utils.start_threads(hel_list)
-
-        """
-        Ignore mds migration
-        if is_mds:
-            # delete mds on this server.
-            values = {'mds': 'no'}
-            db.init_node_update(context, node_id, values)
-            self.ceph_driver.remove_mds(context, node_id)
-            # Find a new node, start mds on that node.
-            nodes = db.init_node_get_all(context)
-            active_list = []
-            for ser in nodes:
-                if ser['status'] == 'Active':
-                    active_list.append(ser)
-            active_host = random.choice(active_list)
-            self._agent_rpcapi.add_mds(context, active_host['host'])
-        """
-
-    @periodic_task(spacing=FLAGS.update_time_interval)
-    def update_node_datetime(self, context):
-        """Update the update-at of each node in db with current time."""
-        values = {'updated_at': timeutils.utcnow()}
-        hostname, err = utils.execute('hostname')
-        if not err:
-            node = db.init_node_get_by_host(context, hostname.strip())
-            if node is not None:
-                db.init_node_update(context, node['id'], values)
-        else:
-            try:
-                raise exception.ExeCmdError
-            except exception.ExeCmdError, e:
-                LOG.error("%s:%s" % (e.code, e.message))
-                
-    @periodic_task(service_topic=FLAGS.agent_topic, spacing=_get_interval_time('ceph_status'))
-    def check_for_external_ceph_conf_updates(self, context):
-        CephConfigSynchronizer().sync_before_read(FLAGS.ceph_conf)
-
     @periodic_task(service_topic=FLAGS.agent_topic, spacing=_get_interval_time('ceph_status'))
     def update_ceph_status(self, context):
         all_pool = db.pool_get_all(context)
@@ -1699,9 +997,6 @@ class AgentManager(manager.Manager):
         else:
             return 'HEALTH_OK'
 
-    def health_status(self, context):
-        return self.update_ceph_status(context)
-
     def inital_ceph_osd_db_conf(self, context, server_list, ceph_conf_in_cluster_manifest):
         """Begin to reate ceph.conf and initial ceph osd in ceph."""
         cluster_ref = db.cluster_get(context, self._cluster_id)
@@ -1716,29 +1011,6 @@ class AgentManager(manager.Manager):
 
     def remove_cache_tier(self, context, body):
         return self.ceph_driver.remove_cache_tier(context, body)
-
-    def monitor_restart(self, context, monitor_num):
-        self.ceph_driver.start_mon_daemon(context, monitor_num)
-        return True
-
-    def get_available_disks(self, context):
-        #LOG.info('333333333')
-        available_disk_name = self.ceph_driver.get_available_disks(context)
-        LOG.info('available_disk_name=====%s'%available_disk_name)
-        devices = db.device_get_all_by_service_id(context,self._service_id)
-        dev_used_by_ceph = [dev.journal for dev in devices]
-        available_disk_info_list = []
-        name_by_path_dict = self.ceph_driver.get_disks_name_by_path_dict(available_disk_name)
-        name_by_uuid_dict = self.ceph_driver.get_disks_name_by_uuid_dict(available_disk_name)
-        for disk in available_disk_name:
-            by_path_name = name_by_path_dict.get(disk,'')
-            by_uuid_name = name_by_uuid_dict.get(disk,'')
-            if not disk in dev_used_by_ceph and not by_path_name in dev_used_by_ceph and not by_uuid_name in dev_used_by_ceph:
-                available_disk_info_list.append({'disk_name':disk,
-                                                 'by_path':by_path_name,
-                                                 'by_uuid':by_uuid_name,})
-        LOG.info('available_disk_info_list=====%s'%available_disk_info_list)
-        return available_disk_info_list
 
     def add_new_disks_to_cluster(self, context, body):
         all_disk = glob.glob('/dev/disk/by-path/*')
@@ -1807,24 +1079,6 @@ class AgentManager(manager.Manager):
             except exception.UpdateDBError, e:
                 LOG.error('%s:%s' % (e.code, e.message))
         return osd_id
-
-    def reconfig_diamond(self, context, body):
-        name = body.get('name')
-        value = body.get('value')
-        confs = {}
-        if name in ['cpu_diamond_collect_interval','ceph_diamond_collect_interval']:
-            if int(value) == 0:
-                confs['enabled'] = False
-            else:
-                confs['enabled'] = True
-                confs['interval'] = value
-        if name == 'cpu_diamond_collect_interval':
-            collect_name = 'CPUCollector'
-        elif name == 'ceph_diamond_collect_interval':
-            collect_name = 'CephCollector'
-        else:
-            return
-        self.diamond_driver.change_collector_conf(collect_name,confs)
 
     def get_crushmap_json_format(self,keyring=None):
         '''
@@ -2233,14 +1487,6 @@ class AgentManager(manager.Manager):
         message = {'code':code,'error':error,'info':info,'tree_data':tree_node}
         return message
 
-    def add_rule_to_crushmap(self,context,body):
-        ret = self.crushmap_manager_driver._generate_one_rule(body)
-        return ret
-
-    def modify_rule_in_crushmap(self,context,body):
-        ret = self.crushmap_manager_driver._modify_takes_of_rule(body)
-        return ret
-
     def update_zones_from_crushmap_to_db(self,context,body):
         crushmap = self.get_crushmap_json_format()
         ret = self._insert_zone_from_crushmap_to_db(context,crushmap)
@@ -2277,26 +1523,6 @@ class AgentManager(manager.Manager):
         }
         ret = db.zone_update_or_create(context,values)
         return ret
-
-    def get_default_pg_num_by_storage_group(self,context,body):
-        storage_group_name = body['storage_group_name']
-        size = db.get_size_by_storage_group_name(context,storage_group_name)
-        storage_group = db.storage_group_get_by_name(context,storage_group_name)
-        crushmap = self.get_crushmap_json_format()
-        try:
-            osd_num_per_group = crushmap.osd_count_by_rule_id( storage_group['rule_id'])
-        except:
-            #LOG.info('get_default_pg_num_by_storage_group: no such rule %s in crushmap'%storage_group['rule_id'])
-            return -1
-        size = int(size)
-        if size == 0:
-            pool_default_size = db.vsm_settings_get_by_name(context,'osd_pool_default_size')
-            size = int(pool_default_size.value)
-        pg_count_factor = db.vsm_settings_get_by_name(context,'pg_count_factor')
-        pg_count_factor = int(pg_count_factor.value)
-        pg_num_default = pg_count_factor * osd_num_per_group//size
-        LOG.info('get_default_pg_num_by_storage_group:%s'%pg_num_default)
-        return pg_num_default
 
     def _rgw_simple_create(self, context, name, host, keyring, log_file, rgw_frontends,
                            is_ssl, s3_user_uid, s3_user_display_name, s3_user_email,

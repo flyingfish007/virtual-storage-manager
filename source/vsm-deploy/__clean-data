@@ -21,7 +21,6 @@ service vsm-api stop
 service vsm-scheduler stop
 service vsm-conductor stop
 service vsm-agent stop
-service vsm-physical stop
 TOPDIR=$(cd $(dirname "$0") && pwd)
 
 function is_controller() {
@@ -47,7 +46,6 @@ function clean_controller() {
     service vsm-scheduler stop
     service vsm-conductor stop
     service vsm-agent stop
-    service vsm-physical stop
     if [[ `is_controller` -gt 0 ]]; then
         echo "Clean over! you have to run vsm-controller again."
         echo "Begin to install controller. (y/n)?"
@@ -76,7 +74,6 @@ function _clean_agent() {
     cp -rf /usr/local/bin/tools/etc/vsm/* /etc/vsm/
     cp -rf /etc/vsm/vsm.conf.sample /etc/vsm/vsm.conf
     #service vsm-agent restart
-    #service vsm-physical restart
     echo "-------------------------------------------------"
     echo "Step 1"
     echo "You have to change auth-key in server.manifest."

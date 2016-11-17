@@ -132,7 +132,6 @@ if [ -n "${REMOVE_CEPH_PKGS}" ]; then
     sudo clean-data -f
 fi
 sudo service vsm-agent stop
-sudo service vsm-physical stop
 sudo apt-get purge --yes vsm vsm-dashboard python-vsmclient vsm-deploy
 sudo apt-get purge --yes diamond
 sudo apt-get purge --yes python-keystoneclient

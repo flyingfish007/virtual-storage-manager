@@ -551,7 +551,7 @@ function _scp_vsm_conf_to_agent_from_controller() {
         else
             $SCP /etc/vsm/vsm.conf $USER@$1:/etc/vsm
         fi
-        $SSH $USER@$1 "$SUDO service vsm-agent restart;$SUDO service vsm-physical restart"
+        $SSH $USER@$1 "$SUDO service vsm-agent restart"
     fi
 }
 

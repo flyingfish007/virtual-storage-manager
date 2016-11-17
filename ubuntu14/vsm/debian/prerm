@@ -15,11 +15,6 @@ if [[ -f /var/run/vsm/vsm-conductor.pid ]]; then
   sudo service vsm-conductor stop
 fi
 
-if [[ -f /var/run/vsm/vsm-physical.pid ]]; then
-  update-rc.d -f vsm-physical remove
-  sudo service vsm-physical stop
-fi
-
 if [[ -f /var/run/vsm/vsm-scheduler.pid ]]; then
   update-rc.d -f vsm-scheduler remove
   sudo service vsm-scheduler stop

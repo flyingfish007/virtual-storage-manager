@@ -184,19 +184,6 @@ for n in `ls /etc/init.d | grep vsm`; do
 done
 
 #---------------------------------------------------
-# Change script exe.
-#---------------------------------------------------
-
-for n in `find /etc/vsm/prepools -name "*"`; do
-    if [[ ! -d $n ]]; then
-        cnt=`head -1 $n | grep bash | wc -l`
-        if [[ $cnt -gt 0 ]];then
-            chmod +x $n
-        fi
-    fi
-done
-
-#---------------------------------------------------
 # End function.
 #---------------------------------------------------
 fi

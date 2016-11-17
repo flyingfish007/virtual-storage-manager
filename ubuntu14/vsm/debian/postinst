@@ -3,5 +3,4 @@
 #update-rc.d vsm-agent defaults
 #update-rc.d vsm-api defaults
 #update-rc.d vsm-conductor defaults
-#update-rc.d vsm-physical defaults
 #update-rc.d vsm-scheduler defaults

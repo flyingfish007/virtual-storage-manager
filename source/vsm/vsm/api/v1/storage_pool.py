@@ -250,20 +250,6 @@ class StoragePoolController(wsgi.Controller):
         return self._items(req,
                             entity_maker=_translate_storage_pool_summary_view)
 
-    @wsgi.serializers(xml=StoragePoolsTemplate)
-    def test_scheduler(self, req, body=None):
-        """Returns a detailed list of host status."""
-        body_info = body.get('request', None)
-        search_opts = {}
-        search_opts.update(req.GET)
-
-        context = req.environ['vsm.context']
-        remove_invalid_options(context,
-                                search_opts, 
-                                self._get_storage_pool_search_options)
-
-        res = self.scheduler_api.test_service(context, body_info)
-        return {'key': res}
 
     @wsgi.serializers(xml=StoragePoolsTemplate)
     def create(self, req, body=None):

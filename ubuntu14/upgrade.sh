@@ -147,7 +147,6 @@ $SUDO service vsm-scheduler restart
 # start all agent services if controller is also an agent
 if [[ $is_agent = True ]]; then
     $SUDO service vsm-agent restart
-    $SUDO service vsm-physical restart
 fi
 EOF
 }
@@ -192,7 +191,6 @@ $SUDO mv -f $ATEMP/server.manifest /etc/manifest
 
 # restart agent vsm services
 $SUDO service vsm-agent restart
-$SUDO service vsm-physical restart
 EOF
 }
 
@@ -204,7 +202,6 @@ function pre_upgrade() {            # pre_upgrade <controller-address> <agent-ad
         $SSH $agent_address "bash -x -s" <<EOF
 # stop all agent vsm services
 $SUDO service vsm-agent stop
-$SUDO service vsm-physical stop
 EOF
     done
 
