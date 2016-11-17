@@ -539,7 +539,6 @@ CATEGORIES = {
     'host': HostCommands,
     'logs': GetLogCommands,
     'shell': ShellCommands,
-    'sm': StorageManagerCommands,
     'version': VersionCommands,
     'volume': VolumeCommands,
     'migrate': ImportCommands,
