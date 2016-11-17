@@ -17,7 +17,7 @@ function _setup_vsmdeploy_rpm() {
     local TO_DIR=$TOPDIR/source/vsm-deploy/tools/etc/vsm-dashboard/
     cp -rf $FROM_DIR/local/local_settings.template $TO_DIR/
     cp -rf $FROM_DIR/settings.py $TO_DIR/
-    cp -rf $FROM_DIR/../tools/vsm-dashboard.conf $TO_DIR/
+    cp -rf $FROM_DIR/../vsm-dashboard.conf $TO_DIR/
 
     cd $TEMP/
 

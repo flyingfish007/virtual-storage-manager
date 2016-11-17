@@ -76,7 +76,7 @@ rm -rf %{buildroot}
 #---------------------------
 
 install -d -m 755 %{buildroot}%{_sysconfdir}/httpd/conf.d
-install -p -D -m 755 tools/vsm-dashboard.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/vsm-dashboard.conf
+install -p -D -m 755 vsm-dashboard.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/vsm-dashboard.conf
 
 
 #---------------------------

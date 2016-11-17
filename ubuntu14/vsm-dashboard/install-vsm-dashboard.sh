@@ -10,7 +10,7 @@ rm -rf build
 # httpd Configuration file
 #---------------------------
 install -g root -o root -v -m 755 -d $VSM_DASHBOARD_ROOT_PATH/etc/apache2/conf-available
-install -g root -o root -v -m 755 -t $VSM_DASHBOARD_ROOT_PATH/etc/apache2/conf-available tools/vsm-dashboard.conf
+install -g root -o root -v -m 755 -t $VSM_DASHBOARD_ROOT_PATH/etc/apache2/conf-available vsm-dashboard.conf
 
 #---------------------------
 # bin Files for lessc
