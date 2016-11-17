@@ -235,45 +235,21 @@ def find_cluster(cs, cluster):
     """Get a cluster by name or ID."""
     return find_resource(cs.clusters, cluster)
 
-def find_mds(cs, mds):
-    """Get a mds by name or ID."""
-    return find_resource(cs.mdses, mds)
-
-def find_mon(cs, mon):
-    """Get a mon by name or ID."""
-    return find_resource(cs.monitors, mon)
-
-def find_osd(cs, osd):
-    """Get an osd by name or ID."""
-    return find_resource(cs.osds, osd)
-
-def find_pg(cs, pg):
-    """Get a pg by name or ID."""
-    return find_resource(cs.placement_groups, pg)
-
-def find_rbd(cs, rbd):
-    """Get a rbd by name or ID."""
-    return find_resource(cs.rbd_pools, rbd)
 
 def find_server(cs, server):
     """Get a server by name or ID."""
     return find_resource(cs.servers, server)
 
-def find_appnode(cs, appnode):
-    """Get an appnode by name or ID."""
-    return find_resource(cs.appnodes, appnode)
 
 def find_storage_group(cs, storage_group):
     """Get a storage group by name or ID."""
     return find_resource(cs.storage_groups, storage_group)
 
+
 def find_storage_pool(cs, storage_pool):
     """Get a storage pool by name or ID."""
     return find_resource(cs.storage_pools, storage_pool)
 
-def find_setting(cs, setting):
-    """Get a setting by name or ID."""
-    return find_resource(cs.vsm_settings, setting)
 
 def find_hs_instance(cs, hs_instance):
     """Get a hyperstash instance by name or ID."""
@@ -283,16 +259,6 @@ def find_hs_rbd_cache_config(cs, hs_rbd_cache_config):
     """Get a hyperstash rbd cache config by name or ID."""
     return find_resource(cs.hs_rbd_cache_configs, hs_rbd_cache_config)
 
-def _format_servers_list_networks(server):
-    output = []
-    for (network, addresses) in server.networks.items():
-        if len(addresses) == 0:
-            continue
-        addresses_csv = ', '.join(addresses)
-        group = "%s=%s" % (network, addresses_csv)
-        output.append(group)
-
-    return '; '.join(output)
 
 class HookableMixin(object):
     """Mixin so classes can register and run hooks."""

@@ -59,45 +59,21 @@ def _find_cluster(cs, cluster):
     """Get a cluster by name or ID."""
     return utils.find_cluster(cs, cluster)
 
-def _find_mds(cs, mds):
-    """Get a mds by name or ID."""
-    return utils.find_mds(cs, mds)
-
-def _find_mon(cs, mon):
-    """Get a mon by name or ID."""
-    return utils.find_mon(cs, mon)
-
-def _find_osd(cs, osd):
-    """Get an osd by name or ID."""
-    return utils.find_osd(cs, osd)
-
-def _find_pg(cs, pg):
-    """Get a pg by name or ID."""
-    return utils.find_pg(cs, pg)
-
-def _find_rbd(cs, rbd):
-    """Get a rbd by name or ID."""
-    return utils.find_rbd(cs, rbd)
 
 def _find_server(cs, server):
     """Get a server by name or ID."""
     return utils.find_server(cs, server)
 
-def _find_appnode(cs, appnode):
-    """Get an appnode by name or ID."""
-    return utils.find_appnode(cs, appnode)
 
 def _find_storage_group(cs, storage_group):
     """Get a storage group by name or ID."""
     return utils.find_storage_group(cs, storage_group)
 
+
 def _find_storage_pool(cs, storage_pool):
     """Get a storage pool by name or ID."""
     return utils.find_storage_pool(cs, storage_pool)
 
-def _find_setting(cs, setting):
-    """Get a setting by name or ID."""
-    return utils.find_setting(cs, setting)
 
 def _find_hs_instance(cs, hs_instance):
     """Get a hyperstash instance by name or ID."""
@@ -114,35 +90,6 @@ def _print_cluster(cluster):
     else:
         utils.print_dict(cluster._info)
 
-def _print_device(device):
-    if isinstance(device, dict):
-        utils.print_dict(device)
-    else:
-        utils.print_dict(device._info)
-
-def _print_mds(mds):
-    if isinstance(mds, dict):
-        utils.print_dict(mds)
-    else:
-        utils.print_dict(mds._info)
-
-def _print_mon(mon):
-    if isinstance(mon, dict):
-        utils.print_dict(mon)
-    else:
-        utils.print_dict(mon._info)
-
-def _print_osd(osd):
-    if isinstance(osd, dict):
-        utils.print_dict(osd)
-    else:
-        utils.print_dict(osd._info)
-
-def _print_pg(pg):
-    if isinstance(pg, dict):
-        utils.print_dict(pg)
-    else:
-        utils.print_dict(pg._info)
 
 def _print_rbd(rbd):
     if isinstance(rbd, dict):
@@ -150,17 +97,13 @@ def _print_rbd(rbd):
     else:
         utils.print_dict(rbd._info)
 
+
 def _print_server(server):
     if isinstance(server, dict):
         utils.print_dict(server)
     else:
         utils.print_dict(server._info)
 
-def _print_storage_group(storage_group):
-    if isinstance(storage_group, dict):
-        utils.print_dict(storage_group)
-    else:
-        utils.print_dict(storage_group._info)
 
 def _print_storage_pool(storage_pool):
     if isinstance(storage_pool, dict):
@@ -168,11 +111,6 @@ def _print_storage_pool(storage_pool):
     else:
         utils.print_dict(storage_pool._info)
 
-def _print_setting(setting):
-    if isinstance(setting, dict):
-        utils.print_dict(setting)
-    else:
-        utils.print_dict(setting._info)
 
 def _print_hs_rbd_cache_config(hs_rbd_cache_config):
     if isinstance(hs_rbd_cache_config, dict):
@@ -203,147 +141,6 @@ def _translate_storage_pool_keys(collection):
         ('pgNum', 'pg_num')
     ]
     _translate_keys(collection, convert)
-
-def _extract_metadata(args):
-    metadata = {}
-    for metadatum in args.metadata:
-        # unset doesn't require a val, so we have the if/else
-        if '=' in metadatum:
-            (key, value) = metadatum.split('=', 1)
-        else:
-            key = metadatum
-            value = None
-
-        metadata[key] = value
-    return metadata
-
-
-
-# TODO begin from here
-
-def _check_cluster_exist(cs):
-    pass
-
-
-####################appnode#########################
-@utils.arg('--vsm-os-username',
-           metavar='<vsm-os-username>',
-           help='The username of openstack keystone connected.')
-@utils.arg('--vsm-os-password',
-           metavar='<vsm-os-password>',
-           help='The password of openstack keystone connected.')
-@utils.arg('--vsm-os-tenant-name',
-           metavar='<vsm-os-tenant-name>',
-           help='The tenant name of openstack keystone connected.')
-@utils.arg('--vsm-os-auth-url',
-           metavar='<vsm-os-auth-url>',
-           help='The auth url of openstack keystone connected.')
-@utils.arg('--vsm-os-region-name',
-           metavar='<vsm-os-region-name>',
-           default='RegionOne',
-           help='The region name of openstack keystone connected. Default=RegionOne.')
-@utils.arg('--ssh-user',
-           metavar='<ssh-user>',
-           help='The ssh user to connect openstack keystone node.')
-@utils.service_type('vsm')
-def do_appnode_create(cs, args):
-    """Creates an appnode."""
-    if not args.vsm_os_username:
-        raise exceptions.CommandError("you need specify a OpenStack username")
-    if not args.vsm_os_password:
-        raise exceptions.CommandError("you need specify a OpenStack password")
-    if not args.vsm_os_tenant_name:
-        raise exceptions.CommandError("you need specify a OpenStack tenant name")
-    if not args.vsm_os_auth_url:
-        raise exceptions.CommandError("you need specify a OpenStack auth url")
-    if not args.ssh_user:
-        raise exceptions.CommandError("you need specify a password-less user to "
-                                      "connect the openstack")
-    appnode = {
-        'os_username': args.vsm_os_username,
-        'os_password': args.vsm_os_password,
-        'os_tenant_name': args.vsm_os_tenant_name,
-        'os_auth_url': args.vsm_os_auth_url,
-        'os_region_name': args.vsm_os_region_name,
-        'ssh_user': args.ssh_user
-    }
-    try:
-        cs.appnodes.create(appnode)
-        print("Succeed to create appnode.")
-    except:
-        raise exceptions.CommandError("Failed to create appnode.")
-
-@utils.service_type('vsm')
-def do_appnode_list(cs, args):
-    """Lists all appnodes."""
-    appnodes = cs.appnodes.list(detailed=False, search_opts=None)
-    columns = ["ID", "VSMApp ID", "SSH Status", "SSH User", "OS UserName",
-               "OS Password", "OS Tenant Name", "OS Auth Url", "OS Region Name",
-               "UUID"]
-    utils.print_list(appnodes, columns)
-
-@utils.arg('id',
-           metavar='<id>',
-           help='ID of appnode.')
-@utils.service_type('vsm')
-def do_appnode_delete(cs, args):
-    """Deletes an appnode by id."""
-    appnode = _find_appnode(cs, args.id)
-    try:
-        cs.appnodes.delete(appnode)
-        print("Succeed to delete appnode.")
-    except:
-        raise exceptions.CommandError("Failed to delete appnode.")
-
-@utils.arg('id',
-           metavar='<id>',
-           help='ID of appnode.')
-@utils.arg('--vsm-os-username',
-           metavar='<vsm-os-username>',
-           help='The username of openstack keystone connected.')
-@utils.arg('--vsm-os-password',
-           metavar='<vsm-os-password>',
-           help='The password of openstack keystone connected.')
-@utils.arg('--vsm-os-tenant-name',
-           metavar='<vsm-os-tenant-name>',
-           help='The tenant name of openstack keystone connected.')
-@utils.arg('--vsm-os-auth-url',
-           metavar='<vsm-os-auth-url>',
-           help='The auth url of openstack keystone connected.')
-@utils.arg('--vsm-os-region-name',
-           metavar='<vsm-os-region-name>',
-           default='RegionOne',
-           help='The region name of openstack keystone connected.')
-@utils.arg('--ssh-user',
-           metavar='<ssh-user>',
-           help='The ssh user to connect openstack keystone node.')
-@utils.service_type('vsm')
-def do_appnode_update(cs, args):
-    """Updates an appnode by id."""
-    appnode = _find_appnode(cs, args.id)
-    vsm_os_username = args.vsm_os_username or appnode.os_username
-    vsm_os_password = args.vsm_os_password or appnode.os_password
-    vsm_os_tenant_name = args.vsm_os_tenant_name or appnode.os_tenant_name
-    vsm_os_auth_url = args.vsm_os_auth_url or appnode.os_auth_url
-    vsm_os_region_name = args.vsm_os_region_name or appnode.os_region_name
-    ssh_user = args.ssh_user or appnode.ssh_user
-    ssh_status = ""
-    log_info = ""
-    new_appnode = {
-        'os_username': vsm_os_username,
-        'os_password': vsm_os_password,
-        'os_tenant_name': vsm_os_tenant_name,
-        'os_auth_url': vsm_os_auth_url,
-        'os_region_name': vsm_os_region_name,
-        'ssh_user': ssh_user,
-        'ssh_status': ssh_status,
-        'log_info': log_info
-    }
-    try:
-        cs.appnodes.update(appnode, new_appnode)
-        print("Succeed to update appnode.")
-    except:
-        raise exceptions.CommandError("Failed to update appnode.")
 
 
 #####################cluster########################
@@ -516,331 +313,6 @@ def do_cluster_start(cs, args):
         raise exceptions.BadRequest("Failed to start cluster.")
 
 
-####################device#########################
-# @utils.service_type('vsm')
-# def do_device_show(cs, args):
-#     """Shows details info of a device."""
-#     _is_developing("device-show",
-#                    "Shows details info of a device.")
-
-@utils.service_type('vsm')
-def do_device_list(cs, args):
-    """Lists all devices."""
-    devices = cs.devices.list(detailed=False, search_opts=None)
-    columns = ["ID", "Name", "Path", "Journal", "Device Type", "Used_Capacity_KB",
-               "Avail_Capacity_KB", "Total_Capacity_KB", "State", "Journal State"]
-    utils.print_list(devices, columns)
-
-@utils.arg('server-id',
-           metavar='<server-id>',
-           help='ID of server.')
-@utils.service_type('vsm')
-def do_device_list_available_disks(cs, args):
-    """Lists available disks."""
-    search_opts = {
-        'server_id': args.server_id,
-        'result_mode': 'get_disks'
-    }
-    available_disks = cs.devices.get_available_disks(search_opts=search_opts)
-    available_disks = available_disks['disks']
-    columns = ["Disk Name", "By-Path", "By-UUID"]
-    utils.print_list(available_disks, columns)
-
-@utils.arg('--device-id',
-           metavar='<device-id>',
-           help='ID of device.')
-@utils.arg('--device-path',
-           metavar='<device-path>',
-           help='Path of device.')
-@utils.service_type('vsm')
-def do_device_show_smart_info(cs, args):
-    """Shows smart info of a device."""
-    if not args.device_id:
-        raise exceptions.CommandError("you need to specify a Device ID")
-    if not args.device_path:
-        raise exceptions.CommandError("you need to specify a Device path")
-    search_opts = {
-        'device_id': args.device_id,
-        'device_path': args.device_path
-    }
-    smart_info = cs.devices.get_smart_info(search_opts=search_opts)
-    _print_device(smart_info)
-
-
-#####################mds########################
-@utils.arg('mds',
-           metavar='<mds>',
-           help='Name or ID of mds.')
-@utils.service_type('vsm')
-def do_mds_show(cs, args):
-    """Shows details info of a mds."""
-    mds = _find_mds(cs, args.mds)
-    _print_mds(mds)
-
-@utils.service_type('vsm')
-def do_mds_list(cs, args):
-    """Lists all mdses."""
-    mdses = cs.mdses.list(detailed=False, search_opts=None)
-    columns = ["ID", "GID", "Name", "State", "Address", "Updated_at"]
-    utils.print_list(mdses, columns)
-
-# @utils.arg('mds',
-#            metavar='<mds>',
-#            help='Name or ID of mds.')
-# @utils.service_type('vsm')
-# def do_mds_restart(cs, args):
-#     """Restarts mds."""
-#     mds = utils.find_mds(cs, args.mds)
-#     resp, body = cs.mdses.restart(mds)
-#     code = resp.status_code
-#     if code != 202:
-#         raise exceptions.CommandError("Failed to restart mds.")
-
-# @utils.service_type('vsm')
-# def do_mds_delete(cs, args):
-#     """Deletes mds by id."""
-#     _is_developing("mds-delete",
-#                    "Deletes mds by id.")
-
-# @utils.service_type('vsm')
-# def do_mds_restore(cs, args):
-#     """Restores mds."""
-#     _is_developing("mds-restore",
-#                    "Restores mds.")
-
-@utils.service_type('vsm')
-def do_mds_summary(cs, args):
-    """Gets summary info of mds."""
-    mds_summary = cs.mdses.summary()
-    _print_mds(mds_summary)
-
-
-#####################mon########################
-@utils.arg('mon',
-           metavar='<mon>',
-           help='Name or ID of mon.')
-@utils.service_type('vsm')
-def do_mon_show(cs, args):
-    """Shows details info of a mon."""
-    mon = _find_mon(cs, args.mon)
-    _print_mon(mon)
-
-@utils.service_type('vsm')
-def do_mon_list(cs, args):
-    """Lists all mons."""
-    mons = cs.monitors.list(detailed=False, search_opts=None)
-    columns = ["ID", "Name", "Address", "Health", "Details"]
-    utils.print_list(mons, columns)
-
-@utils.service_type('vsm')
-def do_mon_summary(cs, args):
-    """Gets summary info of mon."""
-    mon_summary = cs.monitors.summary()
-    _print_mon(mon_summary)
-
-@utils.arg('mon',
-           metavar='<mon>',
-           help='Name or ID of mon.')
-@utils.service_type('vsm')
-def do_mon_restart(cs, args):
-    """Restarts a mon by id."""
-    mon = _find_mon(cs, args.mon)
-    try:
-        cs.monitors.restart(mon)
-        print("Succeed to restart mon named %s." % mon.name)
-    except:
-        raise exceptions.CommandError("Failed to restart mon.")
-
-
-#####################osd########################
-@utils.arg('osd',
-           metavar='<osd>',
-           help='Name or ID of osd.')
-@utils.service_type('vsm')
-def do_osd_show(cs, args):
-    """Shows details info of an osd."""
-    osd = _find_osd(cs, args.osd)
-    _print_osd(osd)
-
-@utils.service_type('vsm')
-def do_osd_list(cs, args):
-    """Lists all osds."""
-    osds = cs.osds.list(detailed=False, search_opts=None, paginate_opts=None)
-    columns = ["ID", "OSD Name", "Weight", "State", "Operation Status",
-               "Device ID", "Service ID", "Updated_at"]
-    utils.print_list(osds, columns)
-
-@utils.arg('osd',
-           metavar='<osd>',
-           help='Name or ID of osd.')
-@utils.service_type('vsm')
-def do_osd_restart(cs, args):
-    """Restarts an osd by id."""
-    osd = _find_osd(cs, args.osd)
-    try:
-        cs.osds.restart(osd)
-        print("Succeed to restart osd named %s." % osd.osd_name)
-    except:
-        raise exceptions.CommandError("Failed to restart osd.")
-
-@utils.arg('osd',
-           metavar='<osd>',
-           help='Name or ID of osd.')
-@utils.service_type('vsm')
-def do_osd_remove(cs, args):
-    """Removes an osd by id."""
-    osd = _find_osd(cs, args.osd)
-    try:
-        cs.osds.remove(osd)
-        print("Succeed to remove osd named %s." % osd.osd_name)
-    except:
-        raise exceptions.CommandError("Failed to remove osd.")
-
-@utils.arg('--server-id',
-           metavar='<server-id>',
-           help='The id of server which to add new osd.')
-@utils.arg('--storage-group-id',
-           metavar='<storage-group-id>',
-           help='The id of storage group.')
-@utils.arg('--weight',
-           metavar='<weight>',
-           default='1.0',
-           help='Weight of osd.')
-@utils.arg('--journal',
-           metavar='<journal>',
-           help='Journal path.')
-@utils.arg('--data',
-           metavar='<data>',
-           help='Data path.')
-@utils.service_type('vsm')
-def do_osd_add_new(cs, args):
-    """Adds new osd to ceph cluster."""
-    if not args.server_id:
-        raise exceptions.CommandError("you need to specify a Server ID")
-    if not args.storage_group_id:
-        raise exceptions.CommandError("you need to specify a Storage Group ID")
-    if not args.journal:
-        raise exceptions.CommandError("you need to specify a journal")
-    if not args.data:
-        raise exceptions.CommandError("you need to specify a data")
-    body = {
-        'server_id': args.server_id,
-        'osd_info': [
-            {
-                'storage_group_id': args.storage_group_id,
-                'weight': args.weight,
-                'journal': args.journal,
-                'data': args.data
-            }
-        ]
-    }
-    try:
-        cs.osds.add_new_disks_to_cluster(body=body)
-        print("Succeed to add new osd to cluster.")
-    except:
-        raise exceptions.CommandError("Failed to add new osd to cluster.")
-
-@utils.arg('osd',
-           metavar='<osd>',
-           help='Name or ID of osd.')
-@utils.service_type('vsm')
-def do_osd_restore(cs, args):
-    """Restores an osd."""
-    osd = _find_osd(cs, args.osd)
-    try:
-        cs.osds.restore(osd)
-        osd = _find_osd(cs, args.osd)
-        print("Succeed to restore osd named %s." % osd.osd_name)
-    except:
-        raise exceptions.CommandError("Failed to restore osd.")
-
-@utils.service_type('vsm')
-def do_osd_refresh(cs, args):
-    """Refreshes osd."""
-    try:
-        cs.osds.refresh()
-        print("Succeed to refresh osd status.")
-    except:
-        raise exceptions.CommandError("Failed to refresh osd status.")
-
-@utils.service_type('vsm')
-def do_osd_summary(cs, args):
-    """Gets summary info of osd."""
-    osd_summary = cs.osds.summary()
-    _print_osd(osd_summary)
-
-
-###################performance metric##########################
-# @utils.service_type('vsm')
-# def do_perf_metric_list(cs, args):
-#     """Lists performance metrics."""
-#     _is_developing("perf-metric-list",
-#                    "Lists performance metrics.")
-
-
-###################placement group##########################
-@utils.arg('pg',
-           metavar='<pg>',
-           help='Name or ID of pg.')
-@utils.service_type('vsm')
-def do_pg_show(cs, args):
-    """Shows details info of a placement group."""
-    pg = _find_pg(cs, args.pg)
-    _print_pg(pg)
-
-@utils.service_type('vsm')
-def do_pg_list(cs, args):
-    """Lists all placement groups."""
-    pgs = cs.placement_groups.list(detailed=False, search_opts=None, paginate_opts=None)
-    columns = ["ID", "PG ID", "State", "UP", "Acting"]
-    utils.print_list(pgs, columns)
-
-@utils.service_type('vsm')
-def do_pg_summary(cs, args):
-    """Gets summary info of placement group."""
-    pg_summary = cs.placement_groups.summary()
-    _print_pg(pg_summary)
-
-
-###################pool usage##########################
-@utils.arg('--pools',
-           metavar='<pool-id=pool-id,cinder-volume-host=hostname,appnode-id=appnode-id>',
-           action='append',
-           default=[],
-           help='Each should have pool id, cinder volume host and appnode id.')
-@utils.service_type('vsm')
-def do_pool_usage_create(cs, args):
-    """Creates pool usage."""
-    pools_list = []
-    pools = args.pools
-    id_list = []
-    for pool in pools:
-        key_value_list = pool.split(",")
-        po = {}
-        for key_value in key_value_list:
-            key, _sep, value = key_value.partition("=")
-            # pool-id -> pool_id
-            # cinder-volume-host -> cinder_volume_host
-            # appnode-id -> appnode_id
-            key = key.replace("-", "_")
-            if key == "pool_id":
-                if value not in id_list:
-                    id_list.append(value)
-                else:
-                    raise exceptions.CommandError("Pool id is duplicated")
-            po[key] = value
-        pools_list.append(po)
-    cs.pool_usages.create(pools=pools_list)
-
-@utils.service_type('vsm')
-def do_pool_usage_list(cs, args):
-    """Lists all pool usages."""
-    pool_usages = cs.pool_usages.list(detailed=False, search_opts=None)
-    columns = ["ID", "Pool ID", "VSMApp ID", "Cinder Volume Host", "Attach Status",
-               "Attach_at"]
-    utils.print_list(pool_usages, columns)
-
-
 ###################rbd pool##########################
 # @utils.arg('rbd',
 #            metavar='<rbd>',
@@ -969,37 +441,6 @@ def do_server_stop(cs, args):
 #     """Upgrades ceph version."""
 #     _is_developing("server-ceph-upgrade",
 #                    "Upgrades ceph version.")
-
-
-###################storage group##########################
-# @utils.service_type('vsm')
-# def do_storage_group_create(cs, args):
-#     """Creates storage group."""
-#     _is_developing("storage-group-create",
-#                    "Creates storage group.")
-
-@utils.arg('id',
-           metavar='<id>',
-           help='ID of storage group.')
-@utils.service_type('vsm')
-def do_storage_group_show(cs, args):
-    """Shows detail info of storage group."""
-    storage_group = _find_storage_group(cs, args.id)
-    _print_storage_group(storage_group)
-
-@utils.service_type('vsm')
-def do_storage_group_list(cs, args):
-    """Lists all storage groups."""
-    storage_groups = cs.storage_groups.list(detailed=True, search_opts=None)
-    columns = ["ID", "Name", "Storage Class", "Attached OSDs", "Rule ID",
-               "Status", "Capacity Used", "Capacity Total"]
-    utils.print_list(storage_groups, columns)
-
-@utils.service_type('vsm')
-def do_storage_group_summary(cs, args):
-    """Gets summary info of storage group."""
-    storage_group_summary = cs.storage_groups.summary()
-    _print_storage_group(storage_group_summary)
 
 
 ###################storage pool##########################
@@ -1258,43 +699,6 @@ def do_storage_pool_list_ec_profiles(cs, args):
     utils.print_list(ec_profiles, columns)
 
 
-###################setting##########################
-@utils.arg('setting-name',
-           metavar='<setting-name>',
-           help='Name of setting.')
-@utils.service_type('vsm')
-def do_setting_show(cs, args):
-    """Shows details info of setting."""
-    setting = cs.vsm_settings.get(args.setting_name)
-    _print_setting(setting)
-
-@utils.service_type('vsm')
-def do_setting_list(cs, args):
-    """Lists all settings."""
-    settings = cs.vsm_settings.list(detailed=False, search_opts=None)
-    columns = ["ID", "Name", "Value"]
-    utils.print_list(settings, columns)
-
-@utils.arg('name',
-           metavar='<name>',
-           help='Name of setting.')
-@utils.arg('--value',
-           metavar='<value>',
-           help='Value of setting.')
-@utils.service_type('vsm')
-def do_setting_create(cs, args):
-    """Creates a setting[if exist, for updating]."""
-    setting = {
-        "name": args.name,
-        "value": args.value
-    }
-    try:
-        cs.vsm_settings.create(setting)
-        print("Succeed to create or update setting.")
-    except:
-        raise exceptions.CommandError("Failed to create or update setting.")
-
-
 ###################zone##########################
 @utils.service_type('vsm')
 def do_zone_list(cs, args):
@@ -1302,63 +706,6 @@ def do_zone_list(cs, args):
     zones = cs.zones.list(detailed=False, search_opts=None)
     columns = ["ID", "Name"]
     utils.print_list(zones, columns)
-
-
-###################rgw##########################
-@utils.arg('--host',
-           metavar='<host>',
-           help='The host of rgw.')
-@utils.arg('--name',
-           metavar='<name>',
-           default="radosgw.gateway",
-           help='The name of rgw instance. Default=radosgw.gateway.')
-@utils.arg('--is-ssl',
-           action='store_true',
-           help='SSL of not. Default=False.')
-@utils.arg('--uid',
-           metavar='<uid>',
-           default="johndoe",
-           help='The user name. Default=johndoe.')
-@utils.arg('--display-name',
-           metavar='<display-name>',
-           default="John Doe",
-           help='The user display name. Default=John Doe.')
-@utils.arg('--email',
-           metavar='<email>',
-           default="john@example.comjohn@example.com",
-           help='The Email. Default=john@example.comjohn@example.com.')
-@utils.arg('--sub-user',
-           metavar='<sub-user>',
-           default="johndoe:swift",
-           help='The sub user name. Default=johndoe:swift.')
-@utils.arg('--access',
-           metavar='<access>',
-           default="full",
-           help='The access type. Default=full.')
-@utils.arg('--key-type',
-           metavar='<key-type>',
-           default="swift",
-           help='The key type. Default=swift.')
-@utils.service_type('vsm')
-def do_rgw_create(cs, args):
-    """Creates a rgw."""
-    host = args.host
-    if not host:
-        raise exceptions.CommandError("you need specify a host")
-    rgw_instance_name = args.name
-    is_ssl = args.is_ssl
-    uid = args.uid
-    display_name = args.display_name
-    email = args.email
-    sub_user = args.sub_user
-    access = args.access
-    key_type = args.key_type
-    try:
-        cs.rgws.create(host, rgw_instance_name, is_ssl, uid, display_name, email,
-                       sub_user, access, key_type)
-        print("Succeed to create rgw.")
-    except:
-        raise exceptions.CommandError("Failed to create rgw.")
 
 
 ###################hyperstash instance##########################

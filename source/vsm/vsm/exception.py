@@ -407,104 +407,19 @@ class HardwareSizeExceedsAvailableQuota(QuotaError):
     message = _("Requested storage or snapshot exceeds "
                 "allowed Gigabytes quota")
 
-class HardwareSizeExceedsQuota(QuotaError):
-    message = _("Maximum storage/snapshot size exceeded")
-
-class HardwareLimitExceeded(QuotaError):
-    message = _("Maximum number of storages allowed (%(allowed)d) exceeded")
-
-class SnapshotLimitExceeded(QuotaError):
-    message = _("Maximum number of snapshots allowed (%(allowed)d) exceeded")
-
-class DuplicateSfHardwareNames(Duplicate):
-    message = _("Detected more than one storage with name %(vol_name)s")
 
 class DuplicateControllerIPs(VsmException):
     code = "E-848B"
     message = _("More than one Controller IP exists: %(err)s.  %(info)s")
 
-class Duplicate3PARHost(VsmException):
-    message = _("3PAR Host already exists: %(err)s.  %(info)s")
-
-class HardwareTypeCreateFailed(VsmException):
-    message = _("Cannot create storage_type with "
-                "name %(name)s and specs %(extra_specs)s")
-
-class SolidFireAPIException(VsmException):
-    message = _("Bad response from SolidFire API")
-
-class SolidFireAPIDataException(SolidFireAPIException):
-    message = _("Error in SolidFire API response: data=%(data)s")
 
 class UnknownCmd(Invalid):
     code = "E-94FF"
     message = _("Unknown or unsupported command %(cmd)s")
 
-class MalformedResponse(Invalid):
-    message = _("Malformed response to command %(cmd)s: %(reason)s")
-
-class BadHTTPResponseStatus(VsmException):
-    code = "E-CDB5"
-    message = _("Bad HTTP response status %(status)s")
-
-class FailedCmdWithDump(VsmException):
-    message = _("Operation failed with status=%(status)s. Full dump: %(data)s")
-
-class ZadaraServerCreateFailure(VsmException):
-    message = _("Unable to create server object for initiator %(name)s")
-
-class ZadaraServerNotFound(NotFound):
-    message = _("Unable to find server object for initiator %(name)s")
-
-class ZadaraVPSANoActiveController(VsmException):
-    message = _("Unable to find any active VPSA controller")
-
-class ZadaraAttachmentsNotFound(NotFound):
-    message = _("Failed to retrieve attachments for storage %(name)s")
-
-class ZadaraInvalidAttachmentInfo(Invalid):
-    message = _("Invalid attachment info for storage %(name)s: %(reason)s")
-
-class InstanceNotFound(NotFound):
-    message = _("Instance %(instance_id)s could not be found.")
-
-class HardwareBackendAPIException(VsmException):
-    message = _("Bad or unexpected response from the storage storage "
-                "backend API: %(data)s")
-
-class NfsException(VsmException):
-    message = _("Unknown NFS exception")
-
-class NfsNoSharesMounted(NotFound):
-    message = _("No mounted NFS shares found")
-
-class NfsNoSuitableShareFound(NotFound):
-    message = _("There is no share which can host %(storage_size)sG")
-
-class GlusterfsException(VsmException):
-    message = _("Unknown Gluster exception")
-
-class GlusterfsNoSharesMounted(NotFound):
-    message = _("No mounted Gluster shares found")
-
-class GlusterfsNoSuitableShareFound(NotFound):
-    message = _("There is no share which can host %(storage_size)sG")
-
-class GlanceMetadataExists(Invalid):
-    message = _("Glance metadata cannot be updated, key %(key)s"
-                " exists for storage id %(storage_id)s")
-
-class ImageCopyFailure(Invalid):
-    message = _("Failed to copy image to storage")
 
 class BackupNotFound(NotFound):
     message = _("Backup %(backup_id)s could not be found.")
-
-class InvalidBackup(Invalid):
-    message = _("Invalid backup: %(reason)s")
-
-class SwiftConnectionFailed(VsmException):
-    message = _("Connection to swift failed") + ": %(reason)s"
 
 
 class VsmappNotFound(NotFound):
